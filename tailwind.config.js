@@ -53,6 +53,7 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        default: 'hsl(var(--default))',
         tremor: {
           brand: {
             faint: colors.blue[50],

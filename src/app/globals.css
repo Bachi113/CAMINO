@@ -12,9 +12,9 @@
 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 262, 58%, 46%; /* #6332BA */
     --primary-foreground: 210 40% 98%;
-    --secondary: 225 5% 45%;
+    --secondary: 0, 0%, 98%; /* #F9F9F9 */
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
@@ -22,10 +22,12 @@
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
+    --border: 220, 12%, 91%; /* #E4E6EA */
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
+
+    --default: 230, 18%, 26%; /* #363A4E */
   }
 }
 
@@ -36,6 +38,10 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.bg-gradient {
+  background: linear-gradient(180deg, #fff 36.49%, #f0e4ff 99.98%), var(--Color-Grey-0, #fff);
 }
 
 ::-webkit-scrollbar {
