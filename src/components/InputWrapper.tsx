@@ -27,6 +27,7 @@ interface InputWrapperProps {
   children?: ReactNode;
   extraOption?: ReactNode;
   className?: string | string[];
+  required?: boolean;
 }
 
 const InputWrapper: FC<InputWrapperProps> = ({
@@ -39,16 +40,18 @@ const InputWrapper: FC<InputWrapperProps> = ({
   children,
   extraOption,
   className,
+  required,
 }) => {
   return (
-    <div className={cn('w-full relative', className)}>
-      <div className='mb-2'>
+    <div className={cn('w-full relative text-default font-medium', className)}>
+      <div>
         <label htmlFor={id} className='flex items-end gap-1 mb-1'>
           {/* Displays extra options, aligning them with the label. Mostly Icons to be shown before the Label. */}
           {extraOption && <div className='w-4'>{extraOption}</div>}
           <div className='flex items-end gap-1 w-full'>
             {/* Display the label text with small font size. */}
             {label && <p className={cn('text-sm leading-none')}>{label}</p>}
+            {required && <span className='text-destructive leading-none'>*</span>}
             {/* Comment text displayed next to the label. */}
             {comment && <p className='text-xs font-light text-gray-500'>({comment})</p>}
             {/* Info popover icon or component positioned on the far right. */}
@@ -62,8 +65,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
       {description && <div className='text-xs font-light text-gray-500 mt-1'>{description}</div>}
       {/* Handles error message to be shown for the specified input */}
       {error && (
-        <div className='text-xs mt-1 text-red-500 flex items-center gap-1.5'>
-          <MdErrorOutline />
+        <div className='text-xs mt-1 text-red-500'>
           <span>{error}</span>
         </div>
       )}

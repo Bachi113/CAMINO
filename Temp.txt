@@ -1,0 +1,2 @@
+1 - validation in business info
+2 - validation in document

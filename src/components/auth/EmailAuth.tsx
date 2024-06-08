@@ -39,7 +39,7 @@ const EmailAuth: FC<EmailAuthProps> = () => {
       return;
     }
 
-    router.push('/admin-dashboard');
+    router.push('/');
   };
 
   return (
@@ -69,11 +69,11 @@ const EmailAuth: FC<EmailAuthProps> = () => {
 
       <div className='text-sm font-light text-center'>
         <p>
-          By proceeding you agree to our{' '}
+          By proceeding you agree to our
           <Link href='/terms-of-service' target='_blank' className='font-semibold hover:underline'>
             Terms
-          </Link>{' '}
-          and{' '}
+          </Link>
+          and
           <Link href='/privacy-policy' target='_blank' className='font-semibold hover:underline'>
             Privacy Policy
           </Link>
