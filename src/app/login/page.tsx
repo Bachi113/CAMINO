@@ -32,7 +32,6 @@ export default function Login() {
     watch,
   } = useForm({
     resolver: yupResolver(schema),
-    mode: 'onChange',
   });
 
   const handleFormAction = async (data: ILoginForm) => {
@@ -84,7 +83,7 @@ export default function Login() {
                         type='email'
                         id='email'
                         placeholder='Email address'
-                        size={10}
+                        className='h-11 bg-secondary'
                         {...register('email')}
                       />
                     </InputWrapper>
