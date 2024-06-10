@@ -47,7 +47,7 @@ export default function Login() {
   const email = watch('email');
 
   return (
-    <div className='h-screen flex flex-col'>
+    <div className='h-screen flex flex-col bg-light-purple-gradient'>
       <div className='w-full flex flex-col items-center mt-36'>
         <div className='m-4 md:m-0 md:min-w-[414px]'>
           <div className='space-y-10 w-full'>

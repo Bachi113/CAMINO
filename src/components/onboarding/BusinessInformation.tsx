@@ -50,13 +50,8 @@ const BusinessInformation = () => {
   const [businessInformationId, setBusinessInformationId] = useState<string | null>(null);
   const [showOtherInput, setShowOtherInput] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-  } = useForm<IBusinessInformation>({
+  // TODO show error message if user not select any checkbox
+  const { register, handleSubmit, setValue, watch } = useForm<IBusinessInformation>({
     resolver: yupResolver(businessInformationSchema),
   });
 
@@ -269,8 +264,11 @@ const BusinessInformation = () => {
                       id='other'
                       value='Other'
                       onClick={() => setShowOtherInput(!showOtherInput)}
-                      checked={watch('other')?.length! > 1 || false}
+                      checked={watch('other')?.length! > 1 || showOtherInput || false}
                       disabled={loading}
+                      onCheckedChange={() => {
+                        businessInformationId && setValue('other', '');
+                      }}
                     />
                     <label htmlFor='other' className='text-sm text-muted-foreground'>
                       Other

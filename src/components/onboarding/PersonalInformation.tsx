@@ -201,6 +201,7 @@ const PersonalInformation = () => {
                     onCheckedChange={(checked) => setValue('terms', checked as boolean)}
                     {...register('terms')}
                     disabled={loading}
+                    checked={isPersonalInfo}
                   />
                   <label htmlFor='terms' className='text-sm font-medium space-x-1'>
                     <span>I agree to</span>

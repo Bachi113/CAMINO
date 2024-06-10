@@ -64,11 +64,11 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
         setData(data);
 
         if (error) {
-          errorToast('Error fetching personal information');
-          console.error('Error fetching personal information:', error);
+          errorToast('Error fetching information');
+          console.error('Error fetching information:', error);
         }
       } catch (error) {
-        console.error('Error fetching personal information:', error);
+        errorToast('Error fetching information');
       } finally {
         setLoading(false);
       }

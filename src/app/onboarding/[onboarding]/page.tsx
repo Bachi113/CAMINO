@@ -74,7 +74,7 @@ export default function OnBoarding({ params }: TypeParams) {
 
   return (
     <div className='flex'>
-      <div className='w-full md:w-1/3 md:border-r py-14 px-16 flex flex-col justify-between bg-gradient'>
+      <div className='w-full md:w-1/3 md:border-r py-14 px-16 flex flex-col justify-between bg-light-purple-gradient'>
         <div className='space-y-14'>
           <Logo />
           <div className='space-y-4'>

@@ -41,8 +41,8 @@
   }
 }
 
-.bg-gradient {
-  background: linear-gradient(180deg, #fff 36.49%, #f0e4ff 99.98%), var(--Color-Grey-0, #fff);
+.bg-light-purple-gradient {
+  background: linear-gradient(180deg, #fff 36.49%, rgb(240, 228, 255, 0.5) 99.98%), var(--Color-Grey-0, #fff);
 }
 
 ::-webkit-scrollbar {
