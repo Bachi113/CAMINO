@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import StoreIcon from '@/assets/icons/StoreIcon';
 import InputWrapper from '../InputWrapper';
@@ -12,7 +13,7 @@ import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { getUser } from '@/utils/get-user';
 import { errorToast } from '@/utils/utils';
 
-type IPersonalInformation = {
+export type IPersonalInformation = {
   firstName: string;
   lastName: string;
   email: string;
@@ -20,7 +21,7 @@ type IPersonalInformation = {
   terms: boolean;
 };
 
-const schema = yup.object().shape({
+export const personalInformationSchema = yup.object().shape({
   firstName: yup.string().required('First Name is required'),
   lastName: yup.string().required('Last Name is required'),
   email: yup.string().email('Invalid email address').required('Email is required'),
@@ -35,51 +36,107 @@ const PersonalInformation = () => {
   const router = useRouter();
   const supabase = supabaseBrowserClient();
 
+  const [isPersonalInfo, setIsPersonalInfo] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm<IPersonalInformation>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(personalInformationSchema),
     defaultValues: {
       terms: false,
     },
   });
 
-  const onHandleFormSubmit = async (data: IPersonalInformation) => {
-    const user = await getUser();
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const user = await getUser();
+      const userId = user?.id;
 
+      const { data, error } = await supabase
+        .from('personal_informations')
+        .select('*')
+        .eq('user_id', userId!)
+        .single();
+
+      if (data) {
+        setIsPersonalInfo(true);
+        setValue('firstName', data.first_name);
+        setValue('lastName', data.last_name);
+        setValue('email', data.email);
+        setValue('phone', data.phone);
+        setValue('terms', true);
+      }
+
+      if (error) {
+        console.error('Error fetching personal information:', error);
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [setValue, supabase]);
+
+  const onHandleFormSubmit = async (data: IPersonalInformation) => {
+    setLoading(true);
+    const user = await getUser();
     const userId = user?.id;
 
-    const { data: insert_data, error } = await supabase
-      .from('personal_informations')
-      .insert({
-        first_name: data.firstName,
-        last_name: data.lastName,
-        email: data.email,
-        phone: data.phone,
+    if (isPersonalInfo) {
+      const { error } = await supabase
+        .from('personal_informations')
+        .update({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          email: data.email,
+          phone: data.phone,
+        })
+        .eq('user_id', userId!);
+
+      if (error) {
+        errorToast(error.message);
+        console.error('Error updating personal information:', error);
+        setLoading(false);
+        return;
+      }
+    } else {
+      const { data: insert_data, error } = await supabase
+        .from('personal_informations')
+        .insert({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          email: data.email,
+          phone: data.phone,
+          user_id: userId!,
+        })
+        .select('id')
+        .single();
+
+      if (error) {
+        errorToast(error.message);
+        console.error('Error inserting personal information:', error);
+        setLoading(false);
+        return;
+      }
+
+      const { error: insert_onboarding_error } = await supabase.from('onboarding').insert({
         user_id: userId!,
-      })
-      .select('id')
-      .single();
+        personal_informations: insert_data.id,
+      });
 
-    if (error) {
-      errorToast(error.message);
-      console.error('Error inserting personal information:', error);
-      return;
+      if (insert_onboarding_error) {
+        errorToast(insert_onboarding_error.message);
+        console.error('Error inserting onboarding:', insert_onboarding_error);
+        setLoading(false);
+        return;
+      }
     }
 
-    const { error: insert_onboarding_error } = await supabase.from('onboarding').insert({
-      user_id: userId!,
-      personal_informations: insert_data.id,
-    });
-
-    if (insert_onboarding_error) {
-      errorToast(insert_onboarding_error.message);
-      console.error('Error inserting onboarding:', insert_onboarding_error);
-      return;
-    }
+    setLoading(false);
     router.push('/onboarding/business_details');
   };
 
@@ -102,21 +159,49 @@ const PersonalInformation = () => {
           <div className='space-y-6'>
             <div className='space-y-4'>
               <InputWrapper label='First name' required error={errors.firstName?.message}>
-                <Input type='text' placeholder='First name' id='firstName' {...register('firstName')} />
+                <Input
+                  type='text'
+                  placeholder='First name'
+                  id='firstName'
+                  {...register('firstName')}
+                  disabled={loading}
+                />
               </InputWrapper>
               <InputWrapper label='Last name' required error={errors.lastName?.message}>
-                <Input type='text' placeholder='Last name' id='lastName' {...register('lastName')} />
+                <Input
+                  type='text'
+                  placeholder='Last name'
+                  id='lastName'
+                  {...register('lastName')}
+                  disabled={loading}
+                />
               </InputWrapper>
               <InputWrapper label='Email address' required error={errors.email?.message}>
-                <Input type='email' placeholder='Email address' id='email' {...register('email')} />
+                <Input
+                  type='email'
+                  placeholder='Email address'
+                  id='email'
+                  {...register('email')}
+                  disabled={loading}
+                />
               </InputWrapper>
               <InputWrapper label='Phone Number' required error={errors.phone?.message}>
-                <Input type='text' placeholder='Phone Number' id='phone' {...register('phone')} />
+                <Input
+                  type='text'
+                  placeholder='Phone Number'
+                  id='phone'
+                  {...register('phone')}
+                  disabled={loading}
+                />
               </InputWrapper>
               <InputWrapper error={errors.terms?.message}>
                 <div className='flex items-center space-x-2'>
-                  {/* TODO fix spacing issue */}
-                  <Checkbox id='terms' onCheckedChange={(checked) => setValue('terms', checked as boolean)} />
+                  <Checkbox
+                    id='terms'
+                    onCheckedChange={(checked) => setValue('terms', checked as boolean)}
+                    {...register('terms')}
+                    disabled={loading}
+                  />
                   <label htmlFor='terms' className='text-sm font-medium space-x-1'>
                     <span>I agree to</span>
                     <Link href='' className='text-primary'>
@@ -131,8 +216,8 @@ const PersonalInformation = () => {
               </InputWrapper>
             </div>
             <div>
-              <Button className='w-full' size='lg' type='submit'>
-                Continue
+              <Button className='w-full' size='lg' type='submit' disabled={loading}>
+                {loading ? 'Loading...' : isPersonalInfo ? 'Update' : 'Continue'}
               </Button>
             </div>
           </div>

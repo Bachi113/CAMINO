@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 import StoreIcon from '@/assets/icons/StoreIcon';
@@ -15,7 +16,7 @@ import { getUser } from '@/utils/get-user';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { errorToast } from '@/utils/utils';
 
-type TBankDetails = {
+export type TBankDetails = {
   bankName: string;
   bankAccountNumber: string;
   sortCode: string;
@@ -24,9 +25,9 @@ type TBankDetails = {
   purchasingCurrency: string;
 };
 
-const bankImages = [bank1, bank2, bank3];
+export const bankImages = [bank1, bank2, bank3];
 
-const schema = yup.object().shape({
+export const BankDetailsSchema = yup.object().shape({
   bankName: yup.string().required('Bank Name is required'),
   bankAccountNumber: yup.string().required('Account Number is required'),
   sortCode: yup.string().required('Sort Code is required'),
@@ -39,53 +40,108 @@ const BankDetails = () => {
   const router = useRouter();
   const supabase = supabaseBrowserClient();
 
+  const [bankDetails, setBankDetails] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<TBankDetails>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(BankDetailsSchema),
   });
 
-  const onHandleFormSubmit = async (data: TBankDetails) => {
-    const user = await getUser();
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const user = await getUser();
+      const userId = user?.id;
 
+      const { data, error } = await supabase.from('bank_details').select('*').eq('user_id', userId!).single();
+
+      if (data) {
+        setValue('bankName', data.bank_name);
+        setValue('bankAccountNumber', data.account_number);
+        setValue('sortCode', data.sort_code);
+        setValue('ibanNumber', data.iban_code ?? undefined);
+        setValue('swiftCode', data.swift_code ?? undefined);
+        setValue('purchasingCurrency', data.purchasing_currency);
+        setBankDetails(true);
+      }
+
+      if (error) {
+        console.error('Error fetching bank details:', error);
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [setValue, supabase]);
+
+  const onHandleFormSubmit = async (data: TBankDetails) => {
+    setLoading(true);
+    const user = await getUser();
     const userId = user?.id;
 
-    const { data: insert_data, error } = await supabase
-      .from('bank_details')
-      .insert({
-        bank_name: data.bankName,
-        account_number: data.bankAccountNumber,
-        sort_code: data.sortCode,
-        iban_code: data.ibanNumber,
-        swift_code: data.swiftCode,
-        purchasing_currency: data.purchasingCurrency,
-        user_id: userId!,
-      })
-      .select('id')
-      .single();
+    if (bankDetails) {
+      const { error } = await supabase
+        .from('bank_details')
+        .update({
+          bank_name: data.bankName,
+          account_number: data.bankAccountNumber,
+          sort_code: data.sortCode,
+          iban_code: data.ibanNumber,
+          swift_code: data.swiftCode,
+          purchasing_currency: data.purchasingCurrency,
+        })
+        .eq('user_id', userId!);
 
-    if (error) {
-      errorToast(error.message);
-      console.error('Error inserting personal information:', error);
-      return;
+      if (error) {
+        errorToast(error.message);
+        console.error('Error updating bank details:', error);
+        setLoading(false);
+        return;
+      }
+    } else {
+      const { data: insert_data, error } = await supabase
+        .from('bank_details')
+        .insert({
+          bank_name: data.bankName,
+          account_number: data.bankAccountNumber,
+          sort_code: data.sortCode,
+          iban_code: data.ibanNumber,
+          swift_code: data.swiftCode,
+          purchasing_currency: data.purchasingCurrency,
+          user_id: userId!,
+        })
+        .select('id')
+        .single();
+
+      if (error) {
+        errorToast(error.message);
+        console.error('Error inserting bank details:', error);
+        setLoading(false);
+        return;
+      }
+
+      const { error: insert_onboarding_error } = await supabase
+        .from('onboarding')
+        .update({
+          user_id: userId!,
+          bank_details: insert_data.id,
+        })
+        .eq('user_id', userId!);
+
+      if (insert_onboarding_error) {
+        errorToast(insert_onboarding_error.message);
+        console.error('Error updating onboarding:', insert_onboarding_error);
+        setLoading(false);
+        return;
+      }
     }
 
-    const { error: insert_onboarding_error } = await supabase
-      .from('onboarding')
-      .update({
-        user_id: userId!,
-        bank_details: insert_data.id,
-      })
-      .eq('user_id', userId!);
-
-    if (insert_onboarding_error) {
-      errorToast(insert_onboarding_error.message);
-      console.error('Error inserting onboarding:', insert_onboarding_error);
-      return;
-    }
-
+    setLoading(false);
     router.push('/onboarding/document_verification');
   };
 
@@ -120,6 +176,7 @@ const BankDetails = () => {
                     placeholder='Find and select the bank'
                     id='bankName'
                     {...register('bankName')}
+                    disabled={loading}
                   />
                   <div className='bg-secondary rounded-lg p-1.5 flex justify-between mt-1'>
                     {bankImages.map((image, index) => (
@@ -133,16 +190,35 @@ const BankDetails = () => {
                     placeholder='Account number'
                     id='bankAccountNumber'
                     {...register('bankAccountNumber')}
+                    disabled={loading}
                   />
                 </InputWrapper>
                 <InputWrapper label='Sort Code' required error={errors.sortCode?.message}>
-                  <Input type='text' placeholder='Sort Code' id='sortCode' {...register('sortCode')} />
+                  <Input
+                    type='text'
+                    placeholder='Sort Code'
+                    id='sortCode'
+                    {...register('sortCode')}
+                    disabled={loading}
+                  />
                 </InputWrapper>
                 <InputWrapper label='IBAN Code' error={errors.ibanNumber?.message}>
-                  <Input type='text' placeholder='IBAN Code' id='ibanNumber' {...register('ibanNumber')} />
+                  <Input
+                    type='text'
+                    placeholder='IBAN Code'
+                    id='ibanNumber'
+                    {...register('ibanNumber')}
+                    disabled={loading}
+                  />
                 </InputWrapper>
                 <InputWrapper label='Swift Code' error={errors.swiftCode?.message}>
-                  <Input type='text' placeholder='Swift Code' id='swiftCode' {...register('swiftCode')} />
+                  <Input
+                    type='text'
+                    placeholder='Swift Code'
+                    id='swiftCode'
+                    {...register('swiftCode')}
+                    disabled={loading}
+                  />
                 </InputWrapper>
                 <InputWrapper label='Purchasing Currency' required error={errors.purchasingCurrency?.message}>
                   <Input
@@ -150,12 +226,13 @@ const BankDetails = () => {
                     placeholder='GBP'
                     id='purchasingCurrency'
                     {...register('purchasingCurrency')}
+                    disabled={loading}
                   />
                 </InputWrapper>
               </div>
               <div>
-                <Button className='w-full' size='lg' type='submit'>
-                  Continue
+                <Button className='w-full' size='lg' type='submit' disabled={loading}>
+                  {loading ? 'Loading...' : bankDetails ? 'Update' : 'Continue'}
                 </Button>
               </div>
             </div>
