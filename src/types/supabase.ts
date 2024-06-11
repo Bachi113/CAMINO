@@ -3,37 +3,43 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
-      chat_with_file: {
+      bank_details: {
         Row: {
-          chat_history: Json | null;
+          account_number: string;
+          bank_name: string;
           created_at: string;
-          file: string;
-          filename: string;
-          history_metadata: string | null;
+          iban_code: string | null;
           id: string;
+          purchasing_currency: string;
+          sort_code: string;
+          swift_code: string | null;
           user_id: string;
         };
         Insert: {
-          chat_history?: Json | null;
+          account_number: string;
+          bank_name: string;
           created_at?: string;
-          file: string;
-          filename: string;
-          history_metadata?: string | null;
+          iban_code?: string | null;
           id?: string;
+          purchasing_currency: string;
+          sort_code: string;
+          swift_code?: string | null;
           user_id: string;
         };
         Update: {
-          chat_history?: Json | null;
+          account_number?: string;
+          bank_name?: string;
           created_at?: string;
-          file?: string;
-          filename?: string;
-          history_metadata?: string | null;
+          iban_code?: string | null;
           id?: string;
+          purchasing_currency?: string;
+          sort_code?: string;
+          swift_code?: string | null;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'chat_with_file_user_id_fkey';
+            foreignKeyName: 'bank_details_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'users';
@@ -41,40 +47,40 @@ export type Database = {
           },
         ];
       };
-      content_creations: {
+      business_addresses: {
         Row: {
+          city: string;
+          country: string;
           created_at: string;
           id: string;
-          results: string | null;
-          style: string;
-          topic: string;
+          phone_number: string;
+          postal_code: string;
+          street_address: string;
           user_id: string;
-          voice: string | null;
-          word_limit: string | null;
         };
         Insert: {
+          city: string;
+          country: string;
           created_at?: string;
           id?: string;
-          results?: string | null;
-          style: string;
-          topic: string;
+          phone_number: string;
+          postal_code: string;
+          street_address: string;
           user_id: string;
-          voice?: string | null;
-          word_limit?: string | null;
         };
         Update: {
+          city?: string;
+          country?: string;
           created_at?: string;
           id?: string;
-          results?: string | null;
-          style?: string;
-          topic?: string;
+          phone_number?: string;
+          postal_code?: string;
+          street_address?: string;
           user_id?: string;
-          voice?: string | null;
-          word_limit?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: 'content_creations_user_id_fkey';
+            foreignKeyName: 'business_addresses_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'users';
@@ -82,47 +88,37 @@ export type Database = {
           },
         ];
       };
-      headshot_generations: {
+      business_details: {
         Row: {
+          business_name: string;
+          business_type: string;
           created_at: string;
-          generation_id: string;
           id: string;
-          image_urls: string[] | null;
-          model_id: string;
-          negative_prompt: string | null;
-          prompt: string;
+          registration_type: string;
           user_id: string;
+          vat_registration_number: string;
         };
         Insert: {
+          business_name: string;
+          business_type: string;
           created_at?: string;
-          generation_id: string;
           id?: string;
-          image_urls?: string[] | null;
-          model_id: string;
-          negative_prompt?: string | null;
-          prompt: string;
+          registration_type: string;
           user_id: string;
+          vat_registration_number: string;
         };
         Update: {
+          business_name?: string;
+          business_type?: string;
           created_at?: string;
-          generation_id?: string;
           id?: string;
-          image_urls?: string[] | null;
-          model_id?: string;
-          negative_prompt?: string | null;
-          prompt?: string;
+          registration_type?: string;
           user_id?: string;
+          vat_registration_number?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'headshot_generations_model_id_fkey';
-            columns: ['model_id'];
-            isOneToOne: false;
-            referencedRelation: 'headshot_models';
-            referencedColumns: ['model_id'];
-          },
-          {
-            foreignKeyName: 'headshot_generations_user_id_fkey';
+            foreignKeyName: 'business_details_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'users';
@@ -130,49 +126,43 @@ export type Database = {
           },
         ];
       };
-      headshot_models: {
+      business_informations: {
         Row: {
+          courier_company: boolean;
           created_at: string;
-          eta: string;
-          expires_at: string | null;
           id: string;
-          images: string[];
-          model_id: string;
-          name: string;
-          status: Database['public']['Enums']['headshotmodelstatus'];
-          trained_at: string | null;
-          type: string;
+          inside_uk: boolean;
+          online_service: boolean;
+          other: string | null;
+          outside_uk: boolean;
+          self_delivery: boolean;
           user_id: string;
         };
         Insert: {
+          courier_company: boolean;
           created_at?: string;
-          eta: string;
-          expires_at?: string | null;
           id?: string;
-          images: string[];
-          model_id: string;
-          name: string;
-          status?: Database['public']['Enums']['headshotmodelstatus'];
-          trained_at?: string | null;
-          type: string;
+          inside_uk: boolean;
+          online_service: boolean;
+          other?: string | null;
+          outside_uk: boolean;
+          self_delivery: boolean;
           user_id: string;
         };
         Update: {
+          courier_company?: boolean;
           created_at?: string;
-          eta?: string;
-          expires_at?: string | null;
           id?: string;
-          images?: string[];
-          model_id?: string;
-          name?: string;
-          status?: Database['public']['Enums']['headshotmodelstatus'];
-          trained_at?: string | null;
-          type?: string;
+          inside_uk?: boolean;
+          online_service?: boolean;
+          other?: string | null;
+          outside_uk?: boolean;
+          self_delivery?: boolean;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'headshot_models_user_id_fkey';
+            foreignKeyName: 'business_informations_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'users';
@@ -180,52 +170,34 @@ export type Database = {
           },
         ];
       };
-      image_generations: {
+      documents: {
         Row: {
           created_at: string;
-          error: string | null;
-          guidance: string;
+          document_urls: string[];
+          experience: string;
           id: string;
-          image_urls: string[] | null;
-          inference: string;
-          model: string;
-          negative_prompt: string | null;
-          no_of_outputs: string;
-          prediction_id: string;
-          prompt: string;
           user_id: string;
+          vat_number: string;
         };
         Insert: {
           created_at?: string;
-          error?: string | null;
-          guidance: string;
+          document_urls: string[];
+          experience: string;
           id?: string;
-          image_urls?: string[] | null;
-          inference: string;
-          model: string;
-          negative_prompt?: string | null;
-          no_of_outputs: string;
-          prediction_id: string;
-          prompt: string;
           user_id: string;
+          vat_number: string;
         };
         Update: {
           created_at?: string;
-          error?: string | null;
-          guidance?: string;
+          document_urls?: string[];
+          experience?: string;
           id?: string;
-          image_urls?: string[] | null;
-          inference?: string;
-          model?: string;
-          negative_prompt?: string | null;
-          no_of_outputs?: string;
-          prediction_id?: string;
-          prompt?: string;
           user_id?: string;
+          vat_number?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'image_generations_user_id_fkey';
+            foreignKeyName: 'documents_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'users';
@@ -233,173 +205,123 @@ export type Database = {
           },
         ];
       };
-      interior_designs: {
+      onboarding: {
         Row: {
-          created_at: string;
-          error: string | null;
+          bank_details: string | null;
+          business_addresses: string | null;
+          business_details: string | null;
+          business_informations: string | null;
+          documents: string | null;
           id: string;
-          image_urls: string[] | null;
-          prediction_id: string;
-          prompt: string;
-          ref_image: string;
-          room_type: string;
-          theme: string;
+          onboarded_at: string;
+          personal_informations: string | null;
           user_id: string;
         };
         Insert: {
-          created_at?: string;
-          error?: string | null;
+          bank_details?: string | null;
+          business_addresses?: string | null;
+          business_details?: string | null;
+          business_informations?: string | null;
+          documents?: string | null;
           id?: string;
-          image_urls?: string[] | null;
-          prediction_id: string;
-          prompt: string;
-          ref_image: string;
-          room_type: string;
-          theme: string;
+          onboarded_at?: string;
+          personal_informations?: string | null;
           user_id: string;
         };
         Update: {
-          created_at?: string;
-          error?: string | null;
+          bank_details?: string | null;
+          business_addresses?: string | null;
+          business_details?: string | null;
+          business_informations?: string | null;
+          documents?: string | null;
           id?: string;
-          image_urls?: string[] | null;
-          prediction_id?: string;
-          prompt?: string;
-          ref_image?: string;
-          room_type?: string;
-          theme?: string;
+          onboarded_at?: string;
+          personal_informations?: string | null;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'interior_designs_user_id_fkey';
-            columns: ['user_id'];
+            foreignKeyName: 'onboarding_bank_details_fkey';
+            columns: ['bank_details'];
             isOneToOne: false;
+            referencedRelation: 'bank_details';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'onboarding_business_addresses_fkey';
+            columns: ['business_addresses'];
+            isOneToOne: false;
+            referencedRelation: 'business_addresses';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'onboarding_business_details_fkey';
+            columns: ['business_details'];
+            isOneToOne: false;
+            referencedRelation: 'business_details';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'onboarding_business_informations_fkey';
+            columns: ['business_informations'];
+            isOneToOne: false;
+            referencedRelation: 'business_informations';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'onboarding_documents_fkey';
+            columns: ['documents'];
+            isOneToOne: false;
+            referencedRelation: 'documents';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'onboarding_personal_informations_fkey';
+            columns: ['personal_informations'];
+            isOneToOne: false;
+            referencedRelation: 'personal_informations';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'onboarding_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
             referencedRelation: 'users';
             referencedColumns: ['id'];
           },
         ];
       };
-      multillm_chatgpt: {
-        Row: {
-          chat_history: Json | null;
-          created_at: string;
-          id: string;
-          model: string | null;
-          title: string | null;
-          user_id: string;
-        };
-        Insert: {
-          chat_history?: Json | null;
-          created_at?: string;
-          id?: string;
-          model?: string | null;
-          title?: string | null;
-          user_id: string;
-        };
-        Update: {
-          chat_history?: Json | null;
-          created_at?: string;
-          id?: string;
-          model?: string | null;
-          title?: string | null;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'multillm_chatgpt_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      qr_code_generations: {
+      personal_informations: {
         Row: {
           created_at: string;
-          error: string | null;
+          email: string;
+          first_name: string;
           id: string;
-          image_url: string | null;
-          prompt: string;
-          url: string;
+          last_name: string;
+          phone: string;
           user_id: string;
         };
         Insert: {
           created_at?: string;
-          error?: string | null;
+          email: string;
+          first_name: string;
           id?: string;
-          image_url?: string | null;
-          prompt: string;
-          url: string;
+          last_name: string;
+          phone: string;
           user_id: string;
         };
         Update: {
           created_at?: string;
-          error?: string | null;
+          email?: string;
+          first_name?: string;
           id?: string;
-          image_url?: string | null;
-          prompt?: string;
-          url?: string;
+          last_name?: string;
+          phone?: string;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'qr_code_generations_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      subscriptions: {
-        Row: {
-          active: boolean | null;
-          amount: number | null;
-          created_at: string;
-          id: string;
-          interval: Database['public']['Enums']['billingcycle'] | null;
-          start_date: string | null;
-          subscription_id: string | null;
-          type: Database['public']['Enums']['subscriptiontype'];
-          user_email: string;
-          user_id: string;
-        };
-        Insert: {
-          active?: boolean | null;
-          amount?: number | null;
-          created_at?: string;
-          id?: string;
-          interval?: Database['public']['Enums']['billingcycle'] | null;
-          start_date?: string | null;
-          subscription_id?: string | null;
-          type?: Database['public']['Enums']['subscriptiontype'];
-          user_email: string;
-          user_id: string;
-        };
-        Update: {
-          active?: boolean | null;
-          amount?: number | null;
-          created_at?: string;
-          id?: string;
-          interval?: Database['public']['Enums']['billingcycle'] | null;
-          start_date?: string | null;
-          subscription_id?: string | null;
-          type?: Database['public']['Enums']['subscriptiontype'];
-          user_email?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'subscriptions_user_email_fkey';
-            columns: ['user_email'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['email'];
-          },
-          {
-            foreignKeyName: 'subscriptions_user_id_fkey';
+            foreignKeyName: 'personal_informations_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'users';
@@ -439,83 +361,6 @@ export type Database = {
           },
         ];
       };
-      voice_transcriptions: {
-        Row: {
-          audio_url: string | null;
-          created_at: string;
-          error: string | null;
-          id: string;
-          summary: string | null;
-          transcription: string | null;
-          transcription_id: string;
-          user_id: string;
-        };
-        Insert: {
-          audio_url?: string | null;
-          created_at?: string;
-          error?: string | null;
-          id?: string;
-          summary?: string | null;
-          transcription?: string | null;
-          transcription_id: string;
-          user_id: string;
-        };
-        Update: {
-          audio_url?: string | null;
-          created_at?: string;
-          error?: string | null;
-          id?: string;
-          summary?: string | null;
-          transcription?: string | null;
-          transcription_id?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'voice_transcriptions_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      youtube_summary_tool: {
-        Row: {
-          chat_history: Json | null;
-          created_at: string;
-          id: string;
-          output_style: string;
-          summary: string | null;
-          tone: string;
-          transcription: string | null;
-          user_id: string;
-          video_link: string;
-        };
-        Insert: {
-          chat_history?: Json | null;
-          created_at?: string;
-          id?: string;
-          output_style: string;
-          summary?: string | null;
-          tone: string;
-          transcription?: string | null;
-          user_id: string;
-          video_link: string;
-        };
-        Update: {
-          chat_history?: Json | null;
-          created_at?: string;
-          id?: string;
-          output_style?: string;
-          summary?: string | null;
-          tone?: string;
-          transcription?: string | null;
-          user_id?: string;
-          video_link?: string;
-        };
-        Relationships: [];
-      };
     };
     Views: {
       [_ in never]: never;
@@ -524,9 +369,7 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      billingcycle: 'month' | 'year';
-      headshotmodelstatus: 'processing' | 'finished';
-      subscriptiontype: 'free' | 'standard' | 'premium';
+      [_ in never]: never;
     };
     CompositeTypes: {
       [_ in never]: never;

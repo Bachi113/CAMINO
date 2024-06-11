@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// Initialize the Resend instance with the API key from environment variables
-const resend = new Resend(process.env.RESEND_API_KEY!);
-
 const senderEmailAddress = 'onboarding@resend.dev';
 
 export async function POST(req: Request) {
+  // Initialize the Resend instance with the API key from environment variables
+  const resend = new Resend(process.env.RESEND_API_KEY!);
+
   try {
     // Parse the request body to extract email and name
     const { email, subject } = await req.json();
