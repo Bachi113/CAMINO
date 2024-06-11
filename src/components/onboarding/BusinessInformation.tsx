@@ -158,6 +158,8 @@ const BusinessInformation = () => {
     router.push('/onboarding/bank_details');
   };
 
+  const otherLength = watch('other')?.length;
+
   return (
     <>
       <Button
@@ -264,7 +266,7 @@ const BusinessInformation = () => {
                       id='other'
                       value='Other'
                       onClick={() => setShowOtherInput(!showOtherInput)}
-                      checked={watch('other')?.length! > 1 || showOtherInput || false}
+                      checked={otherLength! > 1 || showOtherInput || false}
                       disabled={loading}
                       onCheckedChange={() => {
                         businessInformationId && setValue('other', '');
