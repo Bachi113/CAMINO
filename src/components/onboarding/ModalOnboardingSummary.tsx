@@ -46,6 +46,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
       setLoading(true);
       const user = await getUser();
       try {
+        const userId = user?.id;
         const { data, error } = await supabase
           .from('onboarding')
           .select(
@@ -58,7 +59,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
               documents (*)
             `
           )
-          .eq('user_id', user?.id!)
+          .eq('user_id', userId!)
           .single();
 
         setData(data);
