@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { EmailOtpType } from '@supabase/supabase-js';
 import Logo from '@/components/Logo';
 
-export default function ConfirmAuth() {
+function ConfirmAuthContent() {
   const supabase = supabaseBrowserClient();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function ConfirmAuth() {
     };
 
     handleMagicLinkRedirect();
-  }, []);
+  }, [router, supabase, token_hash, type]);
 
   return (
     <div className='h-screen flex flex-col'>
@@ -59,5 +59,13 @@ export default function ConfirmAuth() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ConfirmAuth() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ConfirmAuthContent />
+    </Suspense>
   );
 }

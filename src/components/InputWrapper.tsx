@@ -4,7 +4,6 @@
 import { cn } from '@/utils/utils';
 import { ReactNode } from 'react';
 import { FC } from 'react';
-import { MdErrorOutline } from 'react-icons/md';
 
 // Props:
 // `id` - optional, associates the label with an input element for accessibility.
