@@ -49,10 +49,11 @@ const DocumentVerification = () => {
       const { data, error } = await supabase.from('documents').select('*').eq('user_id', userId!).single();
 
       if (data) {
+        const documentsLength = (data.document_urls as any)?.length;
         setIsDocumentVerification(true);
         setValue('vatNumber', data.vat_number);
         setValue('howLongYouInvolved', data.experience);
-        setValue('document1', data.document_urls.length ? (data.document_urls[0] as any) : null);
+        setValue('document1', documentsLength ? ((data.document_urls as any)[0] as any) : null);
       }
 
       if (error) {
