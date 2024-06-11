@@ -173,7 +173,7 @@ export type Database = {
       documents: {
         Row: {
           created_at: string;
-          document_urls: string[];
+          document_urls: Json;
           experience: string;
           id: string;
           user_id: string;
@@ -181,7 +181,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
-          document_urls: string[];
+          document_urls: Json;
           experience: string;
           id?: string;
           user_id: string;
@@ -189,7 +189,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
-          document_urls?: string[];
+          document_urls?: Json;
           experience?: string;
           id?: string;
           user_id?: string;
