@@ -21,6 +21,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 type ModalOnboardingSummaryProps = {
   isSubmitSuccessful: boolean;
+  setShowModal: (value: boolean) => void;
 };
 
 const sidebarItems = [
@@ -32,7 +33,7 @@ const sidebarItems = [
   { id: 'document-verification', label: 'Document Verification' },
 ];
 
-const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSuccessful }) => {
+const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSuccessful, setShowModal }) => {
   const supabase = supabaseBrowserClient();
 
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
@@ -114,6 +115,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
                   ref={(el) => {
                     sectionRefs.current[0] = el;
                   }}
+                  onMouseEnter={() => setSelectedItem('Personal Information')}
                   className='space-y-4'>
                   <InputWrapper label='First name' required>
                     <Input
@@ -155,6 +157,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
                   ref={(el) => {
                     sectionRefs.current[1] = el;
                   }}
+                  onMouseEnter={() => setSelectedItem('Basic Business Details')}
                   className='space-y-4'>
                   <InputWrapper label='Business Name' required>
                     <Input
@@ -197,6 +200,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
                   ref={(el) => {
                     sectionRefs.current[2] = el;
                   }}
+                  onMouseEnter={() => setSelectedItem('Business Address')}
                   className='space-y-4'>
                   <InputWrapper label='Street Address' required>
                     <Input
@@ -242,6 +246,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
                   ref={(el) => {
                     sectionRefs.current[3] = el;
                   }}
+                  onMouseEnter={() => setSelectedItem('Business Information')}
                   className='space-y-4'>
                   <InputWrapper label='Where are your target customers' required>
                     <div className='space-y-2 mt-2'>
@@ -312,6 +317,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
                   ref={(el) => {
                     sectionRefs.current[4] = el;
                   }}
+                  onMouseEnter={() => setSelectedItem('Bank Account Details')}
                   className='space-y-4'>
                   <InputWrapper label='Bank Name' required>
                     <Input
@@ -368,6 +374,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
                   ref={(el) => {
                     sectionRefs.current[5] = el;
                   }}
+                  onMouseEnter={() => setSelectedItem('Document Verification')}
                   className='space-y-4'>
                   <InputWrapper label='VAT Number' required>
                     <Input
@@ -401,7 +408,13 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
         <DialogFooter>
           <div className='flex gap-4 w-full'>
             <DialogClose asChild>
-              <Button variant='outline' className='w-full' onClick={() => setIsOpen(false)}>
+              <Button
+                variant='outline'
+                className='w-full'
+                onClick={() => {
+                  setIsOpen(false);
+                  setShowModal(false);
+                }}>
                 Cancel
               </Button>
             </DialogClose>

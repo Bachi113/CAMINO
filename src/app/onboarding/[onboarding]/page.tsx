@@ -73,11 +73,11 @@ export default function OnBoarding({ params }: TypeParams) {
   const activeStep = params.onboarding;
 
   return (
-    <div className='flex'>
-      <div className='w-full md:w-1/3 md:border-r py-14 px-16 flex flex-col justify-between bg-light-purple-gradient'>
+    <div className='flex h-screen'>
+      <div className='w-full md:w-1/3 md:border-r py-12 px-16 flex flex-col justify-between bg-light-purple-gradient'>
         <div className='space-y-14'>
           <Logo />
-          <div className='space-y-4'>
+          <div className='space-y-2'>
             {sections.map((section, index) => {
               const activeIndex = sections.findIndex((sec) => sec.id === activeStep);
               const isActive = index <= activeIndex;
@@ -117,7 +117,7 @@ export default function OnBoarding({ params }: TypeParams) {
           <p>contact@camino.com</p>
         </Link>
       </div>
-      <div className='w-full md:w-2/3 py-6 px-9'>{ActiveStepFormComponent(activeStep)}</div>
+      <div className='w-full md:w-2/3 py-6 px-9 overflow-autoer'>{ActiveStepFormComponent(activeStep)}</div>
     </div>
   );
 }
