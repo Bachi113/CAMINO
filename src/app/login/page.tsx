@@ -15,6 +15,7 @@ import GoogleAuth from '@/components/auth/GoogleAuth';
 import InputWrapper from '@/components/InputWrapper';
 import { errorToast } from '@/utils/utils';
 import Link from 'next/link';
+import { useState } from 'react';
 
 type ILoginForm = {
   email: string;
@@ -25,10 +26,12 @@ const schema = yup.object().shape({
 });
 
 export default function Login() {
+  const [isOtpSent, setIsOtpSent] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isValid, isSubmitting },
     watch,
   } = useForm({
     resolver: yupResolver(schema),
@@ -41,6 +44,8 @@ export default function Login() {
       errorToast(response);
       return;
     }
+
+    setIsOtpSent(true);
   };
 
   const email = watch('email');
@@ -55,7 +60,7 @@ export default function Login() {
               <div className='space-y-2 text-center'>
                 <p className='text-2xl font-semibold leading-7 text-default'>Welcome back</p>
                 <p className='text-sm text-subtle'>
-                  {isSubmitSuccessful ? (
+                  {isOtpSent ? (
                     <span>
                       We have sent a magic link to <br /> {email}
                     </span>
@@ -65,7 +70,7 @@ export default function Login() {
                 </p>
               </div>
             </div>
-            {isSubmitSuccessful ? (
+            {isOtpSent ? (
               <div>
                 <Link href='https://mail.google.com/'>
                   <Button size='lg' className='w-full' type='submit'>
@@ -90,7 +95,7 @@ export default function Login() {
                   </div>
                   <div>
                     <Button size='lg' className='w-full' type='submit' disabled={!isValid || isSubmitting}>
-                      {isSubmitSuccessful ? 'Go To mail' : 'Continue'}
+                      {isOtpSent ? 'Go To mail' : 'Continue'}
                     </Button>
                   </div>
                 </form>

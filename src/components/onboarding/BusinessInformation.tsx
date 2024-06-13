@@ -51,7 +51,13 @@ const BusinessInformation = () => {
   const [showOtherInput, setShowOtherInput] = useState(false);
 
   // TODO show error message if user not select any checkbox
-  const { register, handleSubmit, setValue, watch } = useForm<IBusinessInformation>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<IBusinessInformation>({
     resolver: yupResolver(businessInformationSchema),
   });
 
@@ -216,6 +222,9 @@ const BusinessInformation = () => {
                     </label>
                   </div>
                 </div>
+                {(errors as any)['']?.type === 'atLeastOneTargetCustomer' && (
+                  <p className='text-red-500 text-sm mt-2'>{(errors as any)['']?.message}</p>
+                )}
               </InputWrapper>
               <InputWrapper label='How do you deliver your goods/services?' required>
                 <div className='space-y-2 mt-2'>
@@ -286,6 +295,9 @@ const BusinessInformation = () => {
                   )}
                 </div>
               </InputWrapper>
+              {(errors as any)['']?.type === 'atLeastOneDeliveryMethod' && (
+                <p className='text-red-500 text-sm mt-2'>{(errors as any)['']?.message}</p>
+              )}
             </div>
             <div>
               <Button className='w-full' size='lg' type='submit' disabled={loading}>

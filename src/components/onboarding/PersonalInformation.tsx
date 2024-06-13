@@ -194,27 +194,29 @@ const PersonalInformation = () => {
                   disabled={loading}
                 />
               </InputWrapper>
-              <InputWrapper error={errors.terms?.message}>
-                <div className='flex items-center space-x-2'>
-                  <Checkbox
-                    id='terms'
-                    onCheckedChange={(checked) => setValue('terms', checked as boolean)}
-                    {...register('terms')}
-                    disabled={loading}
-                    defaultChecked={isPersonalInfo}
-                  />
-                  <label htmlFor='terms' className='text-sm font-medium space-x-1'>
-                    <span>I agree to</span>
-                    <Link href='' className='text-primary'>
-                      Camino Terms
-                    </Link>
-                    <span>&</span>
-                    <Link href='' className='text-primary'>
-                      Privacy Policy
-                    </Link>
-                  </label>
-                </div>
-              </InputWrapper>
+              {!loading && (
+                <InputWrapper error={errors.terms?.message}>
+                  <div className='flex items-center space-x-2'>
+                    <Checkbox
+                      id='terms'
+                      onCheckedChange={(checked) => setValue('terms', checked as boolean)}
+                      {...register('terms')}
+                      disabled={loading}
+                      defaultChecked={isPersonalInfo}
+                    />
+                    <label htmlFor='terms' className='text-sm font-medium space-x-1'>
+                      <span>I agree to</span>
+                      <Link href='' className='text-primary'>
+                        Camino Terms
+                      </Link>
+                      <span>&</span>
+                      <Link href='' className='text-primary'>
+                        Privacy Policy
+                      </Link>
+                    </label>
+                  </div>
+                </InputWrapper>
+              )}
             </div>
             <div>
               <Button className='w-full' size='lg' type='submit' disabled={loading}>

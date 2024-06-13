@@ -41,6 +41,7 @@ const DocumentVerification = () => {
   });
 
   useEffect(() => {
+    setValue('document1', null as any);
     const fetchData = async () => {
       setLoading(true);
       const user = await getUser();
@@ -209,7 +210,7 @@ const DocumentVerification = () => {
                       {(document1?.name || document1?.[0]?.name) && (
                         <div className='mr-2'>{document1.name || document1?.[0]?.name}</div>
                       )}
-                      {(!document1 || !document1?.[0]?.name) && (
+                      {!document1?.url && !document1?.[0]?.name && (
                         <label
                           htmlFor='document1'
                           className={cn(buttonVariants({ variant: 'outline' }), 'gap-1 cursor-pointer')}>
@@ -238,7 +239,12 @@ const DocumentVerification = () => {
             </div>
           </form>
         </div>
-        {showModal && <ModalOnboardingSummary isSubmitSuccessful={showModal} />}
+        {showModal && (
+          <ModalOnboardingSummary
+            isSubmitSuccessful={showModal}
+            setShowModal={(value) => setShowModal(value)}
+          />
+        )}
       </div>
     </>
   );

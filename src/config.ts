@@ -10,7 +10,7 @@ const config = {
 
   // APP: Basic application settings used globally for branding and links.
   app: {
-    name: 'BuilderKit',
+    name: 'Savex',
     description: 'NextJS SaaS AI Boilerplate',
     url: 'https://base.builderkit.ai',
   },
