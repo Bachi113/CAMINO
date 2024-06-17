@@ -60,22 +60,22 @@ export default function Login() {
   const email = watch('email');
 
   return (
-    <div className='h-screen flex flex-col bg-light-purple-gradient'>
+    <div className='h-screen flex flex-col bg-light-gray'>
       <Button
         size='default'
-        className='gap-2 text-default w-fit mt-10 ml-10'
+        className='gap-2 text-default w-fit mt-16 ml-20'
         variant='outline'
         onClick={() => setLoginMethod(null)}>
         <MdOutlineKeyboardBackspace className='size-5' /> Back
       </Button>
-      <div className='w-full flex flex-col items-center mt-36'>
+      <div className='w-full flex flex-col items-center mt-9'>
         <div className='m-4 md:m-0 md:w-[414px] border rounded-lg p-8'>
           <div className='space-y-10 w-full'>
             <div className='space-y-6 flex flex-col items-center justify-center'>
               <Logo />
               <div className='space-y-2 text-center'>
                 <p className='text-2xl font-semibold leading-7 text-default'>Welcome back</p>
-                <p className='text-sm text-subtle'>
+                <p className='text-sm text-subtle font-medium'>
                   {isSubmitSuccessful ? (
                     <span>
                       We have sent a magic link to <br /> {email}
@@ -125,7 +125,7 @@ export default function Login() {
                 {isSubmitSuccessful ? (
                   <div>
                     <Link href='https://mail.google.com/'>
-                      <Button size='lg' className='w-full' type='submit'>
+                      <Button size='xl' className='w-full' type='submit'>
                         Go To mail
                       </Button>
                     </Link>
@@ -138,7 +138,8 @@ export default function Login() {
                           label='Email address'
                           required
                           error={errors.email?.message}
-                          description='Click on continue to get the magic link'>
+                          description='Click on continue to get the magic link'
+                          className='font-medium'>
                           <Input
                             type='email'
                             id='email'
@@ -150,7 +151,7 @@ export default function Login() {
                       </div>
                       <div>
                         <Button
-                          size='lg'
+                          size='xl'
                           className='w-full'
                           type='submit'
                           disabled={!isValid || isSubmitting}>
@@ -165,17 +166,17 @@ export default function Login() {
             {!loginMethod && (
               <div className='space-y-2'>
                 <Button
-                  size='lg'
+                  size='xl'
                   variant='secondary'
-                  className='w-full border h-11 bg-muted/50 gap-2'
+                  className='w-full border h-11 bg-muted/50 gap-2 font-semibold text-slate-700'
                   onClick={() => setLoginMethod('magic')}>
                   <MdLocalPhone className='size-5' />
                   Login with OTP
                 </Button>
                 <Button
-                  size='lg'
+                  size='xl'
                   variant='secondary'
-                  className='w-full border h-11 bg-muted/50 gap-2'
+                  className='w-full border h-11 bg-muted/50 gap-2 font-semibold text-slate-700'
                   onClick={() => setLoginMethod('magic')}>
                   <MdOutlineEmail className='size-5' /> Login with Magic link
                 </Button>

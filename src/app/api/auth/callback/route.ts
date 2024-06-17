@@ -1,23 +1,26 @@
-// This route handles the server-side OAuth callback for Supabase authentication.
-// It retrieves the auth code from the request URL, exchanges it for a user session, and redirects to the dashboard.
-// This is an essential part of the OAuth flow, allowing secure authentication with third-party providers.
-
 import { supabaseServerClient } from '@/utils/supabase/server';
+import { EmailOtpType } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  // The `/api/auth/callback` route is required for the server-side auth flow implemented
-  // by the SSR package. It exchanges an auth code for the user's session.
-  // https://supabase.com/docs/guides/auth/server-side/nextjs
+  console.log('GET /api/auth/callback');
+
   const requestUrl = new URL(request.url);
+  const token_hash = requestUrl.searchParams.get('token_hash');
+  const type = requestUrl.searchParams.get('type') as EmailOtpType;
   const code = requestUrl.searchParams.get('code');
   const origin = requestUrl.origin;
 
-  if (code) {
-    const supabase = supabaseServerClient();
+  const supabase = supabaseServerClient();
+
+  if (token_hash && type) {
+    // Handle OTP verification
+    await supabase.auth.verifyOtp({ token_hash, type });
+  } else if (code) {
+    // Handle OAuth code exchange for session
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  // URL to redirect to after sign up process completes
+  // URL to redirect to after the authentication process completes
   return NextResponse.redirect(`${origin}`);
 }

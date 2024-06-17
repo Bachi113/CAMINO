@@ -51,7 +51,7 @@ export default function Login() {
   const email = watch('email');
 
   return (
-    <div className='h-screen flex flex-col bg-light-purple-gradient'>
+    <div className='h-screen flex flex-col bg-light-gray'>
       <div className='w-full flex flex-col items-center mt-36'>
         <div className='m-4 md:m-0 md:min-w-[414px]'>
           <div className='space-y-10 w-full'>
@@ -59,7 +59,7 @@ export default function Login() {
               <Logo />
               <div className='space-y-2 text-center'>
                 <p className='text-2xl font-semibold leading-7 text-default'>Welcome back</p>
-                <p className='text-sm text-subtle'>
+                <p className='text-sm text-subtle font-medium'>
                   {isOtpSent ? (
                     <span>
                       We have sent a magic link to <br /> {email}
@@ -73,7 +73,7 @@ export default function Login() {
             {isOtpSent ? (
               <div>
                 <Link href='https://mail.google.com/'>
-                  <Button size='lg' className='w-full' type='submit'>
+                  <Button size='xl' className='w-full' type='submit'>
                     Go To mail
                   </Button>
                 </Link>
@@ -94,7 +94,11 @@ export default function Login() {
                     </InputWrapper>
                   </div>
                   <div>
-                    <Button size='lg' className='w-full' type='submit' disabled={!isValid || isSubmitting}>
+                    <Button
+                      size='xl'
+                      className='w-full font-bold'
+                      type='submit'
+                      disabled={!isValid || isSubmitting}>
                       {isOtpSent ? 'Go To mail' : 'Continue'}
                     </Button>
                   </div>
