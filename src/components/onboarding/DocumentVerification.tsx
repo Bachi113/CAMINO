@@ -234,7 +234,7 @@ const DocumentVerification = () => {
               </div>
               <div>
                 <Button className='w-full' size={'xl'} type='submit' disabled={loading || isLoading}>
-                  {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
+                  {loading || isLoading ? 'Loading...' : data ? 'Update' : 'Continue'}
                 </Button>
               </div>
             </div>
