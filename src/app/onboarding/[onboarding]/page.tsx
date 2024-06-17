@@ -1,83 +1,76 @@
-'use client';
-
-import BusinessDetail from '@/components/onboarding/BusinessDetail';
-import BusinessAddress from '@/components/onboarding/BusinessAddress';
-import PersonalInformation from '@/components/onboarding/PersonalInformation';
-import BusinessInformation from '@/components/onboarding/BusinessInformation';
-import BankDetails from '@/components/onboarding/BankDetails';
-import DocumentVerification from '@/components/onboarding/DocumentVerification';
+import dynamic from 'next/dynamic';
 import Logo from '@/components/Logo';
 import { cn } from '@/utils/utils';
 import { FaCheck } from 'react-icons/fa';
 import { MdOutlineEmail } from 'react-icons/md';
 import Link from 'next/link';
 
-type TypeParams = {
-  params: { onboarding: string };
-  searchParams?: { form: string };
+type Section = {
+  title: string;
+  description: string;
+  id: string;
 };
 
-function ActiveStepFormComponent(step: string) {
-  switch (step) {
-    case 'personal_information':
-      return <PersonalInformation />;
-    case 'business_details':
-      return <BusinessDetail />;
-    case 'business_address':
-      return <BusinessAddress />;
-    case 'business_information':
-      return <BusinessInformation />;
-    case 'bank_details':
-      return <BankDetails />;
-    case 'document_verification':
-      return <DocumentVerification />;
-    default:
-      return null;
-  }
-}
+type TypeParams = {
+  params: { onboarding: string };
+};
 
-const sections = [
+const sections: Section[] = [
   {
     title: 'Personal Information',
     description: 'Please provide basic details about you',
-    id: 'personal_information',
+    id: 'personal-information',
   },
   {
     title: 'Basic Business Details',
     description: 'Please provide basic details about the business',
-    id: 'business_details',
+    id: 'business-details',
   },
   {
     title: 'Business Address',
     description: 'Please provide location details about your business',
-    id: 'business_address',
+    id: 'business-address',
   },
   {
     title: 'Business Information',
     description: 'Please provide other info about your business',
-    id: 'business_information',
+    id: 'business-information',
   },
   {
     title: 'Bank Account Details',
     description: 'Please provide your banking details to verify',
-    id: 'bank_details',
+    id: 'bank-details',
   },
   {
     title: 'Document Verification',
     description: 'Please provide the mentioned documents for verification',
-    id: 'document_verification',
+    id: 'document-verification',
   },
 ];
+
+const ActiveStepFormComponent = (step: string) => {
+  const componentMap: { [key: string]: any } = {
+    'personal-information': dynamic(() => import('@/components/onboarding/PersonalInformation')),
+    'business-details': dynamic(() => import('@/components/onboarding/BusinessDetail')),
+    'business-address': dynamic(() => import('@/components/onboarding/BusinessAddress')),
+    'business-information': dynamic(() => import('@/components/onboarding/BusinessInformation')),
+    'bank-details': dynamic(() => import('@/components/onboarding/BankDetails')),
+    'document-verification': dynamic(() => import('@/components/onboarding/DocumentVerification')),
+  };
+
+  const StepComponent = componentMap[step];
+  return StepComponent ? <StepComponent /> : null;
+};
 
 export default function OnBoarding({ params }: TypeParams) {
   const activeStep = params.onboarding;
 
   return (
     <div className='flex h-screen'>
-      <div className='w-full md:w-1/3 md:border-r py-12 px-16 flex flex-col justify-between bg-light-purple-gradient'>
-        <div className='space-y-14'>
+      <div className='w-full md:w-2/5 md:border-r py-14 px-16 mx-2 flex flex-col justify-between bg-light-purple-gradient'>
+        <div className='space-y-12'>
           <Logo />
-          <div className='space-y-2'>
+          <div className='space-y-2 pt-2'>
             {sections.map((section, index) => {
               const activeIndex = sections.findIndex((sec) => sec.id === activeStep);
               const isActive = index <= activeIndex;
@@ -85,22 +78,22 @@ export default function OnBoarding({ params }: TypeParams) {
                 <div key={index} className='p-2 flex items-center gap-4'>
                   <FaCheck
                     className={cn(
-                      isActive ? 'bg-primary text-white' : 'text-muted-foreground',
-                      'rounded-full size-5 p-1'
+                      isActive ? 'bg-primary' : 'bg-slate-400',
+                      'rounded-full size-5 p-1 text-white'
                     )}
                   />
-                  <div className='space-y-2'>
+                  <div className='space-y-1'>
                     <p
                       className={cn(
-                        isActive ? 'text-default' : 'text-muted-foreground',
-                        'text-lg font-semibold leading-6'
+                        isActive ? 'text-slate-800 font-semibold' : 'text-slate-400 font-semibold',
+                        'text-lg leading-7'
                       )}>
                       {section.title}
                     </p>
                     <p
                       className={cn(
-                        isActive ? 'text-subtle' : 'text-muted-foreground',
-                        'text-sm font-normal leading-5'
+                        isActive ? 'text-slate-600' : 'text-slate-400',
+                        'text-sm font-medium leading-5'
                       )}>
                       {section.description}
                     </p>
@@ -117,7 +110,7 @@ export default function OnBoarding({ params }: TypeParams) {
           <p>contact@camino.com</p>
         </Link>
       </div>
-      <div className='w-full md:w-2/3 py-6 px-9 overflow-autoer'>{ActiveStepFormComponent(activeStep)}</div>
+      <div className='w-full md:w-3/5 py-6 px-9 overflow-auto'>{ActiveStepFormComponent(activeStep)}</div>
     </div>
   );
 }

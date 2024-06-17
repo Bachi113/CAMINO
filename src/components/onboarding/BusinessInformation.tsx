@@ -1,51 +1,23 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { Button } from '../ui/button';
-import { MdOutlineKeyboardBackspace } from 'react-icons/md';
-import StoreIcon from '@/assets/icons/StoreIcon';
-import InputWrapper from '../InputWrapper';
-import { Input } from '../ui/input';
+import { Button } from '@/components/ui/button';
+import InputWrapper from '@/components/InputWrapper';
+import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { Checkbox } from '../ui/checkbox';
-import * as yup from 'yup';
+import { Checkbox } from '@/components/ui/checkbox';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getUser } from '@/utils/get-user';
-import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { errorToast } from '@/utils/utils';
-
-export type IBusinessInformation = {
-  insideUk?: boolean;
-  outsideUk?: boolean;
-  courierCompany?: boolean;
-  selfDelivery?: boolean;
-  onlineService?: boolean;
-  other?: string;
-};
-
-export const businessInformationSchema = yup
-  .object()
-  .shape({
-    insideUk: yup.boolean(),
-    outsideUk: yup.boolean(),
-    courierCompany: yup.boolean(),
-    selfDelivery: yup.boolean(),
-    onlineService: yup.boolean(),
-    other: yup.string().optional(),
-  })
-  .test(
-    'atLeastOneTargetCustomer',
-    'At least one target customer location must be selected',
-    function (values) {
-      return values.insideUk || values.outsideUk;
-    }
-  )
-  .test('atLeastOneDeliveryMethod', 'At least one delivery method must be selected', function (values) {
-    return values.courierCompany || values.selfDelivery || values.onlineService || !!values.other;
-  });
+import { IBusinessInformation, businessInformationSchema } from '@/types/validations';
+import { useGetBusinessInformation } from '@/app/query-hooks';
+import NavigationButton from './NavigationButton';
+import StoreIcon from '@/assets/icons/StoreIcon';
+import { saveData, updateData } from '@/app/onboarding/action';
+import { queryClient } from '@/app/providers';
 
 const BusinessInformation = () => {
   const router = useRouter();
-  const supabase = supabaseBrowserClient();
   const [loading, setLoading] = useState(false);
   const [businessInformationId, setBusinessInformationId] = useState<string | null>(null);
   const [showOtherInput, setShowOtherInput] = useState(false);
@@ -61,135 +33,72 @@ const BusinessInformation = () => {
     resolver: yupResolver(businessInformationSchema),
   });
 
+  const { data, isLoading } = useGetBusinessInformation();
+
   useEffect(() => {
-    const fetchBusinessInformation = async () => {
-      setLoading(true);
-      const user = await getUser();
-      const userId = user?.id;
+    if (data) {
+      setValue('insideUk', data.inside_uk);
+      setValue('outsideUk', data.outside_uk);
+      setValue('courierCompany', data.courier_company);
+      setValue('selfDelivery', data.self_delivery);
+      setValue('onlineService', data.online_service);
+      setValue('other', data.other || undefined);
+      setBusinessInformationId(data.id);
 
-      const { data, error } = await supabase
-        .from('business_informations')
-        .select('*')
-        .eq('user_id', userId!)
-        .single();
-
-      if (data) {
-        setValue('insideUk', data.inside_uk);
-        setValue('outsideUk', data.outside_uk);
-        setValue('courierCompany', data.courier_company);
-        setValue('selfDelivery', data.self_delivery);
-        setValue('onlineService', data.online_service);
-        setValue('other', data.other || undefined);
-        setBusinessInformationId(data.id);
-
-        if (data.other) {
-          setShowOtherInput(true);
-        }
-      }
-
-      if (error && error.code !== 'PGRST116') {
-        errorToast(error.message);
-        console.error('Error fetching business information:', error);
-      }
-
-      setLoading(false);
-    };
-
-    fetchBusinessInformation();
-  }, [supabase, setValue]);
-
-  const onHandleFormSubmit = async (data: IBusinessInformation) => {
-    setLoading(true);
-    const user = await getUser();
-    const userId = user?.id;
-
-    if (businessInformationId) {
-      const { error } = await supabase
-        .from('business_informations')
-        .update({
-          inside_uk: data.insideUk ?? false,
-          outside_uk: data.outsideUk ?? false,
-          courier_company: data.courierCompany ?? false,
-          self_delivery: data.selfDelivery ?? false,
-          online_service: data.onlineService ?? false,
-          other: data.other,
-        })
-        .eq('user_id', userId!);
-
-      if (error) {
-        errorToast(error.message);
-        console.error('Error updating business information:', error);
-        setLoading(false);
-        return;
-      }
-    } else {
-      const { data: insert_data, error } = await supabase
-        .from('business_informations')
-        .insert({
-          inside_uk: data.insideUk ?? false,
-          outside_uk: data.outsideUk ?? false,
-          courier_company: data.courierCompany ?? false,
-          self_delivery: data.selfDelivery ?? false,
-          online_service: data.onlineService ?? false,
-          other: data.other,
-          user_id: userId!,
-        })
-        .select('id')
-        .single();
-
-      if (error) {
-        errorToast(error.message);
-        console.error('Error inserting business information:', error);
-        setLoading(false);
-        return;
-      }
-
-      const { error: insert_onboarding_error } = await supabase
-        .from('onboarding')
-        .update({
-          user_id: userId!,
-          business_informations: insert_data.id,
-        })
-        .eq('user_id', userId!);
-
-      if (insert_onboarding_error) {
-        errorToast(insert_onboarding_error.message);
-        console.error('Error updating onboarding:', insert_onboarding_error);
-        setLoading(false);
-        return;
+      if (data.other) {
+        setShowOtherInput(true);
       }
     }
+  }, [data, setValue]);
 
-    setLoading(false);
-    router.push('/onboarding/bank_details');
+  const handleFormSubmit = async (formData: IBusinessInformation) => {
+    setLoading(true);
+    const dataToUpdate = {
+      inside_uk: formData.insideUk,
+      outside_uk: formData.outsideUk,
+      courier_company: formData.courierCompany,
+      self_delivery: formData.selfDelivery,
+      online_service: formData.onlineService,
+      other: formData.other,
+    };
+    try {
+      if (data) {
+        const res = await updateData(JSON.stringify(dataToUpdate), 'business_informations');
+        if (res?.error) throw res.error;
+
+        queryClient.invalidateQueries({ queryKey: ['getBusinessInformation'] });
+      } else {
+        const res = await saveData(JSON.stringify(dataToUpdate), 'business_informations');
+        if (res?.error) throw res.error;
+      }
+      router.push('/onboarding/bank-details');
+    } catch (error: any) {
+      console.error('Error during form submission:', error);
+      errorToast(error || 'An unknown error occurred.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const otherLength = watch('other')?.length;
 
   return (
     <>
-      <Button
-        size='default'
-        className='gap-2 text-default'
-        variant='outline'
-        onClick={() => router.push('/onboarding/business_address')}
-        disabled={loading}>
-        <MdOutlineKeyboardBackspace className='size-5' /> Back
-      </Button>
-      <div className='flex flex-col items-center justify-center mt-6'>
-        <div className='max-w-[350px] w-full space-y-10'>
+      <NavigationButton showNext={!!data} />
+      <div className='flex flex-col items-center justify-center mt-6 animate-fade-in-left'>
+        <div className='max-w-[350px] mr-20 w-full space-y-10'>
           <div className='space-y-6 flex flex-col items-center'>
             <div className='border rounded-lg p-3'>
               <StoreIcon />
             </div>
             <div className='space-y-2 text-center'>
               <p className='text-default text-2xl font-semibold leading-7'>Business Information</p>
-              <p className='text-subtle text-sm text-normal leading-5'>
+              <p className='text-subtle text-sm font-medium leading-5'>
                 Please provide other info about your business
               </p>
             </div>
           </div>
-          <form onSubmit={handleSubmit(onHandleFormSubmit)} className='space-y-6'>
+          <form onSubmit={handleSubmit(handleFormSubmit)} className='space-y-6'>
             <div className='space-y-4'>
               <InputWrapper label='Where are your target customers' required>
                 <div className='space-y-2 mt-2'>
@@ -201,7 +110,7 @@ const BusinessInformation = () => {
                         setValue('insideUk', checked as boolean);
                       }}
                       checked={watch('insideUk') || false}
-                      disabled={loading}
+                      disabled={loading || isLoading}
                     />
                     <label htmlFor='insideUk' className='text-sm text-muted-foreground'>
                       Inside UK
@@ -215,7 +124,7 @@ const BusinessInformation = () => {
                       }}
                       value='Outside UK'
                       checked={watch('outsideUk') || false}
-                      disabled={loading}
+                      disabled={loading || isLoading}
                     />
                     <label htmlFor='outsideUk' className='text-sm text-muted-foreground'>
                       Outside UK
@@ -236,7 +145,7 @@ const BusinessInformation = () => {
                       }}
                       value='Courier company (e.g. TCS, Leopard)'
                       checked={watch('courierCompany') || false}
-                      disabled={loading}
+                      disabled={loading || isLoading}
                     />
                     <label htmlFor='courierCompany' className='text-sm text-muted-foreground'>
                       Courier company (e.g. TCS, Leopard)
@@ -250,7 +159,7 @@ const BusinessInformation = () => {
                       }}
                       value='Self Delivery (e.g. Glovo)'
                       checked={watch('selfDelivery') || false}
-                      disabled={loading}
+                      disabled={loading || isLoading}
                     />
                     <label htmlFor='selfDelivery' className='text-sm text-muted-foreground'>
                       Self Delivery (e.g. Glovo)
@@ -264,7 +173,7 @@ const BusinessInformation = () => {
                       }}
                       value='Online Services - no delivery required'
                       checked={watch('onlineService') || false}
-                      disabled={loading}
+                      disabled={loading || isLoading}
                     />
                     <label htmlFor='onlineService' className='text-sm text-muted-foreground'>
                       Online Services - no delivery required
@@ -276,7 +185,7 @@ const BusinessInformation = () => {
                       value='Other'
                       onClick={() => setShowOtherInput(!showOtherInput)}
                       checked={otherLength! > 1 || showOtherInput || false}
-                      disabled={loading}
+                      disabled={loading || isLoading}
                       onCheckedChange={() => {
                         businessInformationId && setValue('other', '');
                       }}
@@ -290,7 +199,7 @@ const BusinessInformation = () => {
                       {...register('other')}
                       placeholder='Other...'
                       className='mt-3'
-                      disabled={loading}
+                      disabled={loading || isLoading}
                     />
                   )}
                 </div>
@@ -300,7 +209,7 @@ const BusinessInformation = () => {
               )}
             </div>
             <div>
-              <Button className='w-full' size='lg' type='submit' disabled={loading}>
+              <Button className='w-full' size={'xl'} type='submit' disabled={loading || isLoading}>
                 {loading ? 'Loading...' : businessInformationId ? 'Update' : 'Continue'}
               </Button>
             </div>

@@ -23,7 +23,7 @@ export default async function Home() {
       )}
       {user && <ButtonSignout />}
       {user && (
-        <Link href='onboarding/personal_information'>
+        <Link href='onboarding/personal-information'>
           {' '}
           <Button>Go to onboarding</Button>
         </Link>

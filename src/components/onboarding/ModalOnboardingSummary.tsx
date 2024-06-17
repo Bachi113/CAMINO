@@ -8,8 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '../ui/button';
-import { cn, errorToast } from '@/utils/utils';
+import { Button } from '@/components/ui/button';
+import { cn, errorToast, extractFileNameFromUrl } from '@/utils/utils';
 import ModalSubmitConfirmation from './ModalSubmitConfirmation';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ import { getUser } from '@/utils/get-user';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { Separator } from '@/components/ui/separator';
-import { Checkbox } from '@/components/ui/checkbox';
+import { type } from 'os';
 
 type ModalOnboardingSummaryProps = {
   isSubmitSuccessful: boolean;
@@ -79,21 +79,249 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
     fetchPersonalInformation();
   }, [supabase]);
 
+  const renderInputs = (
+    inputs: { label: string; id: string; type: string; value: string; required?: boolean }[]
+  ) => {
+    return inputs.map(({ label, id, type, value, required }) => (
+      <InputWrapper label={label} required={required} key={id}>
+        <Input type={type} placeholder={label} id={id} value={value} />
+      </InputWrapper>
+    ));
+  };
+
+  const sections = [
+    {
+      id: 'personal-information',
+      title: 'Personal Information',
+      inputs: [
+        {
+          label: 'First name',
+          id: 'firstName',
+          type: 'text',
+          value: data?.personal_informations.first_name,
+          required: true,
+        },
+        {
+          label: 'Last name',
+          id: 'lastName',
+          type: 'text',
+          value: data?.personal_informations.last_name,
+          required: true,
+        },
+        {
+          label: 'Email address',
+          id: 'email',
+          type: 'email',
+          value: data?.personal_informations.email,
+          required: true,
+        },
+        {
+          label: 'Phone Number',
+          id: 'phone',
+          type: 'text',
+          value: data?.personal_informations.phone,
+          required: true,
+        },
+      ],
+    },
+    {
+      id: 'basic-business-details',
+      title: 'Basic Business Details',
+      inputs: [
+        {
+          label: 'Business Name',
+          id: 'businessName',
+          type: 'text',
+          value: data?.business_details.business_name,
+          required: true,
+        },
+        {
+          label: 'Business type',
+          id: 'businessType',
+          type: 'text',
+          value: data?.business_details.business_type,
+          required: true,
+        },
+        {
+          label: 'Registration type',
+          id: 'registrationType',
+          type: 'text',
+          value: data?.business_details.registration_type,
+          required: true,
+        },
+        {
+          label: 'VAT Registration number',
+          id: 'vatRegistrationNumber',
+          type: 'text',
+          value: data?.business_details.vat_registration_number,
+          required: true,
+        },
+      ],
+    },
+    {
+      id: 'business-address',
+      title: 'Business Address',
+      inputs: [
+        {
+          label: 'Street Address',
+          id: 'streetAddress',
+          type: 'text',
+          value: data?.business_addresses.street_address,
+          required: true,
+        },
+        { label: 'City', id: 'city', type: 'text', value: data?.business_addresses.city, required: true },
+        {
+          label: 'Postal Code',
+          id: 'postalCode',
+          type: 'text',
+          value: data?.business_addresses.postal_code,
+          required: true,
+        },
+        {
+          label: 'Country',
+          id: 'country',
+          type: 'text',
+          value: data?.business_addresses.country,
+          required: true,
+        },
+        {
+          label: 'Business Phone Number',
+          id: 'phoneNumber',
+          type: 'text',
+          value: data?.business_addresses.phone_number,
+          required: true,
+        },
+      ],
+    },
+    {
+      id: 'business-information',
+      title: 'Business Information',
+      inputs: [
+        {
+          label: 'Where are your target customers',
+          id: 'targetCustomers',
+          type: 'text',
+          value: data?.business_informations.inside_uk ? 'Inside UK' : 'Outside UK',
+        },
+        {
+          label: 'How do you deliver your goods/services?',
+          id: 'deliveryMethod',
+          type: 'text',
+          value: data?.business_informations.courier_company
+            ? 'Courier company (e.g. TCS, Leopard)'
+            : 'Self Delivery (e.g. Glovo)',
+        },
+        {
+          label: 'Online Services',
+          id: 'onlineServices',
+          type: 'text',
+          value: data?.business_informations.online_service
+            ? 'Online Services - no delivery required'
+            : 'Other',
+        },
+      ],
+    },
+    {
+      id: 'bank-account-details',
+      title: 'Bank Account Details',
+      inputs: [
+        {
+          label: 'Bank Name',
+          id: 'bankName',
+          type: 'text',
+          value: data?.bank_details.bank_name,
+          required: true,
+        },
+        {
+          label: 'Bank Account Number',
+          id: 'accountNumber',
+          type: 'text',
+          value: data?.bank_details.account_number,
+          required: true,
+        },
+        {
+          label: 'Sort Code',
+          id: 'sortCode',
+          type: 'text',
+          value: data?.bank_details.sort_code,
+          required: true,
+        },
+        { label: 'IBAN Code', id: 'ibanCode', type: 'text', value: data?.bank_details.iban_code },
+        { label: 'Swift Code', id: 'swiftCode', type: 'text', value: data?.bank_details.swift_code },
+        {
+          label: 'Purchasing Currency',
+          id: 'purchasingCurrency',
+          type: 'text',
+          value: data?.bank_details.purchasing_currency,
+          required: true,
+        },
+      ],
+    },
+    {
+      id: 'document-verification',
+      title: 'Document Verification',
+      inputs: [
+        {
+          label: 'VAT Number',
+          id: 'vatNumber',
+          type: 'text',
+          value: data?.documents.vat_number,
+          required: true,
+        },
+        {
+          label: 'How long have you been involved in business',
+          id: 'experience',
+          type: 'text',
+          value: data?.documents.experience,
+          required: true,
+        },
+        {
+          label: 'Document type',
+          id: 'documentType',
+          type: 'text',
+          value: extractFileNameFromUrl(data?.documents.document_urls[0]),
+          required: true,
+        },
+        {
+          label: 'Document type',
+          id: 'documentType',
+          type: 'text',
+          value: extractFileNameFromUrl(data?.documents.document_urls[1]),
+          required: true,
+        },
+        {
+          label: 'Document type',
+          id: 'documentType',
+          type: 'text',
+          value: extractFileNameFromUrl(data?.documents.document_urls[2]),
+          required: true,
+        },
+        {
+          label: 'Document type',
+          id: 'documentType',
+          type: 'text',
+          value: extractFileNameFromUrl(data?.documents.document_urls[3]),
+          required: true,
+        },
+      ],
+    },
+  ];
+
   return (
     <Dialog open={isOpen}>
       <DialogContent className='max-w-2xl'>
         <DialogHeader>
-          <DialogTitle>Review Your Information</DialogTitle>
+          <DialogTitle className='text-slate-800'>Review Your Information</DialogTitle>
           <DialogDescription>Please check the details below before submitting the form</DialogDescription>
         </DialogHeader>
-        <div className='flex gap-8'>
+        <div className='flex gap-12 mt-6'>
           <div className='w-5/12 sticky top-0 h-[calc(100vh-200px)]'>
             {sidebarItems.map((item) => (
               <div
                 key={item.id}
                 className={cn(
-                  'flex items-center text-sm gap-4 px-4 py-2 text-default font-semibold leading-6 cursor-pointer rounded-lg',
-                  { 'bg-primary/10 text-primary': selectedItem === item.label }
+                  'flex items-center text-sm gap-4 px-4 py-2 text-default font-medium leading-6 cursor-pointer rounded-lg',
+                  { 'bg-primary/10 text-primary font-semibold': selectedItem === item.label }
                 )}
                 onClick={() => {
                   document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' });
@@ -110,297 +338,19 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
               </div>
             ) : (
               <div className='space-y-6'>
-                <div
-                  id='personal-information'
-                  ref={(el) => {
-                    sectionRefs.current[0] = el;
-                  }}
-                  onMouseEnter={() => setSelectedItem('Personal Information')}
-                  className='space-y-4'>
-                  <InputWrapper label='First name' required>
-                    <Input
-                      type='text'
-                      placeholder='First name'
-                      id='firstName'
-                      value={data?.personal_informations.first_name}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Last name' required>
-                    <Input
-                      type='text'
-                      placeholder='Last name'
-                      id='lastName'
-                      value={data?.personal_informations.last_name}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Email address' required>
-                    <Input
-                      type='email'
-                      placeholder='Email address'
-                      id='email'
-                      value={data?.personal_informations.email}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Phone Number' required>
-                    <Input
-                      type='text'
-                      placeholder='Phone Number'
-                      id='phone'
-                      value={data?.personal_informations.phone}
-                    />
-                  </InputWrapper>
-                </div>
-                <Separator />
-
-                <div
-                  id='basic-business-details'
-                  ref={(el) => {
-                    sectionRefs.current[1] = el;
-                  }}
-                  onMouseEnter={() => setSelectedItem('Basic Business Details')}
-                  className='space-y-4'>
-                  <InputWrapper label='Business Name' required>
-                    <Input
-                      type='text'
-                      placeholder='Name of your business'
-                      id='businessName'
-                      value={data?.business_details.business_name}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Business type' required>
-                    <Input
-                      type='text'
-                      placeholder='Select Company type'
-                      id='businessType'
-                      value={data?.business_details.business_type}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Registration type' required>
-                    <Input
-                      type='text'
-                      placeholder='Select Registration type'
-                      id='registrationType'
-                      value={data?.business_details.registration_type}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='VAT Registration number' required>
-                    <Input
-                      type='text'
-                      placeholder='Enter Registration eg: GB123456789'
-                      id='vatRegistrationNumber'
-                      value={data?.business_details.vat_registration_number}
-                    />
-                  </InputWrapper>
-                </div>
-
-                <Separator />
-
-                <div
-                  id='business-address'
-                  ref={(el) => {
-                    sectionRefs.current[2] = el;
-                  }}
-                  onMouseEnter={() => setSelectedItem('Business Address')}
-                  className='space-y-4'>
-                  <InputWrapper label='Street Address' required>
-                    <Input
-                      type='text'
-                      placeholder='Street Address'
-                      id='streetAddress'
-                      value={data?.business_addresses.street_address}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='City' required>
-                    <Input type='text' placeholder='City' id='city' value={data?.business_addresses.city} />
-                  </InputWrapper>
-                  <InputWrapper label='Postal Code' required>
-                    <Input
-                      type='text'
-                      placeholder='Postal Code'
-                      id='postalCode'
-                      value={data?.business_addresses.postal_code}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Country' required>
-                    <Input
-                      type='text'
-                      placeholder='Country'
-                      id='country'
-                      value={data?.business_addresses.country}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Business Phone Number' required>
-                    <Input
-                      type='text'
-                      placeholder='Business Phone Number'
-                      id='phoneNumber'
-                      value={data?.business_addresses.phone_number}
-                    />
-                  </InputWrapper>
-                </div>
-
-                <Separator />
-
-                <div
-                  id='business-information'
-                  ref={(el) => {
-                    sectionRefs.current[3] = el;
-                  }}
-                  onMouseEnter={() => setSelectedItem('Business Information')}
-                  className='space-y-4'>
-                  <InputWrapper label='Where are your target customers' required>
-                    <div className='space-y-2 mt-2'>
-                      <div className='flex items-center gap-2.5'>
-                        <Checkbox
-                          id='insideUk'
-                          value='Inside UK'
-                          checked={data?.business_informations.inside_uk}
-                        />
-                        <label htmlFor='insideUk' className='text-sm text-muted-foreground'>
-                          Inside UK
-                        </label>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <Checkbox id='outsideUk' checked={data?.business_informations.outside_uk} />
-                        <label htmlFor='outsideUk' className='text-sm text-muted-foreground'>
-                          Outside UK
-                        </label>
-                      </div>
-                    </div>
-                  </InputWrapper>
-                  <InputWrapper label='How do you deliver your goods/services?' required>
-                    <div className='space-y-2 mt-2'>
-                      <div className='flex items-center gap-2.5'>
-                        <Checkbox id='courierCompany' checked={data?.business_informations.courier_company} />
-                        <label htmlFor='courierCompany' className='text-sm text-muted-foreground'>
-                          Courier company (e.g. TCS, Leopard)
-                        </label>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <Checkbox id='selfDelivery' checked={data?.business_informations.self_delivery} />
-                        <label htmlFor='selfDelivery' className='text-sm text-muted-foreground'>
-                          Self Delivery (e.g. Glovo)
-                        </label>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <Checkbox id='onlineService' checked={data?.business_informations.online_service} />
-                        <label htmlFor='onlineService' className='text-sm text-muted-foreground'>
-                          Online Services - no delivery required
-                        </label>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <Checkbox
-                          id='other'
-                          value='Other'
-                          checked={data?.business_informations.other?.length > 1 ? true : false}
-                        />
-                        <label htmlFor='other' className='text-sm text-muted-foreground'>
-                          Other
-                        </label>
-                      </div>
-
-                      {data?.business_informations.other && (
-                        <Input
-                          value={data.business_informations.other}
-                          placeholder='Other...'
-                          className='mt-3'
-                        />
-                      )}
-                    </div>
-                  </InputWrapper>
-                </div>
-
-                <Separator />
-
-                <div
-                  id='bank-account-details'
-                  ref={(el) => {
-                    sectionRefs.current[4] = el;
-                  }}
-                  onMouseEnter={() => setSelectedItem('Bank Account Details')}
-                  className='space-y-4'>
-                  <InputWrapper label='Bank Name' required>
-                    <Input
-                      type='text'
-                      placeholder='Find and select the bank'
-                      value={data?.bank_details.bank_name}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Bank Account Number' required>
-                    <Input
-                      type='text'
-                      placeholder='Account number'
-                      value={data?.bank_details.account_number}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Sort Code' required>
-                    <Input
-                      type='text'
-                      placeholder='Sort Code'
-                      id='sortCode'
-                      value={data?.bank_details.sort_code}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='IBAN Code'>
-                    <Input
-                      type='text'
-                      placeholder='IBAN Code'
-                      id='ibanNumber'
-                      value={data?.bank_details?.iban_code}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Swift Code'>
-                    <Input
-                      type='text'
-                      placeholder='Swift Code'
-                      id='swiftCode'
-                      value={data?.bank_details?.swift_code}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='Purchasing Currency' required>
-                    <Input
-                      type='text'
-                      placeholder='GBP'
-                      id='purchasingCurrency'
-                      value={data?.bank_details.purchasing_currency}
-                    />
-                  </InputWrapper>
-                </div>
-
-                <Separator />
-
-                <div
-                  id='document-verification'
-                  ref={(el) => {
-                    sectionRefs.current[5] = el;
-                  }}
-                  onMouseEnter={() => setSelectedItem('Document Verification')}
-                  className='space-y-4'>
-                  <InputWrapper label='VAT Number' required>
-                    <Input
-                      type='text'
-                      placeholder='VAT Number'
-                      id='vatNumber'
-                      value={data?.documents.vat_number}
-                    />
-                  </InputWrapper>
-                  <InputWrapper label='How long have you been involved in business' required>
-                    <Input
-                      type='text'
-                      placeholder='2 to 5 years'
-                      id='howLongYouInvolved'
-                      value={data?.documents.experience}
-                    />
-                  </InputWrapper>
-                  <div>
-                    <label className='text-sm leading-none mb-2'>Upload the business documents</label>
-
-                    <div className='flex items-center justify-between text-base'>
-                      <p>Document type</p>
-                      {data?.documents.document_urls[0].name}
-                    </div>
+                {sections.map(({ id, title, inputs }) => (
+                  <div
+                    id={id}
+                    ref={(el) => {
+                      sectionRefs.current[id] = el;
+                    }}
+                    onMouseEnter={() => setSelectedItem(title)}
+                    className='space-y-4'
+                    key={id}>
+                    {renderInputs(inputs)}
+                    <Separator />
                   </div>
-                </div>
+                ))}
               </div>
             )}
           </div>

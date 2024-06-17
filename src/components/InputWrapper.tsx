@@ -49,7 +49,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
           {extraOption && <div className='w-4'>{extraOption}</div>}
           <div className='flex items-end gap-1 w-full'>
             {/* Display the label text with small font size. */}
-            {label && <p className={cn('text-sm leading-none')}>{label}</p>}
+            {label && <p className={cn('text-sm font-medium text-slate-800')}>{label}</p>}
             {required && <span className='text-destructive leading-none'>*</span>}
             {/* Comment text displayed next to the label. */}
             {comment && <p className='text-xs font-light text-gray-500'>({comment})</p>}

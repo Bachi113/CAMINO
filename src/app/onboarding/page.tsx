@@ -8,7 +8,7 @@ const Page = async () => {
     return redirect('/login');
   }
 
-  return redirect('/onboarding/personal_information');
+  return redirect('/onboarding/personal-information');
 };
 
 export default Page;
