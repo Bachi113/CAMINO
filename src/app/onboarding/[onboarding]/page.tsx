@@ -4,6 +4,8 @@ import { cn } from '@/utils/utils';
 import { FaCheck } from 'react-icons/fa';
 import { MdOutlineEmail } from 'react-icons/md';
 import Link from 'next/link';
+import { getUser } from '@/utils/get-user';
+import { redirect } from 'next/navigation';
 
 type Section = {
   title: string;
@@ -62,7 +64,13 @@ const ActiveStepFormComponent = (step: string) => {
   return StepComponent ? <StepComponent /> : null;
 };
 
-export default function OnBoarding({ params }: TypeParams) {
+export default async function OnBoarding({ params }: TypeParams) {
+  const user = await getUser();
+
+  if (!user) {
+    return redirect('/login');
+  }
+
   const activeStep = params.onboarding;
 
   return (
