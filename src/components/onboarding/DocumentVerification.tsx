@@ -172,7 +172,7 @@ const DocumentVerification = () => {
                   <Select
                     {...register('howLongYouInvolved')}
                     onValueChange={(val) => setValue('howLongYouInvolved', val)}
-                    defaultValue={data?.experience}>
+                    value={watch('howLongYouInvolved')}>
                     <SelectTrigger>
                       <SelectValue placeholder='Select Duration' />
                     </SelectTrigger>
@@ -187,52 +187,58 @@ const DocumentVerification = () => {
                 </InputWrapper>
                 <div className='space-y-2'>
                   <label className='text-sm leading-none mb-2'>Upload the business documents</label>
-                  {documentFields.map((doc, index) => (
-                    <InputWrapper
-                      key={index}
-                      label={`Document Verification ${index + 1}`}
-                      className='flex justify-between items-center w-full'
-                      required>
-                      <Input
-                        type='file'
-                        id={doc}
-                        {...register(doc as keyof IDocumentVerification)}
-                        className='hidden'
-                        required
-                      />
-                      <div className='flex items-center'>
-                        {(watch(doc as keyof IDocumentVerification)?.name ||
-                          watch(doc as keyof IDocumentVerification)?.[0]?.name) && (
-                          <div className='mr-2 line-clamp-1 max-w-28'>
-                            {watch(doc as keyof IDocumentVerification).name ||
-                              watch(doc as keyof IDocumentVerification)?.[0]?.name}
-                          </div>
-                        )}
-                        {!watch(doc as keyof IDocumentVerification)?.url &&
-                          !watch(doc as keyof IDocumentVerification)?.[0]?.name && (
-                            <label
-                              htmlFor={doc}
-                              className={cn(buttonVariants({ variant: 'outline' }), 'gap-1 cursor-pointer')}>
-                              <LuUploadCloud /> Upload
-                            </label>
+                  {documentFields.map((doc: string, index) => (
+                    <>
+                      <InputWrapper
+                        key={index}
+                        label={`Document Verification ${index + 1}`}
+                        className='flex justify-between items-center w-full'
+                        required>
+                        <Input
+                          type='file'
+                          id={doc}
+                          {...register(doc as keyof IDocumentVerification)}
+                          className='hidden'
+                          required
+                        />
+                        <div className='flex items-center'>
+                          {(watch(doc as keyof IDocumentVerification)?.name ||
+                            watch(doc as keyof IDocumentVerification)?.[0]?.name) && (
+                            <div className='mr-2 line-clamp-1 max-w-28'>
+                              {watch(doc as keyof IDocumentVerification).name ||
+                                watch(doc as keyof IDocumentVerification)?.[0]?.name}
+                            </div>
                           )}
-                        {(watch(doc as keyof IDocumentVerification)?.name ||
-                          watch(doc as keyof IDocumentVerification)?.[0]?.name) && (
-                          <Button
-                            size='icon'
-                            variant='outline'
-                            className='text-destructive'
-                            onClick={() => removeFile(doc as keyof IDocumentVerification)}>
-                            <FaRegTrashAlt />
-                          </Button>
-                        )}
-                      </div>
-                    </InputWrapper>
+                          {!watch(doc as keyof IDocumentVerification)?.url &&
+                            !watch(doc as keyof IDocumentVerification)?.[0]?.name && (
+                              <label
+                                htmlFor={doc}
+                                className={cn(
+                                  buttonVariants({ variant: 'outline' }),
+                                  'gap-1 cursor-pointer'
+                                )}>
+                                <LuUploadCloud /> Upload
+                              </label>
+                            )}
+                          {(watch(doc as keyof IDocumentVerification)?.name ||
+                            watch(doc as keyof IDocumentVerification)?.[0]?.name) && (
+                            <Button
+                              size='icon'
+                              variant='outline'
+                              className='text-destructive'
+                              onClick={() => removeFile(doc as keyof IDocumentVerification)}>
+                              <FaRegTrashAlt />
+                            </Button>
+                          )}
+                        </div>
+                      </InputWrapper>
+                      {/* <p className='text-xs mt-1 text-red-500 font-medium'>{errors[doc]?.message}</p> */}
+                    </>
                   ))}
                 </div>
               </div>
               <div>
-                <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
+                <Button size={'xl'} disabled={loading}>
                   {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
                 </Button>
               </div>

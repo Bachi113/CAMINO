@@ -61,6 +61,7 @@ const BankDetails = () => {
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm<IBankDetails>({
     resolver: yupResolver(BankDetailsSchema),
   });
@@ -127,7 +128,7 @@ const BankDetails = () => {
                   required
                   {...register('bankName')}
                   onValueChange={(val) => setValue('bankName', val)}
-                  defaultValue={data && data.bank_name}>
+                  value={watch('bankName')}>
                   <SelectTrigger>
                     <SelectValue placeholder='Select the bank' />
                   </SelectTrigger>
@@ -160,7 +161,7 @@ const BankDetails = () => {
                 <Select
                   {...register('purchasingCurrency')}
                   onValueChange={(val) => setValue('purchasingCurrency', val)}
-                  defaultValue={data ? data.purchasing_currency : ''}>
+                  value={watch('purchasingCurrency')}>
                   <SelectTrigger>
                     <SelectValue placeholder='Select currency' />
                   </SelectTrigger>
@@ -174,7 +175,7 @@ const BankDetails = () => {
                 </Select>
               </InputWrapper>
               <div>
-                <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
+                <Button size={'xl'} disabled={loading}>
                   {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
                 </Button>
               </div>

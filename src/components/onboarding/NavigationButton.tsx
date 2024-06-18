@@ -1,11 +1,9 @@
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6';
 import { onboardingData } from '@/app/onboarding/[onboarding]/page';
 import { IoIosArrowRoundBack } from 'react-icons/io';
 import { IoIosArrowRoundForward } from 'react-icons/io';
-const { sections } = onboardingData;
 
 interface NavigationButtonProps {
   showNext: boolean;
@@ -14,6 +12,7 @@ interface NavigationButtonProps {
 const NavigationButton = ({ showNext }: NavigationButtonProps) => {
   const router = useRouter();
   const pathname = usePathname();
+  const { sections } = onboardingData;
   const currentStep = pathname.split('/').pop() || sections[0].id;
 
   const currentIndex = sections.findIndex((section) => section.id === currentStep);

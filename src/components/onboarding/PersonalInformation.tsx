@@ -124,7 +124,7 @@ const PersonalInformation = () => {
                 )}
               </div>
 
-              <Button className='w-full' size='xl' type='submit' disabled={loading}>
+              <Button size='xl' disabled={loading}>
                 {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
               </Button>
             </div>

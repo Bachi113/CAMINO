@@ -204,7 +204,7 @@ const BusinessInformation = () => {
               )}
             </div>
             <div>
-              <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
+              <Button size={'xl'} disabled={loading}>
                 {loading ? 'Loading...' : businessInformationId ? 'Update' : 'Continue'}
               </Button>
             </div>
