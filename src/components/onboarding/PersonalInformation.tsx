@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import UserIcon from '@/assets/icons/UserIcon';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
@@ -17,7 +16,8 @@ import NavigationButton from '@/components/onboarding/NavigationButton';
 import { personalInfoFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
-import Heading from './Heading';
+import Heading from '@/components/onboarding/Heading';
+import { SubmitButton } from '@/components/SubmitButton';
 
 const PersonalInformation = () => {
   const router = useRouter();
@@ -61,14 +61,12 @@ const PersonalInformation = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'personal_informations');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getPersonalInfo'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'personal_informations');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getPersonalInfo'] });
       }
+
+      queryClient.invalidateQueries({ queryKey: ['getPersonalInfo'] });
       router.push('/onboarding/business-details');
     } catch (error: any) {
       errorToast(error.message);
@@ -126,9 +124,7 @@ const PersonalInformation = () => {
                 )}
               </div>
 
-              <Button className='w-full' size='xl' type='submit' disabled={loading}>
-                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-              </Button>
+              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>
         </div>

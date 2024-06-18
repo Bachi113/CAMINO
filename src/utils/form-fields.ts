@@ -93,7 +93,7 @@ export const summaryFileds = (data: any) => {
       ],
     },
     {
-      id: 'basic-business-details',
+      id: 'business-details',
       title: 'Basic Business Details',
       inputs: [
         { label: 'Business Name', id: 'businessName', value: data.business_details?.business_name },

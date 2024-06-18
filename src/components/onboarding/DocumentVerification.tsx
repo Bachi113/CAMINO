@@ -14,27 +14,27 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 import { LuUploadCloud } from 'react-icons/lu';
 import ModalOnboardingSummary from './ModalOnboardingSummary';
 import { useGetVerificationDocuments } from '@/app/query-hooks';
-import NavigationButton from './NavigationButton';
+import NavigationButton from '@/components/onboarding/NavigationButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { queryClient } from '@/app/providers';
-import Heading from './Heading';
+import Heading from '@/components/onboarding/Heading';
+import { SubmitButton } from '@/components/SubmitButton';
 
 interface IDocumentVerification {
   vatNumber: string;
-  howLongYouInvolved: string;
-  document1?: any;
-  document2?: any;
-  document3?: any;
-  document4?: any;
+  experience: string;
+  document1: any;
+  document2: any;
+  document3: any;
+  document4: any;
 }
-
 export const documentVerificationSchema = yup.object().shape({
   vatNumber: yup.string().required('VAT Number is required'),
-  howLongYouInvolved: yup.string().required('Please specify how long you have been involved in business'),
-  document1: yup.mixed(),
-  document2: yup.mixed(),
-  document3: yup.mixed(),
-  document4: yup.mixed(),
+  experience: yup.string().required('Please specify how long you have been involved in business'),
+  document1: yup.mixed().required('Document 1 is required'),
+  document2: yup.mixed().required('Document 2 is required'),
+  document3: yup.mixed().required('Document 3 is required'),
+  document4: yup.mixed().required('Document 4 is required'),
 });
 
 const yearsInvolved = [
@@ -59,21 +59,31 @@ const DocumentVerification = () => {
 
   const { data } = useGetVerificationDocuments();
 
+  const document1 = watch('document1') as any;
+  const document2 = watch('document2') as any;
+  const document3 = watch('document3') as any;
+  const document4 = watch('document4') as any;
+
+  const documentsToUpload = [
+    { field: 'document1', value: document1 },
+    { field: 'document2', value: document2 },
+    { field: 'document3', value: document3 },
+    { field: 'document4', value: document4 },
+  ];
+
   useEffect(() => {
-    ['document1', 'document2', 'document3', 'document4'].forEach((doc) =>
-      setValue(doc as keyof IDocumentVerification, null)
-    );
+    documentsToUpload.forEach((doc) => setValue(doc.field as keyof IDocumentVerification, null));
     if (data) {
       const documentsLength = (data?.document_urls as []).length || 0;
 
       setValue('vatNumber', data.vat_number);
-      setValue('howLongYouInvolved', data.experience);
+      setValue('experience', data.experience);
       if (documentsLength && Array.isArray(data.document_urls)) {
         data.document_urls.forEach((fileUrl, index) => {
           if (index < documentsLength) {
             const fileName = extractFileNameFromUrl(fileUrl as string);
             if (!fileName) {
-              return errorToast(`Please upload a valid file for document ${index + 1}`);
+              return;
             }
 
             setValue(`document${index + 1}` as keyof IDocumentVerification, { url: fileUrl, name: fileName });
@@ -83,22 +93,10 @@ const DocumentVerification = () => {
     }
   }, [setValue, data]);
 
-  const document1 = watch('document1') as any;
-  const document2 = watch('document2') as any;
-  const document3 = watch('document3') as any;
-  const document4 = watch('document4') as any;
-
   const handleFormSubmit = async (formData: IDocumentVerification) => {
     setLoading(true);
 
     try {
-      const documentsToUpload = [
-        { field: 'document1', value: document1 },
-        { field: 'document2', value: document2 },
-        { field: 'document3', value: document3 },
-        { field: 'document4', value: document4 },
-      ];
-
       const fileUrls = await Promise.all(
         documentsToUpload.map(async ({ field, value }) => {
           if (value && value.url) {
@@ -117,21 +115,18 @@ const DocumentVerification = () => {
 
       const dataToUpdate = {
         vat_number: formData.vatNumber,
-        experience: formData.howLongYouInvolved || data?.experience,
+        experience: formData.experience || data?.experience,
         document_urls: fileUrls,
       };
 
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'documents');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'documents');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
       }
+      queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
       setShowModal(true);
     } catch (error: any) {
       errorToast(error || 'An unknown error occurred.');
@@ -171,11 +166,11 @@ const DocumentVerification = () => {
                 <InputWrapper
                   label='How long have you been involved in business'
                   required
-                  error={errors.howLongYouInvolved?.message}>
+                  error={errors.experience?.message}>
                   <Select
-                    {...register('howLongYouInvolved')}
-                    onValueChange={(val) => setValue('howLongYouInvolved', val)}
-                    defaultValue={data?.experience}>
+                    {...register('experience')}
+                    onValueChange={(val) => setValue('experience', val)}
+                    value={watch('experience')}>
                     <SelectTrigger>
                       <SelectValue placeholder='Select Duration' />
                     </SelectTrigger>
@@ -188,57 +183,62 @@ const DocumentVerification = () => {
                     </SelectContent>
                   </Select>
                 </InputWrapper>
-                <div>
+                <div className='space-y-2'>
                   <label className='text-sm leading-none mb-2'>Upload the business documents</label>
-                  {['document1', 'document2', 'document3', 'document4'].map((doc, index) => (
-                    <InputWrapper
-                      key={index}
-                      label={`Document Verification ${index + 1}`}
-                      className='flex justify-between items-center w-full'
-                      required>
-                      <Input
-                        type='file'
-                        id={doc}
-                        {...register(doc as keyof IDocumentVerification)}
-                        className='hidden'
-                        required
-                      />
-                      <div className='flex items-center'>
-                        {(watch(doc as keyof IDocumentVerification)?.name ||
-                          watch(doc as keyof IDocumentVerification)?.[0]?.name) && (
-                          <div className='mr-2 line-clamp-1 max-w-28'>
-                            {watch(doc as keyof IDocumentVerification).name ||
-                              watch(doc as keyof IDocumentVerification)?.[0]?.name}
-                          </div>
-                        )}
-                        {!watch(doc as keyof IDocumentVerification)?.url &&
-                          !watch(doc as keyof IDocumentVerification)?.[0]?.name && (
-                            <label
-                              htmlFor={doc}
-                              className={cn(buttonVariants({ variant: 'outline' }), 'gap-1 cursor-pointer')}>
-                              <LuUploadCloud /> Upload
-                            </label>
+                  {documentsToUpload.map((doc, index) => (
+                    <>
+                      <InputWrapper
+                        key={index}
+                        label={`Document Verification ${index + 1}`}
+                        className='flex justify-between items-center w-full'
+                        required>
+                        <Input
+                          type='file'
+                          id={doc.field}
+                          {...register(doc.field as keyof IDocumentVerification)}
+                          className='hidden'
+                        />
+                        <div className='flex items-center'>
+                          {(watch(doc.field as keyof IDocumentVerification)?.name ||
+                            watch(doc.field as keyof IDocumentVerification)?.[0]?.name) && (
+                            <div className='mr-2 line-clamp-1 max-w-28'>
+                              {watch(doc.field as keyof IDocumentVerification).name ||
+                                watch(doc.field as keyof IDocumentVerification)?.[0]?.name}
+                            </div>
                           )}
-                        {(watch(doc as keyof IDocumentVerification)?.name ||
-                          watch(doc as keyof IDocumentVerification)?.[0]?.name) && (
-                          <Button
-                            size='icon'
-                            variant='outline'
-                            className='text-destructive'
-                            onClick={() => removeFile(doc as keyof IDocumentVerification)}>
-                            <FaRegTrashAlt />
-                          </Button>
-                        )}
-                      </div>
-                    </InputWrapper>
+                          {!watch(doc.field as keyof IDocumentVerification)?.url &&
+                            !watch(doc.field as keyof IDocumentVerification)?.[0]?.name && (
+                              <label
+                                htmlFor={doc.field}
+                                className={cn(
+                                  buttonVariants({ variant: 'outline' }),
+                                  'gap-1 cursor-pointer'
+                                )}>
+                                <LuUploadCloud /> Upload
+                              </label>
+                            )}
+                          {(watch(doc.field as keyof IDocumentVerification)?.name ||
+                            watch(doc.field as keyof IDocumentVerification)?.[0]?.name) && (
+                            <Button
+                              size='icon'
+                              variant='outline'
+                              className='text-destructive'
+                              onClick={() => removeFile(doc.field as keyof IDocumentVerification)}>
+                              <FaRegTrashAlt />
+                            </Button>
+                          )}
+                        </div>
+                      </InputWrapper>
+                      {errors[doc?.field as keyof IDocumentVerification] && (
+                        <p className='text-xs mt-1 text-red-500 font-medium'>
+                          {String(errors[doc.field as keyof IDocumentVerification]?.message)}
+                        </p>
+                      )}
+                    </>
                   ))}
                 </div>
               </div>
-              <div>
-                <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
-                  {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-                </Button>
-              </div>
+              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>
         </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import StoreIcon from '@/assets/icons/StoreIcon';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
@@ -11,11 +10,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
 import { IBusinessAddress, businessAddressSchema } from '@/types/validations';
 import { useGetBusinessAddress } from '@/app/query-hooks';
-import NavigationButton from './NavigationButton';
+import NavigationButton from '@/components/onboarding/NavigationButton';
 import { businessAddressFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
-import Heading from './Heading';
+import Heading from '@/components/onboarding/Heading';
+import { SubmitButton } from '@/components/SubmitButton';
 
 const BusinessAddress = () => {
   const router = useRouter();
@@ -30,7 +30,7 @@ const BusinessAddress = () => {
     resolver: yupResolver(businessAddressSchema),
   });
 
-  const { data, isLoading } = useGetBusinessAddress();
+  const { data } = useGetBusinessAddress();
 
   useEffect(() => {
     if (data) {
@@ -56,15 +56,13 @@ const BusinessAddress = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'business_addresses');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessAddress'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_addresses');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessAddress'] });
       }
-      router.push('/onboarding/bank-details');
+
+      queryClient.invalidateQueries({ queryKey: ['getBusinessAddress'] });
+      router.push('/onboarding/bank-account-details');
     } catch (error: any) {
       errorToast(error || 'An unknown error occurred.');
     } finally {
@@ -97,11 +95,7 @@ const BusinessAddress = () => {
                   </InputWrapper>
                 ))}
               </div>
-              <div>
-                <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
-                  {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-                </Button>
-              </div>
+              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>
         </div>

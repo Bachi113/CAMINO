@@ -1,4 +1,4 @@
-import { useState, useRef, FC } from 'react';
+import { useState, useRef, FC, useEffect } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -27,7 +27,7 @@ const { sections: sidebarItems } = onboardingData;
 const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSuccessful, setShowModal }) => {
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
   const [isOpen, setIsOpen] = useState<boolean>(isSubmitSuccessful);
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
 
   const { data, isLoading } = useGetOnboardingData();
 
@@ -41,6 +41,33 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
   };
 
   const sections = summaryFileds(data);
+
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.map((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          setSelectedItem(sectionId);
+        }
+      });
+    }, observerOptions);
+
+    Object.values(sectionRefs.current).map((sectionRef) => {
+      if (sectionRef) {
+        observer.observe(sectionRef);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [sections]);
 
   return (
     <Dialog open={isOpen}>
@@ -56,11 +83,11 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
                 key={item.id}
                 className={cn(
                   'flex items-center text-sm gap-4 px-4 py-2 text-default font-medium leading-6 cursor-pointer rounded-lg',
-                  { 'bg-primary/10 text-primary font-semibold': selectedItem === item.label }
+                  { 'bg-primary/10 text-primary font-semibold': selectedItem === item.id }
                 )}
                 onClick={() => {
                   document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' });
-                  setSelectedItem(item.label);
+                  setSelectedItem(item.id);
                 }}>
                 <p>{item.label}</p>
               </div>
@@ -74,13 +101,12 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
             ) : (
               <div className='space-y-6'>
                 {sections &&
-                  sections.map(({ id, title, inputs }) => (
+                  sections.map(({ id, inputs }) => (
                     <div
                       id={id}
                       ref={(el) => {
                         sectionRefs.current[id] = el;
                       }}
-                      onMouseEnter={() => setSelectedItem(title)}
                       className='space-y-4'
                       key={id}>
                       {renderFields(inputs)}
@@ -104,7 +130,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
                 Cancel
               </Button>
             </DialogClose>
-            <ModalSubmitConfirmation />
+            <ModalSubmitConfirmation onBoardingId={data?.id} />
           </div>
         </DialogFooter>
       </DialogContent>

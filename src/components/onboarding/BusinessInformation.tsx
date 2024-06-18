@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
@@ -11,11 +10,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
 import { IBusinessInformation, businessInformationSchema } from '@/types/validations';
 import { useGetBusinessInformation } from '@/app/query-hooks';
-import NavigationButton from './NavigationButton';
+import NavigationButton from '@/components/onboarding/NavigationButton';
 import StoreIcon from '@/assets/icons/StoreIcon';
 import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
-import Heading from './Heading';
+import Heading from '@/components/onboarding/Heading';
+import { SubmitButton } from '@/components/SubmitButton';
 
 const BusinessInformation = () => {
   const router = useRouter();
@@ -34,7 +34,7 @@ const BusinessInformation = () => {
     resolver: yupResolver(businessInformationSchema),
   });
 
-  const { data, isLoading } = useGetBusinessInformation();
+  const { data } = useGetBusinessInformation();
 
   useEffect(() => {
     if (data) {
@@ -66,14 +66,11 @@ const BusinessInformation = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'business_informations');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessInformation'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_informations');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessInformation'] });
       }
+      queryClient.invalidateQueries({ queryKey: ['getBusinessInformation'] });
       router.push('/onboarding/bank-details');
     } catch (error: any) {
       console.error('Error during form submission:', error);
@@ -206,11 +203,7 @@ const BusinessInformation = () => {
                 <p className='text-red-500 text-sm mt-2'>{(errors as any)['']?.message}</p>
               )}
             </div>
-            <div>
-              <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
-                {loading ? 'Loading...' : businessInformationId ? 'Update' : 'Continue'}
-              </Button>
-            </div>
+            <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
           </form>
         </div>
       </div>

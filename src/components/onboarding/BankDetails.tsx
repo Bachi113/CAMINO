@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
@@ -9,14 +8,15 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
 import { useGetBankDetails } from '@/app/query-hooks';
-import NavigationButton from './NavigationButton';
+import NavigationButton from '@/components/onboarding/NavigationButton';
 import { bankFields } from '@/utils/form-fields';
 import { BankDetailsSchema, IBankDetails } from '@/types/validations';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BankIcon from '@/assets/icons/BankIcon';
 import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
-import Heading from './Heading';
+import Heading from '@/components/onboarding/Heading';
+import { SubmitButton } from '@/components/SubmitButton';
 
 const bankOptions = [
   {
@@ -61,11 +61,12 @@ const BankDetails = () => {
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm<IBankDetails>({
     resolver: yupResolver(BankDetailsSchema),
   });
 
-  const { data, isLoading } = useGetBankDetails();
+  const { data } = useGetBankDetails();
 
   useEffect(() => {
     if (data) {
@@ -94,14 +95,13 @@ const BankDetails = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'bank_details');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBankDetails'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'bank_details');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBankDetails'] });
       }
+
+      queryClient.invalidateQueries({ queryKey: ['getBankDetails'] });
+
       router.push('/onboarding/document-verification');
     } catch (error: any) {
       console.error('Error during form submission:', error);
@@ -123,12 +123,12 @@ const BankDetails = () => {
           />
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='space-y-4'>
-              <InputWrapper id='bankName' label='Bank Name' required>
+              <InputWrapper id='bankName' label='Bank Name' required error={errors.bankName?.message}>
                 <Select
                   required
                   {...register('bankName')}
                   onValueChange={(val) => setValue('bankName', val)}
-                  defaultValue={data && data.bank_name}>
+                  value={watch('bankName')}>
                   <SelectTrigger>
                     <SelectValue placeholder='Select the bank' />
                   </SelectTrigger>
@@ -157,11 +157,16 @@ const BankDetails = () => {
                   />
                 </InputWrapper>
               ))}
-              <InputWrapper id='purchasingCurrency' label='Purchasing Currency' required>
+              <InputWrapper
+                id='purchasingCurrency'
+                label='Purchasing Currency'
+                required
+                error={errors.purchasingCurrency?.message}>
                 <Select
                   {...register('purchasingCurrency')}
+                  required
                   onValueChange={(val) => setValue('purchasingCurrency', val)}
-                  defaultValue={data ? data.purchasing_currency : ''}>
+                  value={watch('purchasingCurrency')}>
                   <SelectTrigger>
                     <SelectValue placeholder='Select currency' />
                   </SelectTrigger>
@@ -174,11 +179,7 @@ const BankDetails = () => {
                   </SelectContent>
                 </Select>
               </InputWrapper>
-              <div>
-                <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
-                  {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-                </Button>
-              </div>
+              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>
         </div>

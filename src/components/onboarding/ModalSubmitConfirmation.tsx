@@ -14,24 +14,25 @@ import { FaCheck } from 'react-icons/fa6';
 import Link from 'next/link';
 import { errorToast } from '@/utils/utils';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
-import { getUser } from '@/utils/get-user';
 
-const ModalSubmitConfirmation = () => {
+interface ModalSubmitConfirmationProps {
+  onBoardingId?: string;
+}
+const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps) => {
   const [submitConfirmation, setSubmitConfirmation] = useState(false);
 
   const handleSubmit = async () => {
     try {
       const supabase = supabaseBrowserClient();
-      const user = await getUser();
 
-      if (!user) {
+      if (!onBoardingId) {
         throw new Error('You need to be logged in.');
       }
 
       const { error } = await supabase
         .from('onboarding')
-        .update({ onboarded_at: new Date().toISOString().toLocaleString() })
-        .eq('user_id', user.id);
+        .update({ onboarded_at: new Date().toISOString() })
+        .eq('id', onBoardingId);
 
       if (error) {
         throw new Error(error.message);

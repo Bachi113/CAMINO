@@ -1,4 +1,5 @@
 'use server';
+
 import { getUser } from '@/utils/get-user';
 import { supabaseServerClient } from '@/utils/supabase/server';
 

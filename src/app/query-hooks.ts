@@ -1,4 +1,3 @@
-import { getUser } from '@/utils/get-user';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -8,15 +7,7 @@ const useGetPersonalInfo = () => {
   return useQuery({
     queryKey: ['getPersonalInfo'],
     queryFn: async () => {
-      const user = await getUser();
-      if (!user) {
-        throw new Error('You need to be logged in.');
-      }
-      const { data, error } = await supabase
-        .from('personal_informations')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
+      const { data, error } = await supabase.from('personal_informations').select('*').single();
       if (error) {
         throw error;
       }
@@ -32,15 +23,7 @@ const useGetBuinessDetail = () => {
   return useQuery({
     queryKey: ['getBusinessDetail'],
     queryFn: async () => {
-      const user = await getUser();
-      if (!user) {
-        throw new Error('You need to be logged in.');
-      }
-      const { data, error } = await supabase
-        .from('business_details')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
+      const { data, error } = await supabase.from('business_details').select('*').single();
 
       if (error) {
         throw error;
@@ -57,15 +40,7 @@ const useGetBusinessAddress = () => {
   return useQuery({
     queryKey: ['getBusinessAddress'],
     queryFn: async () => {
-      const user = await getUser();
-      if (!user) {
-        throw new Error('You need to be logged in.');
-      }
-      const { data, error } = await supabase
-        .from('business_addresses')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
+      const { data, error } = await supabase.from('business_addresses').select('*').single();
 
       if (error) {
         throw error;
@@ -82,15 +57,7 @@ const useGetBusinessInformation = () => {
   return useQuery({
     queryKey: ['getBusinessInformation'],
     queryFn: async () => {
-      const user = await getUser();
-      if (!user) {
-        throw new Error('You need to be logged in.');
-      }
-      const { data, error } = await supabase
-        .from('business_informations')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
+      const { data, error } = await supabase.from('business_informations').select('*').single();
 
       if (error) {
         throw error;
@@ -107,15 +74,7 @@ const useGetBankDetails = () => {
   return useQuery({
     queryKey: ['getBankDetails'],
     queryFn: async () => {
-      const user = await getUser();
-      if (!user) {
-        throw new Error('You need to be logged in.');
-      }
-      const { data, error } = await supabase
-        .from('bank_details')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
+      const { data, error } = await supabase.from('bank_details').select('*').single();
 
       if (error) {
         throw error;
@@ -132,11 +91,7 @@ const useGetVerificationDocuments = () => {
   return useQuery({
     queryKey: ['getDocumentes'],
     queryFn: async () => {
-      const user = await getUser();
-      if (!user) {
-        throw new Error('You need to be logged in.');
-      }
-      const { data, error } = await supabase.from('documents').select('*').eq('user_id', user?.id).single();
+      const { data, error } = await supabase.from('documents').select('*').single();
 
       if (error) {
         throw error;
@@ -153,10 +108,6 @@ const useGetOnboardingData = () => {
   return useQuery({
     queryKey: ['getOnboardingData'],
     queryFn: async () => {
-      const user = await getUser();
-      if (!user) {
-        throw new Error('You need to be logged in.');
-      }
       const { data, error } = await supabase
         .from('onboarding')
         .select(
@@ -168,7 +119,6 @@ const useGetOnboardingData = () => {
           documents (*)
         `
         )
-        .eq('user_id', user.id)
         .single();
 
       if (error) {

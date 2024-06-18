@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import StoreIcon from '@/assets/icons/StoreIcon';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
@@ -9,13 +8,14 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
-import NavigationButton from './NavigationButton';
+import NavigationButton from '@/components/onboarding/NavigationButton';
 import { useGetBuinessDetail } from '@/app/query-hooks';
 import { IBusinessDetail, businessDetailSchema } from '@/types/validations';
 import { businessDetailsFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
-import Heading from './Heading';
+import Heading from '@/components/onboarding/Heading';
+import { SubmitButton } from '@/components/SubmitButton';
 
 const BusinessDetail = () => {
   const router = useRouter();
@@ -30,7 +30,7 @@ const BusinessDetail = () => {
     resolver: yupResolver(businessDetailSchema),
   });
 
-  const { data, isLoading } = useGetBuinessDetail();
+  const { data } = useGetBuinessDetail();
 
   useEffect(() => {
     if (data) {
@@ -55,14 +55,12 @@ const BusinessDetail = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'business_details');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessDetail'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_details');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessDetail'] });
       }
+
+      queryClient.invalidateQueries({ queryKey: ['getBusinessDetail'] });
 
       router.push('/onboarding/business-address');
     } catch (error: any) {
@@ -97,12 +95,7 @@ const BusinessDetail = () => {
                 </InputWrapper>
               ))}
             </div>
-
-            <div>
-              <Button className='w-full' size='xl' type='submit' disabled={loading}>
-                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-              </Button>
-            </div>
+            <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
           </form>
         </div>
       </div>
