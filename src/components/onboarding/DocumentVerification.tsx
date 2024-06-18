@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { cn, errorToast, extractFileNameFromUrl } from '@/utils/utils';
-import { saveData, updateData, uploadDocument } from '@/app/onboarding/action';
+import { saveData, updateData, uploadDocument } from '@/app/onboarding/actions';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { LuUploadCloud } from 'react-icons/lu';
 import ModalOnboardingSummary from './ModalOnboardingSummary';
@@ -17,23 +17,24 @@ import { useGetVerificationDocuments } from '@/app/query-hooks';
 import NavigationButton from './NavigationButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { queryClient } from '@/app/providers';
+import Heading from './Heading';
 
 interface IDocumentVerification {
   vatNumber: string;
   howLongYouInvolved: string;
-  document1: any;
-  document2: any;
-  document3: any;
-  document4: any;
+  document1?: any;
+  document2?: any;
+  document3?: any;
+  document4?: any;
 }
 
 export const documentVerificationSchema = yup.object().shape({
   vatNumber: yup.string().required('VAT Number is required'),
   howLongYouInvolved: yup.string().required('Please specify how long you have been involved in business'),
-  document1: yup.mixed().required('Document 1 is required'),
-  document2: yup.mixed().required('Document 2 is required'),
-  document3: yup.mixed().required('Document 3 is required'),
-  document4: yup.mixed().required('Document 4 is required'),
+  document1: yup.mixed(),
+  document2: yup.mixed(),
+  document3: yup.mixed(),
+  document4: yup.mixed(),
 });
 
 const yearsInvolved = [
@@ -56,7 +57,7 @@ const DocumentVerification = () => {
     resolver: yupResolver(documentVerificationSchema),
   });
 
-  const { data, isLoading } = useGetVerificationDocuments();
+  const { data } = useGetVerificationDocuments();
 
   useEffect(() => {
     ['document1', 'document2', 'document3', 'document4'].forEach((doc) =>
@@ -64,7 +65,6 @@ const DocumentVerification = () => {
     );
     if (data) {
       const documentsLength = (data?.document_urls as []).length || 0;
-      console.log(documentsLength);
 
       setValue('vatNumber', data.vat_number);
       setValue('howLongYouInvolved', data.experience);
@@ -72,6 +72,10 @@ const DocumentVerification = () => {
         data.document_urls.forEach((fileUrl, index) => {
           if (index < documentsLength) {
             const fileName = extractFileNameFromUrl(fileUrl as string);
+            if (!fileName) {
+              return errorToast(`Please upload a valid file for document ${index + 1}`);
+            }
+
             setValue(`document${index + 1}` as keyof IDocumentVerification, { url: fileUrl, name: fileName });
           }
         });
@@ -120,10 +124,13 @@ const DocumentVerification = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'documents');
         if (res?.error) throw res.error;
+
         queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'documents');
         if (res?.error) throw res.error;
+
+        queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
       }
       setShowModal(true);
     } catch (error: any) {
@@ -143,17 +150,11 @@ const DocumentVerification = () => {
       <NavigationButton showNext={!!data} />
       <div className='flex flex-col items-center justify-center mt-14 animate-fade-in-left'>
         <div className='max-w-[350px] mr-20 w-full space-y-10 mt-1'>
-          <div className='space-y-6 flex flex-col items-center'>
-            <div className='border rounded-lg p-3'>
-              <DocumentVerificationIcon />
-            </div>
-            <div className='space-y-2 text-center'>
-              <p className='text-default text-2xl font-semibold leading-7'>Document Verification</p>
-              <p className='text-subtle text-sm font-medium leading-5'>
-                Please provide your business documents to verify
-              </p>
-            </div>
-          </div>
+          <Heading
+            title='Document Verification'
+            description='Please provide your business documents to verify'
+            icon={<DocumentVerificationIcon />}
+          />
 
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='space-y-6'>
@@ -164,7 +165,7 @@ const DocumentVerification = () => {
                     placeholder='VAT Number'
                     id='vatNumber'
                     {...register('vatNumber')}
-                    disabled={loading || isLoading}
+                    disabled={loading}
                   />
                 </InputWrapper>
                 <InputWrapper
@@ -200,11 +201,12 @@ const DocumentVerification = () => {
                         id={doc}
                         {...register(doc as keyof IDocumentVerification)}
                         className='hidden'
+                        required
                       />
                       <div className='flex items-center'>
                         {(watch(doc as keyof IDocumentVerification)?.name ||
                           watch(doc as keyof IDocumentVerification)?.[0]?.name) && (
-                          <div className='mr-2 line-clamp-1'>
+                          <div className='mr-2 line-clamp-1 max-w-28'>
                             {watch(doc as keyof IDocumentVerification).name ||
                               watch(doc as keyof IDocumentVerification)?.[0]?.name}
                           </div>
@@ -233,8 +235,8 @@ const DocumentVerification = () => {
                 </div>
               </div>
               <div>
-                <Button className='w-full' size={'xl'} type='submit' disabled={loading || isLoading}>
-                  {loading || isLoading ? 'Loading...' : data ? 'Update' : 'Continue'}
+                <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
+                  {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
                 </Button>
               </div>
             </div>

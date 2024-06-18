@@ -147,6 +147,40 @@ const useGetVerificationDocuments = () => {
   });
 };
 
+const useGetOnboardingData = () => {
+  const supabase = supabaseBrowserClient();
+
+  return useQuery({
+    queryKey: ['getOnboardingData'],
+    queryFn: async () => {
+      const user = await getUser();
+      if (!user) {
+        throw new Error('You need to be logged in.');
+      }
+      const { data, error } = await supabase
+        .from('onboarding')
+        .select(
+          `*,
+          personal_informations (*),
+          business_details (*),
+          business_addresses (*),
+          bank_details (*),
+          documents (*)
+        `
+        )
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+    staleTime: 1000 * 60,
+  });
+};
+
 export {
   useGetPersonalInfo,
   useGetBuinessDetail,
@@ -154,4 +188,5 @@ export {
   useGetBusinessInformation,
   useGetBankDetails,
   useGetVerificationDocuments,
+  useGetOnboardingData,
 };

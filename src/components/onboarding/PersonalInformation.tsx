@@ -15,8 +15,9 @@ import { IPersonalInformation, personalInformationSchema } from '@/types/validat
 import { useGetPersonalInfo } from '@/app/query-hooks';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { personalInfoFields } from '@/utils/form-fields';
-import { saveData, updateData } from '@/app/onboarding/action';
+import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
+import Heading from './Heading';
 
 const PersonalInformation = () => {
   const router = useRouter();
@@ -34,15 +35,14 @@ const PersonalInformation = () => {
     },
   });
 
-  const { data, isLoading } = useGetPersonalInfo();
-  console.log(isLoading);
+  const { data } = useGetPersonalInfo();
 
   useEffect(() => {
     if (data) {
-      setValue('firstName', data.first_name || '');
-      setValue('lastName', data.last_name || '');
-      setValue('email', data.email || '');
-      setValue('phone', data.phone || '');
+      setValue('firstName', data.first_name);
+      setValue('lastName', data.last_name);
+      setValue('email', data.email);
+      setValue('phone', data.phone);
       setValue('terms', true);
     }
   }, [data, setValue]);
@@ -61,11 +61,13 @@ const PersonalInformation = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'personal_informations');
         if (res?.error) throw res.error;
+
         queryClient.invalidateQueries({ queryKey: ['getPersonalInfo'] });
-        router.refresh();
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'personal_informations');
         if (res?.error) throw res.error;
+
+        queryClient.invalidateQueries({ queryKey: ['getPersonalInfo'] });
       }
       router.push('/onboarding/business-details');
     } catch (error: any) {
@@ -80,16 +82,11 @@ const PersonalInformation = () => {
       <NavigationButton showNext={!!data} />
       <div className='flex flex-col items-center justify-center mt-6 animate-fade-in-left'>
         <div className='max-w-[370px] mr-20 w-full space-y-10'>
-          <div className='space-y-6 flex flex-col items-center'>
-            <div className='border rounded-lg p-3'>
-              <UserIcon />
-            </div>
-            <div className='space-y-2 text-center'>
-              <p className='text-default text-2xl font-semibold leading-7'>Key Contact Person Information</p>
-              <p className='text-subtle text-sm font-medium leading-5'>Please provide basic details</p>
-            </div>
-          </div>
-
+          <Heading
+            title='Key Contact Person Information'
+            icon={<UserIcon />}
+            description='Please provide basic details'
+          />
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='space-y-6'>
               <div className='space-y-5'>
@@ -100,7 +97,7 @@ const PersonalInformation = () => {
                       placeholder={field.placeholder}
                       id={field.id}
                       {...register(field.id)}
-                      disabled={loading || isLoading}
+                      disabled={loading}
                     />
                   </InputWrapper>
                 ))}
@@ -111,7 +108,7 @@ const PersonalInformation = () => {
                         id='terms'
                         onCheckedChange={(checked) => setValue('terms', checked as boolean)}
                         {...register('terms')}
-                        disabled={loading || isLoading}
+                        disabled={loading}
                         defaultChecked={!!data}
                       />
                       <label htmlFor='terms' className='text-sm font-medium space-x-1'>
@@ -128,11 +125,10 @@ const PersonalInformation = () => {
                   </InputWrapper>
                 )}
               </div>
-              <div>
-                <Button className='w-full' size='xl' type='submit' disabled={loading || isLoading}>
-                  {loading || isLoading ? 'Loading...' : data ? 'Update' : 'Continue'}
-                </Button>
-              </div>
+
+              <Button className='w-full' size='xl' type='submit' disabled={loading}>
+                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
+              </Button>
             </div>
           </form>
         </div>

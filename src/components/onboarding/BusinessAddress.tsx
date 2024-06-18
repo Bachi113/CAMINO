@@ -13,8 +13,9 @@ import { IBusinessAddress, businessAddressSchema } from '@/types/validations';
 import { useGetBusinessAddress } from '@/app/query-hooks';
 import NavigationButton from './NavigationButton';
 import { businessAddressFields } from '@/utils/form-fields';
-import { saveData, updateData } from '@/app/onboarding/action';
+import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
+import Heading from './Heading';
 
 const BusinessAddress = () => {
   const router = useRouter();
@@ -55,12 +56,15 @@ const BusinessAddress = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'business_addresses');
         if (res?.error) throw res.error;
+
         queryClient.invalidateQueries({ queryKey: ['getBusinessAddress'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_addresses');
         if (res?.error) throw res.error;
+
+        queryClient.invalidateQueries({ queryKey: ['getBusinessAddress'] });
       }
-      router.push('/onboarding/business-information');
+      router.push('/onboarding/bank-details');
     } catch (error: any) {
       errorToast(error || 'An unknown error occurred.');
     } finally {
@@ -73,17 +77,11 @@ const BusinessAddress = () => {
       <NavigationButton showNext={!!data} />
       <div className='flex flex-col items-center justify-center mt-6 animate-fade-in-left'>
         <div className='max-w-[350px] mr-20 w-full space-y-10'>
-          <div className='space-y-6 flex flex-col items-center'>
-            <div className='border rounded-lg p-3'>
-              <StoreIcon />
-            </div>
-            <div className='space-y-2 text-center'>
-              <p className='text-default text-2xl font-semibold leading-7'>Business Address</p>
-              <p className='text-subtle text-sm font-medium leading-5'>
-                Please provide location details about your business
-              </p>
-            </div>
-          </div>
+          <Heading
+            title='Business Address'
+            description='Please provide location details about your business'
+            icon={<StoreIcon />}
+          />
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='space-y-6'>
               <div className='space-y-4'>
@@ -94,14 +92,14 @@ const BusinessAddress = () => {
                       placeholder={field.placeholder}
                       id={field.id}
                       {...register(field.id)}
-                      disabled={loading || isLoading}
+                      disabled={loading}
                     />
                   </InputWrapper>
                 ))}
               </div>
               <div>
-                <Button className='w-full' size={'xl'} type='submit' disabled={loading || isLoading}>
-                  {loading || isLoading ? 'Loading...' : data ? 'Update' : 'Continue'}
+                <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
+                  {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
                 </Button>
               </div>
             </div>

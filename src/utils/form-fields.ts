@@ -5,6 +5,7 @@ import {
   IBusinessDetailField,
   IPersonalInfoField,
 } from '@/types/validations';
+import { extractFileNameFromUrl } from './utils';
 
 export const personalInfoFields: IPersonalInfoField[] = [
   { label: 'First Name', id: 'firstName', placeholder: 'First name', type: 'text', required: true },
@@ -70,3 +71,111 @@ export const bankFields: IBankDetailField[] = [
   { label: 'IBAN Code', id: 'ibanNumber', placeholder: 'IBAN Code', type: 'text', required: false },
   { label: 'Swift Code', id: 'swiftCode', placeholder: 'Swift Code', type: 'text', required: false },
 ];
+
+// summary fileds
+export const summaryFileds = (data: any) => {
+  if (!data) return [];
+
+  return [
+    {
+      id: 'personal-information',
+      title: 'Personal Information',
+      inputs: [
+        { label: 'First name', id: 'firstName', value: data.personal_informations?.first_name },
+        { label: 'Last name', id: 'lastName', value: data.personal_informations?.last_name },
+        {
+          label: 'Email address',
+          id: 'email',
+          type: 'email',
+          value: data.personal_informations?.email,
+        },
+        { label: 'Phone Number', id: 'phone', value: data.personal_informations?.phone },
+      ],
+    },
+    {
+      id: 'basic-business-details',
+      title: 'Basic Business Details',
+      inputs: [
+        { label: 'Business Name', id: 'businessName', value: data.business_details?.business_name },
+        { label: 'Business type', id: 'businessType', value: data.business_details?.business_type },
+        {
+          label: 'Registration type',
+          id: 'registrationType',
+          value: data.business_details?.registration_type,
+        },
+        {
+          label: 'VAT Registration number',
+          id: 'vatRegistrationNumber',
+          value: data.business_details?.vat_registration_number,
+        },
+      ],
+    },
+    {
+      id: 'business-address',
+      title: 'Business Address',
+      inputs: [
+        {
+          label: 'Street Address',
+          id: 'streetAddress',
+          value: data.business_addresses?.street_address,
+        },
+        { label: 'City', id: 'city', value: data.business_addresses?.city },
+        { label: 'Postal Code', id: 'postalCode', value: data.business_addresses?.postal_code },
+        { label: 'Country', id: 'country', value: data.business_addresses?.country },
+        {
+          label: 'Business Phone Number',
+          id: 'phoneNumber',
+          value: data.business_addresses?.phone_number,
+        },
+      ],
+    },
+    {
+      id: 'bank-account-details',
+      title: 'Bank Account Details',
+      inputs: [
+        { label: 'Bank Name', id: 'bankName', value: data.bank_details?.bank_name },
+        { label: 'Bank Account Number', id: 'accountNumber', value: data.bank_details?.account_number },
+        { label: 'Sort Code', id: 'sortCode', value: data.bank_details?.sort_code },
+        { label: 'IBAN Code', id: 'ibanCode', value: data.bank_details?.iban_code },
+        { label: 'Swift Code', id: 'swiftCode', value: data.bank_details?.swift_code },
+        {
+          label: 'Purchasing Currency',
+          id: 'purchasingCurrency',
+          value: data.bank_details?.purchasing_currency,
+        },
+      ],
+    },
+    {
+      id: 'document-verification',
+      title: 'Document Verification',
+      inputs: [
+        { label: 'VAT Number', id: 'vatNumber', value: data.documents?.vat_number },
+        {
+          label: 'How long have you been involved in business',
+          id: 'experience',
+          value: data.documents?.experience,
+        },
+        {
+          label: 'Document type 1',
+          id: 'documentType1',
+          value: extractFileNameFromUrl(data.documents?.document_urls?.[0]),
+        },
+        {
+          label: 'Document type 2',
+          id: 'documentType2',
+          value: extractFileNameFromUrl(data.documents?.document_urls?.[1]),
+        },
+        {
+          label: 'Document type 3',
+          id: 'documentType3',
+          value: extractFileNameFromUrl(data.documents?.document_urls?.[2]),
+        },
+        {
+          label: 'Document type 4',
+          id: 'documentType4',
+          value: extractFileNameFromUrl(data.documents?.document_urls?.[3]),
+        },
+      ],
+    },
+  ];
+};

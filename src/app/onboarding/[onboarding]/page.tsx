@@ -17,50 +17,30 @@ type TypeParams = {
   params: { onboarding: string };
 };
 
-const sections: Section[] = [
-  {
-    title: 'Personal Information',
-    description: 'Please provide basic details about you',
-    id: 'personal-information',
-  },
-  {
-    title: 'Basic Business Details',
-    description: 'Please provide basic details about the business',
-    id: 'business-details',
-  },
-  {
-    title: 'Business Address',
-    description: 'Please provide location details about your business',
-    id: 'business-address',
-  },
-  {
-    title: 'Business Information',
-    description: 'Please provide other info about your business',
-    id: 'business-information',
-  },
-  {
-    title: 'Bank Account Details',
-    description: 'Please provide your banking details to verify',
-    id: 'bank-details',
-  },
-  {
-    title: 'Document Verification',
-    description: 'Please provide the mentioned documents for verification',
-    id: 'document-verification',
-  },
-];
-
-const ActiveStepFormComponent = (step: string) => {
-  const componentMap: { [key: string]: any } = {
+export const onboardingData = {
+  sections: [
+    { id: 'personal-information', label: 'Personal Information' },
+    { id: 'business-details', label: 'Basic Business Details' },
+    { id: 'business-address', label: 'Business Address' },
+    { id: 'bank-account-details', label: 'Bank Account Details' },
+    { id: 'document-verification', label: 'Document Verification' },
+  ],
+  componentMap: {
     'personal-information': dynamic(() => import('@/components/onboarding/PersonalInformation')),
     'business-details': dynamic(() => import('@/components/onboarding/BusinessDetail')),
     'business-address': dynamic(() => import('@/components/onboarding/BusinessAddress')),
-    'business-information': dynamic(() => import('@/components/onboarding/BusinessInformation')),
-    'bank-details': dynamic(() => import('@/components/onboarding/BankDetails')),
+    'bank-account-details': dynamic(() => import('@/components/onboarding/BankDetails')),
     'document-verification': dynamic(() => import('@/components/onboarding/DocumentVerification')),
-  };
+  } as { [key: string]: any },
+};
+const sections: Section[] = onboardingData.sections.map((section) => ({
+  title: section.label,
+  description: `Please provide ${section.label.toLowerCase().startsWith('business') ? 'details about' : 'the mentioned'} ${section.label.toLowerCase().replace('details', '').replace('verify', '').replace('provide', '')} `,
+  id: section.id,
+}));
 
-  const StepComponent = componentMap[step];
+const ActiveStepFormComponent = (step: string) => {
+  const StepComponent = onboardingData.componentMap[step];
   return StepComponent ? <StepComponent /> : null;
 };
 

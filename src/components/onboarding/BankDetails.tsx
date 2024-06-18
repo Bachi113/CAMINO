@@ -14,8 +14,9 @@ import { bankFields } from '@/utils/form-fields';
 import { BankDetailsSchema, IBankDetails } from '@/types/validations';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BankIcon from '@/assets/icons/BankIcon';
-import { saveData, updateData } from '@/app/onboarding/action';
+import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
+import Heading from './Heading';
 
 const bankOptions = [
   {
@@ -98,6 +99,8 @@ const BankDetails = () => {
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'bank_details');
         if (res?.error) throw res.error;
+
+        queryClient.invalidateQueries({ queryKey: ['getBankDetails'] });
       }
       router.push('/onboarding/document-verification');
     } catch (error: any) {
@@ -113,17 +116,11 @@ const BankDetails = () => {
       <NavigationButton showNext={!!data} />
       <div className='flex flex-col items-center justify-center mt-6 animate-fade-in-left'>
         <div className='max-w-[350px] mr-20 w-full space-y-10'>
-          <div className='space-y-6 flex flex-col items-center'>
-            <div className='border rounded-lg p-3'>
-              <BankIcon />
-            </div>
-            <div className='space-y-2 text-center'>
-              <p className='text-default text-2xl font-semibold leading-7'>Bank Details</p>
-              <p className='text-subtle text-sm font-medium leading-5'>
-                Please provide your banking details to verify
-              </p>
-            </div>
-          </div>
+          <Heading
+            title='Bank Details'
+            description='Please provide your banking details to verify'
+            icon={<BankIcon />}
+          />
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='space-y-4'>
               <InputWrapper id='bankName' label='Bank Name' required>
@@ -156,7 +153,7 @@ const BankDetails = () => {
                     placeholder={field.placeholder}
                     id={field.id}
                     {...register(field.id)}
-                    disabled={loading || isLoading}
+                    disabled={loading}
                   />
                 </InputWrapper>
               ))}
@@ -178,8 +175,8 @@ const BankDetails = () => {
                 </Select>
               </InputWrapper>
               <div>
-                <Button className='w-full' size={'xl'} type='submit' disabled={loading || isLoading}>
-                  {loading || isLoading ? 'Loading...' : data ? 'Update' : 'Continue'}
+                <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
+                  {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
                 </Button>
               </div>
             </div>

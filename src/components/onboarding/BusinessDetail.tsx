@@ -13,8 +13,9 @@ import NavigationButton from './NavigationButton';
 import { useGetBuinessDetail } from '@/app/query-hooks';
 import { IBusinessDetail, businessDetailSchema } from '@/types/validations';
 import { businessDetailsFields } from '@/utils/form-fields';
-import { saveData, updateData } from '@/app/onboarding/action';
+import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
+import Heading from './Heading';
 
 const BusinessDetail = () => {
   const router = useRouter();
@@ -59,6 +60,8 @@ const BusinessDetail = () => {
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_details');
         if (res?.error) throw res.error;
+
+        queryClient.invalidateQueries({ queryKey: ['getBusinessDetail'] });
       }
 
       router.push('/onboarding/business-address');
@@ -75,17 +78,11 @@ const BusinessDetail = () => {
       <NavigationButton showNext={!!data} />
       <div className='flex flex-col items-center justify-center mt-6 animate-fade-in-left'>
         <div className='max-w-[350px] mr-20 w-full space-y-10'>
-          <div className='space-y-6 flex flex-col items-center'>
-            <div className='border rounded-lg p-3'>
-              <StoreIcon />
-            </div>
-            <div className='space-y-2 text-center'>
-              <p className='text-default text-2xl font-semibold leading-7'>Business Details</p>
-              <p className='text-subtle text-sm font-medium leading-5'>
-                Please provide basic details about the business
-              </p>
-            </div>
-          </div>
+          <Heading
+            title='Business Details'
+            description='Please provide basic details about the business'
+            icon={<StoreIcon />}
+          />
           <form onSubmit={handleSubmit(handleFormSubmit)} className='space-y-6'>
             <div className='space-y-4'>
               {businessDetailsFields.map((field) => (
@@ -95,15 +92,15 @@ const BusinessDetail = () => {
                     placeholder={field.placeholder}
                     id={field.id}
                     {...register(field.id)}
-                    disabled={loading || isLoading}
+                    disabled={loading}
                   />
                 </InputWrapper>
               ))}
             </div>
 
             <div>
-              <Button className='w-full' size='xl' type='submit' disabled={loading || isLoading}>
-                {loading || isLoading ? 'Loading...' : data ? 'Update' : 'Continue'}
+              <Button className='w-full' size='xl' type='submit' disabled={loading}>
+                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
               </Button>
             </div>
           </form>
