@@ -13,8 +13,9 @@ import { IBusinessInformation, businessInformationSchema } from '@/types/validat
 import { useGetBusinessInformation } from '@/app/query-hooks';
 import NavigationButton from './NavigationButton';
 import StoreIcon from '@/assets/icons/StoreIcon';
-import { saveData, updateData } from '@/app/onboarding/action';
+import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
+import Heading from './Heading';
 
 const BusinessInformation = () => {
   const router = useRouter();
@@ -70,6 +71,8 @@ const BusinessInformation = () => {
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_informations');
         if (res?.error) throw res.error;
+
+        queryClient.invalidateQueries({ queryKey: ['getBusinessInformation'] });
       }
       router.push('/onboarding/bank-details');
     } catch (error: any) {
@@ -87,17 +90,12 @@ const BusinessInformation = () => {
       <NavigationButton showNext={!!data} />
       <div className='flex flex-col items-center justify-center mt-6 animate-fade-in-left'>
         <div className='max-w-[350px] mr-20 w-full space-y-10'>
-          <div className='space-y-6 flex flex-col items-center'>
-            <div className='border rounded-lg p-3'>
-              <StoreIcon />
-            </div>
-            <div className='space-y-2 text-center'>
-              <p className='text-default text-2xl font-semibold leading-7'>Business Information</p>
-              <p className='text-subtle text-sm font-medium leading-5'>
-                Please provide other info about your business
-              </p>
-            </div>
-          </div>
+          <Heading
+            title='Business Information'
+            description='Please provide other info about your business'
+            icon={<StoreIcon />}
+          />
+
           <form onSubmit={handleSubmit(handleFormSubmit)} className='space-y-6'>
             <div className='space-y-4'>
               <InputWrapper label='Where are your target customers' required>
@@ -110,7 +108,7 @@ const BusinessInformation = () => {
                         setValue('insideUk', checked as boolean);
                       }}
                       checked={watch('insideUk') || false}
-                      disabled={loading || isLoading}
+                      disabled={loading}
                     />
                     <label htmlFor='insideUk' className='text-sm text-muted-foreground'>
                       Inside UK
@@ -124,7 +122,7 @@ const BusinessInformation = () => {
                       }}
                       value='Outside UK'
                       checked={watch('outsideUk') || false}
-                      disabled={loading || isLoading}
+                      disabled={loading}
                     />
                     <label htmlFor='outsideUk' className='text-sm text-muted-foreground'>
                       Outside UK
@@ -145,7 +143,7 @@ const BusinessInformation = () => {
                       }}
                       value='Courier company (e.g. TCS, Leopard)'
                       checked={watch('courierCompany') || false}
-                      disabled={loading || isLoading}
+                      disabled={loading}
                     />
                     <label htmlFor='courierCompany' className='text-sm text-muted-foreground'>
                       Courier company (e.g. TCS, Leopard)
@@ -159,7 +157,7 @@ const BusinessInformation = () => {
                       }}
                       value='Self Delivery (e.g. Glovo)'
                       checked={watch('selfDelivery') || false}
-                      disabled={loading || isLoading}
+                      disabled={loading}
                     />
                     <label htmlFor='selfDelivery' className='text-sm text-muted-foreground'>
                       Self Delivery (e.g. Glovo)
@@ -173,7 +171,7 @@ const BusinessInformation = () => {
                       }}
                       value='Online Services - no delivery required'
                       checked={watch('onlineService') || false}
-                      disabled={loading || isLoading}
+                      disabled={loading}
                     />
                     <label htmlFor='onlineService' className='text-sm text-muted-foreground'>
                       Online Services - no delivery required
@@ -185,7 +183,7 @@ const BusinessInformation = () => {
                       value='Other'
                       onClick={() => setShowOtherInput(!showOtherInput)}
                       checked={otherLength! > 1 || showOtherInput || false}
-                      disabled={loading || isLoading}
+                      disabled={loading}
                       onCheckedChange={() => {
                         businessInformationId && setValue('other', '');
                       }}
@@ -199,7 +197,7 @@ const BusinessInformation = () => {
                       {...register('other')}
                       placeholder='Other...'
                       className='mt-3'
-                      disabled={loading || isLoading}
+                      disabled={loading}
                     />
                   )}
                 </div>
@@ -209,7 +207,7 @@ const BusinessInformation = () => {
               )}
             </div>
             <div>
-              <Button className='w-full' size={'xl'} type='submit' disabled={loading || isLoading}>
+              <Button className='w-full' size={'xl'} type='submit' disabled={loading}>
                 {loading ? 'Loading...' : businessInformationId ? 'Update' : 'Continue'}
               </Button>
             </div>

@@ -13,8 +13,6 @@ export async function uploadDocument(files: FormData): Promise<string> {
     const fileEntry = fileEntries.next();
     const file = fileEntry.value[1] as File;
 
-    console.log('file:', file);
-
     if (!file) {
       throw new Error('Document does not exist.');
     }
@@ -36,7 +34,6 @@ export async function uploadDocument(files: FormData): Promise<string> {
 
     // Get the public URL of the uploaded document file.
     const { data } = await supabase.storage.from(bucketName).getPublicUrl(key);
-    console.log(data);
 
     return data.publicUrl;
   } catch (error: any) {
