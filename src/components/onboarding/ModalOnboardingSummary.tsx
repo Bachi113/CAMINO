@@ -130,7 +130,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
                 Cancel
               </Button>
             </DialogClose>
-            <ModalSubmitConfirmation />
+            <ModalSubmitConfirmation onBoardingId={data?.id} />
           </div>
         </DialogFooter>
       </DialogContent>
