@@ -30,7 +30,7 @@ const BusinessDetail = () => {
     resolver: yupResolver(businessDetailSchema),
   });
 
-  const { data, isLoading } = useGetBuinessDetail();
+  const { data } = useGetBuinessDetail();
 
   useEffect(() => {
     if (data) {
@@ -55,14 +55,12 @@ const BusinessDetail = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'business_details');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessDetail'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_details');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessDetail'] });
       }
+
+      queryClient.invalidateQueries({ queryKey: ['getBusinessDetail'] });
 
       router.push('/onboarding/business-address');
     } catch (error: any) {

@@ -61,14 +61,12 @@ const PersonalInformation = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'personal_informations');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getPersonalInfo'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'personal_informations');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getPersonalInfo'] });
       }
+
+      queryClient.invalidateQueries({ queryKey: ['getPersonalInfo'] });
       router.push('/onboarding/business-details');
     } catch (error: any) {
       errorToast(error.message);

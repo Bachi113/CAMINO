@@ -65,7 +65,7 @@ const BankDetails = () => {
     resolver: yupResolver(BankDetailsSchema),
   });
 
-  const { data, isLoading } = useGetBankDetails();
+  const { data } = useGetBankDetails();
 
   useEffect(() => {
     if (data) {
@@ -94,14 +94,13 @@ const BankDetails = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'bank_details');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBankDetails'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'bank_details');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBankDetails'] });
       }
+
+      queryClient.invalidateQueries({ queryKey: ['getBankDetails'] });
+
       router.push('/onboarding/document-verification');
     } catch (error: any) {
       console.error('Error during form submission:', error);

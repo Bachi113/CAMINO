@@ -27,14 +27,13 @@ interface IDocumentVerification {
   document3?: any;
   document4?: any;
 }
-
 export const documentVerificationSchema = yup.object().shape({
   vatNumber: yup.string().required('VAT Number is required'),
   howLongYouInvolved: yup.string().required('Please specify how long you have been involved in business'),
-  document1: yup.mixed(),
-  document2: yup.mixed(),
-  document3: yup.mixed(),
-  document4: yup.mixed(),
+  document1: yup.mixed().notRequired().nullable(),
+  document2: yup.mixed().notRequired().nullable(),
+  document3: yup.mixed().notRequired().nullable(),
+  document4: yup.mixed().notRequired().nullable(),
 });
 
 const yearsInvolved = [
@@ -58,11 +57,9 @@ const DocumentVerification = () => {
   });
 
   const { data } = useGetVerificationDocuments();
-
+  const documentFields = ['document1', 'document2', 'document3', 'document4'];
   useEffect(() => {
-    ['document1', 'document2', 'document3', 'document4'].forEach((doc) =>
-      setValue(doc as keyof IDocumentVerification, null)
-    );
+    documentFields.forEach((doc) => setValue(doc as keyof IDocumentVerification, null));
     if (data) {
       const documentsLength = (data?.document_urls as []).length || 0;
 
@@ -73,7 +70,7 @@ const DocumentVerification = () => {
           if (index < documentsLength) {
             const fileName = extractFileNameFromUrl(fileUrl as string);
             if (!fileName) {
-              return errorToast(`Please upload a valid file for document ${index + 1}`);
+              return;
             }
 
             setValue(`document${index + 1}` as keyof IDocumentVerification, { url: fileUrl, name: fileName });
@@ -188,9 +185,9 @@ const DocumentVerification = () => {
                     </SelectContent>
                   </Select>
                 </InputWrapper>
-                <div>
+                <div className='space-y-2'>
                   <label className='text-sm leading-none mb-2'>Upload the business documents</label>
-                  {['document1', 'document2', 'document3', 'document4'].map((doc, index) => (
+                  {documentFields.map((doc, index) => (
                     <InputWrapper
                       key={index}
                       label={`Document Verification ${index + 1}`}

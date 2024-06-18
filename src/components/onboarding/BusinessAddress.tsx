@@ -30,7 +30,7 @@ const BusinessAddress = () => {
     resolver: yupResolver(businessAddressSchema),
   });
 
-  const { data, isLoading } = useGetBusinessAddress();
+  const { data } = useGetBusinessAddress();
 
   useEffect(() => {
     if (data) {
@@ -56,15 +56,13 @@ const BusinessAddress = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'business_addresses');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessAddress'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_addresses');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessAddress'] });
       }
-      router.push('/onboarding/bank-details');
+
+      queryClient.invalidateQueries({ queryKey: ['getBusinessAddress'] });
+      router.push('/onboarding/bank-account-details');
     } catch (error: any) {
       errorToast(error || 'An unknown error occurred.');
     } finally {

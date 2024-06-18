@@ -34,7 +34,7 @@ const BusinessInformation = () => {
     resolver: yupResolver(businessInformationSchema),
   });
 
-  const { data, isLoading } = useGetBusinessInformation();
+  const { data } = useGetBusinessInformation();
 
   useEffect(() => {
     if (data) {
@@ -66,14 +66,11 @@ const BusinessInformation = () => {
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'business_informations');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessInformation'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_informations');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getBusinessInformation'] });
       }
+      queryClient.invalidateQueries({ queryKey: ['getBusinessInformation'] });
       router.push('/onboarding/bank-details');
     } catch (error: any) {
       console.error('Error during form submission:', error);
