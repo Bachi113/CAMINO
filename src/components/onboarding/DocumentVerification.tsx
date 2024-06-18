@@ -14,10 +14,11 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 import { LuUploadCloud } from 'react-icons/lu';
 import ModalOnboardingSummary from './ModalOnboardingSummary';
 import { useGetVerificationDocuments } from '@/app/query-hooks';
-import NavigationButton from './NavigationButton';
+import NavigationButton from '@/components/onboarding/NavigationButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { queryClient } from '@/app/providers';
-import Heading from './Heading';
+import Heading from '@/components/onboarding/Heading';
+import { SubmitButton } from '@/components/SubmitButton';
 
 interface IDocumentVerification {
   vatNumber: string;
@@ -237,9 +238,7 @@ const DocumentVerification = () => {
                   ))}
                 </div>
               </div>
-              <Button size={'xl'} type='submit' disabled={loading}>
-                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-              </Button>
+              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>
         </div>

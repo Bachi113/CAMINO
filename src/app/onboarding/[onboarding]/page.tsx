@@ -33,6 +33,7 @@ export const onboardingData = {
     'document-verification': dynamic(() => import('@/components/onboarding/DocumentVerification')),
   } as { [key: string]: any },
 };
+
 const sections: Section[] = onboardingData.sections.map((section) => ({
   title: section.label,
   description: `Please provide ${section.label.toLowerCase().startsWith('business') ? 'details about' : 'the mentioned'} ${section.label.toLowerCase().replace('details', '').replace('verify', '').replace('provide', '')} `,

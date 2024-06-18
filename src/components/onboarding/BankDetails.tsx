@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
@@ -9,14 +8,15 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
 import { useGetBankDetails } from '@/app/query-hooks';
-import NavigationButton from './NavigationButton';
+import NavigationButton from '@/components/onboarding/NavigationButton';
 import { bankFields } from '@/utils/form-fields';
 import { BankDetailsSchema, IBankDetails } from '@/types/validations';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BankIcon from '@/assets/icons/BankIcon';
 import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
-import Heading from './Heading';
+import Heading from '@/components/onboarding/Heading';
+import { SubmitButton } from '@/components/SubmitButton';
 
 const bankOptions = [
   {
@@ -179,9 +179,7 @@ const BankDetails = () => {
                   </SelectContent>
                 </Select>
               </InputWrapper>
-              <Button size={'xl'} disabled={loading}>
-                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-              </Button>
+              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>
         </div>

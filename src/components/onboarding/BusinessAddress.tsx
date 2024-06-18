@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import StoreIcon from '@/assets/icons/StoreIcon';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
@@ -11,11 +10,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
 import { IBusinessAddress, businessAddressSchema } from '@/types/validations';
 import { useGetBusinessAddress } from '@/app/query-hooks';
-import NavigationButton from './NavigationButton';
+import NavigationButton from '@/components/onboarding/NavigationButton';
 import { businessAddressFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/onboarding/actions';
 import { queryClient } from '@/app/providers';
-import Heading from './Heading';
+import Heading from '@/components/onboarding/Heading';
+import { SubmitButton } from '@/components/SubmitButton';
 
 const BusinessAddress = () => {
   const router = useRouter();
@@ -95,9 +95,7 @@ const BusinessAddress = () => {
                   </InputWrapper>
                 ))}
               </div>
-              <Button size={'xl'} disabled={loading}>
-                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-              </Button>
+              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>
         </div>
