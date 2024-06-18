@@ -18,15 +18,14 @@ import { onboardingData } from '@/app/onboarding/[onboarding]/page';
 import { summaryFileds } from '@/utils/form-fields';
 
 type ModalOnboardingSummaryProps = {
-  isSubmitSuccessful: boolean;
-  setShowModal: (value: boolean) => void;
+  isOpen: boolean;
+  handleModalOpen: () => void;
 };
 
 const { sections: sidebarItems } = onboardingData;
 
-const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSuccessful, setShowModal }) => {
+const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handleModalOpen }) => {
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
-  const [isOpen, setIsOpen] = useState<boolean>(isSubmitSuccessful);
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
 
   const { data, isLoading } = useGetOnboardingData();
@@ -71,7 +70,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
 
   return (
     <Dialog open={isOpen}>
-      <DialogContent className='max-w-2xl'>
+      <DialogContent className='max-w-3xl'>
         <DialogHeader>
           <DialogTitle className='text-slate-800'>Review Your Information</DialogTitle>
           <DialogDescription>Please check the details below before submitting the form</DialogDescription>
@@ -120,13 +119,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
         <DialogFooter>
           <div className='flex gap-4 w-full'>
             <DialogClose asChild>
-              <Button
-                variant='outline'
-                className='w-full'
-                onClick={() => {
-                  setIsOpen(false);
-                  setShowModal(false);
-                }}>
+              <Button variant='outline' className='w-full' onClick={handleModalOpen}>
                 Cancel
               </Button>
             </DialogClose>

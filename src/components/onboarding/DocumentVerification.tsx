@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import DocumentVerificationIcon from '@/assets/icons/DocumentVerificationIcon';
 import InputWrapper from '@/components/InputWrapper';
@@ -64,12 +64,14 @@ const DocumentVerification = () => {
   const document3 = watch('document3') as any;
   const document4 = watch('document4') as any;
 
-  const documentsToUpload = [
-    { field: 'document1', value: document1 },
-    { field: 'document2', value: document2 },
-    { field: 'document3', value: document3 },
-    { field: 'document4', value: document4 },
-  ];
+  const documentsToUpload = useMemo(() => {
+    return [
+      { field: 'document1', value: document1 },
+      { field: 'document2', value: document2 },
+      { field: 'document3', value: document3 },
+      { field: 'document4', value: document4 },
+    ];
+  }, [document1, document2, document3, document4]);
 
   useEffect(() => {
     documentsToUpload.forEach((doc) => setValue(doc.field as keyof IDocumentVerification, null));
@@ -91,7 +93,7 @@ const DocumentVerification = () => {
         });
       }
     }
-  }, [setValue, data]);
+  }, [setValue, documentsToUpload, data]);
 
   const handleFormSubmit = async (formData: IDocumentVerification) => {
     setLoading(true);
@@ -242,12 +244,8 @@ const DocumentVerification = () => {
             </div>
           </form>
         </div>
-        {showModal && (
-          <ModalOnboardingSummary
-            isSubmitSuccessful={showModal}
-            setShowModal={(value) => setShowModal(value)}
-          />
-        )}
+
+        <ModalOnboardingSummary isOpen={showModal} handleModalOpen={() => setShowModal(!showModal)} />
       </div>
     </>
   );
