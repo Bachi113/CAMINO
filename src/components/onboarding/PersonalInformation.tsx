@@ -28,6 +28,7 @@ const PersonalInformation = () => {
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm<IPersonalInformation>({
     resolver: yupResolver(personalInformationSchema),
     defaultValues: {

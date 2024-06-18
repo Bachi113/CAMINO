@@ -21,7 +21,7 @@ import Heading from './Heading';
 
 interface IDocumentVerification {
   vatNumber: string;
-  howLongYouInvolved: string;
+  experience: string;
   document1?: any;
   document2?: any;
   document3?: any;
@@ -29,7 +29,7 @@ interface IDocumentVerification {
 }
 export const documentVerificationSchema = yup.object().shape({
   vatNumber: yup.string().required('VAT Number is required'),
-  howLongYouInvolved: yup.string().required('Please specify how long you have been involved in business'),
+  experience: yup.string().required('Please specify how long you have been involved in business'),
   document1: yup.mixed().notRequired().nullable(),
   document2: yup.mixed().notRequired().nullable(),
   document3: yup.mixed().notRequired().nullable(),
@@ -57,16 +57,27 @@ const DocumentVerification = () => {
   });
 
   const { data } = useGetVerificationDocuments();
-  const documentFields = ['document1', 'document2', 'document3', 'document4'];
+
+  const document1 = watch('document1') as any;
+  const document2 = watch('document2') as any;
+  const document3 = watch('document3') as any;
+  const document4 = watch('document4') as any;
+
+  const documentsToUpload = [
+    { field: 'document1', value: document1 },
+    { field: 'document2', value: document2 },
+    { field: 'document3', value: document3 },
+    { field: 'document4', value: document4 },
+  ];
+
   useEffect(() => {
-    documentFields.forEach((doc) => setValue(doc as keyof IDocumentVerification, null));
     if (data) {
       const documentsLength = (data?.document_urls as []).length || 0;
 
       setValue('vatNumber', data.vat_number);
-      setValue('howLongYouInvolved', data.experience);
+      setValue('experience', data.experience);
       if (documentsLength && Array.isArray(data.document_urls)) {
-        data.document_urls.forEach((fileUrl, index) => {
+        data.document_urls.map((fileUrl, index) => {
           if (index < documentsLength) {
             const fileName = extractFileNameFromUrl(fileUrl as string);
             if (!fileName) {
@@ -80,22 +91,10 @@ const DocumentVerification = () => {
     }
   }, [setValue, data]);
 
-  const document1 = watch('document1') as any;
-  const document2 = watch('document2') as any;
-  const document3 = watch('document3') as any;
-  const document4 = watch('document4') as any;
-
   const handleFormSubmit = async (formData: IDocumentVerification) => {
     setLoading(true);
 
     try {
-      const documentsToUpload = [
-        { field: 'document1', value: document1 },
-        { field: 'document2', value: document2 },
-        { field: 'document3', value: document3 },
-        { field: 'document4', value: document4 },
-      ];
-
       const fileUrls = await Promise.all(
         documentsToUpload.map(async ({ field, value }) => {
           if (value && value.url) {
@@ -114,21 +113,18 @@ const DocumentVerification = () => {
 
       const dataToUpdate = {
         vat_number: formData.vatNumber,
-        experience: formData.howLongYouInvolved || data?.experience,
+        experience: formData.experience || data?.experience,
         document_urls: fileUrls,
       };
 
       if (data) {
         const res = await updateData(JSON.stringify(dataToUpdate), 'documents');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'documents');
         if (res?.error) throw res.error;
-
-        queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
       }
+      queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
       setShowModal(true);
     } catch (error: any) {
       errorToast(error || 'An unknown error occurred.');
@@ -168,11 +164,11 @@ const DocumentVerification = () => {
                 <InputWrapper
                   label='How long have you been involved in business'
                   required
-                  error={errors.howLongYouInvolved?.message}>
+                  error={errors.experience?.message}>
                   <Select
-                    {...register('howLongYouInvolved')}
-                    onValueChange={(val) => setValue('howLongYouInvolved', val)}
-                    value={watch('howLongYouInvolved')}>
+                    {...register('experience')}
+                    onValueChange={(val) => setValue('experience', val)}
+                    value={watch('experience')}>
                     <SelectTrigger>
                       <SelectValue placeholder='Select Duration' />
                     </SelectTrigger>
@@ -187,7 +183,7 @@ const DocumentVerification = () => {
                 </InputWrapper>
                 <div className='space-y-2'>
                   <label className='text-sm leading-none mb-2'>Upload the business documents</label>
-                  {documentFields.map((doc: string, index) => (
+                  {documentsToUpload.map((doc, index) => (
                     <>
                       <InputWrapper
                         key={index}
@@ -196,23 +192,23 @@ const DocumentVerification = () => {
                         required>
                         <Input
                           type='file'
-                          id={doc}
-                          {...register(doc as keyof IDocumentVerification)}
+                          id={doc.field}
+                          {...register(doc.field as keyof IDocumentVerification)}
                           className='hidden'
                           required
                         />
                         <div className='flex items-center'>
-                          {(watch(doc as keyof IDocumentVerification)?.name ||
-                            watch(doc as keyof IDocumentVerification)?.[0]?.name) && (
+                          {(watch(doc.field as keyof IDocumentVerification)?.name ||
+                            watch(doc.field as keyof IDocumentVerification)?.[0]?.name) && (
                             <div className='mr-2 line-clamp-1 max-w-28'>
-                              {watch(doc as keyof IDocumentVerification).name ||
-                                watch(doc as keyof IDocumentVerification)?.[0]?.name}
+                              {watch(doc.field as keyof IDocumentVerification).name ||
+                                watch(doc.field as keyof IDocumentVerification)?.[0]?.name}
                             </div>
                           )}
-                          {!watch(doc as keyof IDocumentVerification)?.url &&
-                            !watch(doc as keyof IDocumentVerification)?.[0]?.name && (
+                          {!watch(doc.field as keyof IDocumentVerification)?.url &&
+                            !watch(doc.field as keyof IDocumentVerification)?.[0]?.name && (
                               <label
-                                htmlFor={doc}
+                                htmlFor={doc.field}
                                 className={cn(
                                   buttonVariants({ variant: 'outline' }),
                                   'gap-1 cursor-pointer'
@@ -220,13 +216,13 @@ const DocumentVerification = () => {
                                 <LuUploadCloud /> Upload
                               </label>
                             )}
-                          {(watch(doc as keyof IDocumentVerification)?.name ||
-                            watch(doc as keyof IDocumentVerification)?.[0]?.name) && (
+                          {(watch(doc.field as keyof IDocumentVerification)?.name ||
+                            watch(doc.field as keyof IDocumentVerification)?.[0]?.name) && (
                             <Button
                               size='icon'
                               variant='outline'
                               className='text-destructive'
-                              onClick={() => removeFile(doc as keyof IDocumentVerification)}>
+                              onClick={() => removeFile(doc.field as keyof IDocumentVerification)}>
                               <FaRegTrashAlt />
                             </Button>
                           )}
@@ -237,11 +233,9 @@ const DocumentVerification = () => {
                   ))}
                 </div>
               </div>
-              <div>
-                <Button size={'xl'} disabled={loading}>
-                  {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-                </Button>
-              </div>
+              <Button size={'xl'} type='submit' disabled={loading}>
+                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
+              </Button>
             </div>
           </form>
         </div>

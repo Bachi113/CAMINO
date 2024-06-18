@@ -203,11 +203,9 @@ const BusinessInformation = () => {
                 <p className='text-red-500 text-sm mt-2'>{(errors as any)['']?.message}</p>
               )}
             </div>
-            <div>
-              <Button size={'xl'} disabled={loading}>
-                {loading ? 'Loading...' : businessInformationId ? 'Update' : 'Continue'}
-              </Button>
-            </div>
+            <Button size={'xl'} disabled={loading}>
+              {loading ? 'Loading...' : businessInformationId ? 'Update' : 'Continue'}
+            </Button>
           </form>
         </div>
       </div>

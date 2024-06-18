@@ -95,12 +95,9 @@ const BusinessDetail = () => {
                 </InputWrapper>
               ))}
             </div>
-
-            <div>
-              <Button size='xl' disabled={loading}>
-                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-              </Button>
-            </div>
+            <Button size='xl' disabled={loading}>
+              {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
+            </Button>
           </form>
         </div>
       </div>

@@ -123,7 +123,7 @@ const BankDetails = () => {
           />
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='space-y-4'>
-              <InputWrapper id='bankName' label='Bank Name' required>
+              <InputWrapper id='bankName' label='Bank Name' required error={errors.bankName?.message}>
                 <Select
                   required
                   {...register('bankName')}
@@ -157,9 +157,14 @@ const BankDetails = () => {
                   />
                 </InputWrapper>
               ))}
-              <InputWrapper id='purchasingCurrency' label='Purchasing Currency' required>
+              <InputWrapper
+                id='purchasingCurrency'
+                label='Purchasing Currency'
+                required
+                error={errors.purchasingCurrency?.message}>
                 <Select
                   {...register('purchasingCurrency')}
+                  required
                   onValueChange={(val) => setValue('purchasingCurrency', val)}
                   value={watch('purchasingCurrency')}>
                   <SelectTrigger>
@@ -174,11 +179,9 @@ const BankDetails = () => {
                   </SelectContent>
                 </Select>
               </InputWrapper>
-              <div>
-                <Button size={'xl'} disabled={loading}>
-                  {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
-                </Button>
-              </div>
+              <Button size={'xl'} disabled={loading}>
+                {loading ? 'Loading...' : data ? 'Update' : 'Continue'}
+              </Button>
             </div>
           </form>
         </div>

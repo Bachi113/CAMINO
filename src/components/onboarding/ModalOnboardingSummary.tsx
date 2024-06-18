@@ -50,7 +50,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
     };
 
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+      entries.map((entry) => {
         if (entry.isIntersecting) {
           const sectionId = entry.target.id;
           setSelectedItem(sectionId);
@@ -58,7 +58,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isSubmitSucce
       });
     }, observerOptions);
 
-    Object.values(sectionRefs.current).forEach((sectionRef) => {
+    Object.values(sectionRefs.current).map((sectionRef) => {
       if (sectionRef) {
         observer.observe(sectionRef);
       }
