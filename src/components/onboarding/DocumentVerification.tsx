@@ -22,18 +22,18 @@ import Heading from './Heading';
 interface IDocumentVerification {
   vatNumber: string;
   experience: string;
-  document1?: any;
-  document2?: any;
-  document3?: any;
-  document4?: any;
+  document1: any;
+  document2: any;
+  document3: any;
+  document4: any;
 }
 export const documentVerificationSchema = yup.object().shape({
   vatNumber: yup.string().required('VAT Number is required'),
   experience: yup.string().required('Please specify how long you have been involved in business'),
-  document1: yup.mixed().notRequired().nullable(),
-  document2: yup.mixed().notRequired().nullable(),
-  document3: yup.mixed().notRequired().nullable(),
-  document4: yup.mixed().notRequired().nullable(),
+  document1: yup.mixed().required('Document 1 is required'),
+  document2: yup.mixed().required('Document 2 is required'),
+  document3: yup.mixed().required('Document 3 is required'),
+  document4: yup.mixed().required('Document 4 is required'),
 });
 
 const yearsInvolved = [
@@ -71,13 +71,14 @@ const DocumentVerification = () => {
   ];
 
   useEffect(() => {
+    documentsToUpload.forEach((doc) => setValue(doc.field as keyof IDocumentVerification, null));
     if (data) {
       const documentsLength = (data?.document_urls as []).length || 0;
 
       setValue('vatNumber', data.vat_number);
       setValue('experience', data.experience);
       if (documentsLength && Array.isArray(data.document_urls)) {
-        data.document_urls.map((fileUrl, index) => {
+        data.document_urls.forEach((fileUrl, index) => {
           if (index < documentsLength) {
             const fileName = extractFileNameFromUrl(fileUrl as string);
             if (!fileName) {
@@ -195,7 +196,6 @@ const DocumentVerification = () => {
                           id={doc.field}
                           {...register(doc.field as keyof IDocumentVerification)}
                           className='hidden'
-                          required
                         />
                         <div className='flex items-center'>
                           {(watch(doc.field as keyof IDocumentVerification)?.name ||
@@ -228,7 +228,11 @@ const DocumentVerification = () => {
                           )}
                         </div>
                       </InputWrapper>
-                      {/* <p className='text-xs mt-1 text-red-500 font-medium'>{errors[doc]?.message}</p> */}
+                      {errors[doc?.field as keyof IDocumentVerification] && (
+                        <p className='text-xs mt-1 text-red-500 font-medium'>
+                          {String(errors[doc.field as keyof IDocumentVerification]?.message)}
+                        </p>
+                      )}
                     </>
                   ))}
                 </div>
