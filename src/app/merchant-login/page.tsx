@@ -6,7 +6,7 @@ import React from 'react';
 const Page = async () => {
   const user = await getUser();
 
-  // Redirects to login page if user is not authenticated
+  // Redirects to home page if user is authenticated
   if (user) {
     redirect('/');
   }

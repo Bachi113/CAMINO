@@ -40,8 +40,7 @@ const MerchantLoginForm = () => {
     const response = await signInWithEmail(data.email);
 
     if (typeof response === 'string') {
-      errorToast(response);
-      return;
+      return errorToast(response);
     }
 
     setIsOtpSent(true);
