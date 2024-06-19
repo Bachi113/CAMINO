@@ -69,49 +69,47 @@ const MerchantLoginForm = () => {
       </Button>
       <div className='w-full flex flex-col items-center mt-12'>
         <div className='m-4 md:m-0 md:min-w-[350px]'>
-          <div className='w-full'>
-            <div className='flex flex-col items-center justify-center gap-5 mb-10'>
-              <Logo />
-              <div className='space-y-2 text-center'>
-                <p className='text-2xl font-semibold leading-7 text-default'>
-                  {isOtpSent ? 'Welcome to SaveX' : 'Welcome Back'}
-                </p>
-                <p className='text-sm text-subtle font-medium'>
-                  {isOtpSent ? (
-                    <span>
-                      We have sent a magic link to <br /> <span className='font-semibold'> {email}</span>
-                    </span>
-                  ) : (
-                    'Please enter your below details to login'
-                  )}
-                </p>
-              </div>
+          <div className='flex flex-col items-center justify-center gap-5 mb-10'>
+            <Logo />
+            <div className='space-y-2 text-center'>
+              <p className='text-2xl font-semibold leading-7 text-default'>
+                {isOtpSent ? 'Welcome to SaveX' : 'Welcome Back'}
+              </p>
+              <p className='text-sm text-subtle font-medium'>
+                {isOtpSent ? (
+                  <span>
+                    We have sent a magic link to <br /> <span className='font-semibold'> {email}</span>
+                  </span>
+                ) : (
+                  'Please enter your below details to login'
+                )}
+              </p>
             </div>
-            {isOtpSent ? (
-              <Link href='https://mail.google.com/'>
-                <SubmitButton disabled={!isValid || isSubmitting}>Go To mail</SubmitButton>
-              </Link>
-            ) : (
-              <div className='space-y-6'>
-                <GoogleAuth />
-                <form onSubmit={handleSubmit(handleFormAction)} className='space-y-7'>
-                  <InputWrapper label='Email address' required error={errors.email?.message}>
-                    <Input
-                      type='email'
-                      id='email'
-                      placeholder='Email address'
-                      className='h-11 bg-secondary mt-2'
-                      {...register('email')}
-                    />
-                  </InputWrapper>
-
-                  <SubmitButton disabled={!isValid || isSubmitting}>
-                    {isSubmitting ? 'Loading...' : 'Continue'}
-                  </SubmitButton>
-                </form>
-              </div>
-            )}
           </div>
+          {isOtpSent ? (
+            <Link href='https://mail.google.com/'>
+              <SubmitButton>Go To mail</SubmitButton>
+            </Link>
+          ) : (
+            <div className='space-y-6'>
+              <GoogleAuth />
+              <form onSubmit={handleSubmit(handleFormAction)} className='space-y-7'>
+                <InputWrapper label='Email address' required error={errors.email?.message}>
+                  <Input
+                    type='email'
+                    id='email'
+                    placeholder='Email address'
+                    className='h-11 bg-secondary mt-2'
+                    {...register('email')}
+                  />
+                </InputWrapper>
+
+                <SubmitButton disabled={!isValid || isSubmitting}>
+                  {isSubmitting ? 'Loading...' : 'Continue'}
+                </SubmitButton>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </div>
