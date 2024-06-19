@@ -99,10 +99,15 @@ module.exports = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'fade-in-left': {
+          from: { opacity: '0', transform: 'translateX(5rem)' },
+          to: { opacity: '1', transform: 'translateX(0rem)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in-left': 'fade-in-left 0.3s ease-out',
       },
     },
   },
