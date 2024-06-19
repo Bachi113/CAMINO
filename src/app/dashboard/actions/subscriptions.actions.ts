@@ -14,7 +14,15 @@ export async function createSubscription() {
       {
         items: [
           {
-            price: 'price_1PTRpMSJAHz9RUEICqFxq8Vs', // price id
+            // price_data: {
+            //   product: '', // product id
+            //   currency: '',
+            //   recurring: {
+            //     interval: 'month',
+            //   },
+            //   unit_amount_decimal: '1000.00',
+            // },
+            price: '', // price id
             quantity: 1,
           },
         ],
