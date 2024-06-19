@@ -5,7 +5,7 @@ import { supabaseServerClient } from '@/utils/supabase/server';
 
 const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_NAME!;
 
-export async function uploadDocument(files: FormData): Promise<string> {
+export async function uploadDocument(files: FormData) {
   try {
     const supabase = await supabaseServerClient();
 
@@ -23,20 +23,24 @@ export async function uploadDocument(files: FormData): Promise<string> {
       throw new Error('Please login to get started.');
     }
 
-    // Create a unique key for the document file.
-    const key = `${Date.now()}-${file.name}`;
+    const key = `${user.id}-${file.name}`;
 
     // Upload the document file to the Supabase storage bucket.
-    const { error } = await supabase.storage.from(bucketName).upload(key, file);
+    const { data, error } = await supabase.storage.from(bucketName).upload(key, file, {
+      upsert: true,
+    });
 
     if (error) {
       throw new Error(error.message);
     }
 
-    // Get the public URL of the uploaded document file.
-    const { data } = await supabase.storage.from(bucketName).getPublicUrl(key);
+    return { path: data.path };
 
-    return data.publicUrl;
+    // TODO: Implement the following code to get the public URL of the uploaded document file.
+    // // Get the public URL of the uploaded document file.
+    // const { data } = await supabase.storage.from(bucketName).getPublicUrl(key);
+
+    // return data.publicUrl;
   } catch (error: any) {
     console.error('Error uploading file:', error);
     return `Error: ${error.message}`;

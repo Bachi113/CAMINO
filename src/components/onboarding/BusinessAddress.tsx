@@ -65,7 +65,6 @@ const BusinessAddress = () => {
       router.push('/onboarding/bank-account-details');
     } catch (error: any) {
       errorToast(error || 'An unknown error occurred.');
-    } finally {
       setLoading(false);
     }
   };

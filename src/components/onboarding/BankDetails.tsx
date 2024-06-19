@@ -104,9 +104,7 @@ const BankDetails = () => {
 
       router.push('/onboarding/document-verification');
     } catch (error: any) {
-      console.error('Error during form submission:', error);
       errorToast(error || 'An unknown error occurred.');
-    } finally {
       setLoading(false);
     }
   };

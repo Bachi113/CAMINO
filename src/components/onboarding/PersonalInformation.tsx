@@ -70,7 +70,6 @@ const PersonalInformation = () => {
       router.push('/onboarding/business-details');
     } catch (error: any) {
       errorToast(error.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -99,29 +98,28 @@ const PersonalInformation = () => {
                     />
                   </InputWrapper>
                 ))}
-                {!loading && (
-                  <InputWrapper error={errors.terms?.message}>
-                    <div className='flex items-center space-x-2'>
-                      <Checkbox
-                        id='terms'
-                        onCheckedChange={(checked) => setValue('terms', checked as boolean)}
-                        {...register('terms')}
-                        disabled={loading}
-                        defaultChecked={!!data}
-                      />
-                      <label htmlFor='terms' className='text-sm font-medium space-x-1'>
-                        <span>I agree to</span>
-                        <Link href='' className='text-primary'>
-                          Camino Terms
-                        </Link>
-                        <span>&</span>
-                        <Link href='' className='text-primary'>
-                          Privacy Policy
-                        </Link>
-                      </label>
-                    </div>
-                  </InputWrapper>
-                )}
+
+                <InputWrapper error={errors.terms?.message}>
+                  <div className='flex items-center space-x-2'>
+                    <Checkbox
+                      id='terms'
+                      onCheckedChange={(checked) => setValue('terms', checked as boolean)}
+                      {...register('terms')}
+                      disabled={loading}
+                      defaultChecked={!!data}
+                    />
+                    <label htmlFor='terms' className='text-sm font-medium space-x-1'>
+                      <span>I agree to</span>
+                      <Link href='' className='text-primary'>
+                        Camino Terms
+                      </Link>
+                      <span>&</span>
+                      <Link href='' className='text-primary'>
+                        Privacy Policy
+                      </Link>
+                    </label>
+                  </div>
+                </InputWrapper>
               </div>
 
               <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
