@@ -2,12 +2,13 @@
 // It sequentially renders the primary sections of the landing page including Hero, Features, Product, Pricing, Faq, and Footer components.
 
 import ButtonSignout from '@/components/auth/ButtonSignout';
-import { Button } from '@/components/ui/button';
+import OnboradingChecker from '@/components/onboarding/OnboradingChecker';
 import { getUser } from '@/utils/get-user';
 import Link from 'next/link';
 
 export default async function Home() {
   const user = await getUser();
+
   return (
     <div>
       <p>SaveX/Camino</p>
@@ -21,12 +22,11 @@ export default async function Home() {
           </Link>
         </p>
       )}
-      {user && <ButtonSignout />}
       {user && (
-        <Link href='onboarding/personal-information'>
-          {' '}
-          <Button>Go to onboarding</Button>
-        </Link>
+        <>
+          <ButtonSignout />
+          <OnboradingChecker />
+        </>
       )}
     </div>
   );

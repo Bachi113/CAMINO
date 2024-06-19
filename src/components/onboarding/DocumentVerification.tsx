@@ -76,12 +76,14 @@ const DocumentVerification = () => {
 
   useEffect(() => {
     if (data) {
+      setValue('vatNumber', data.vat_number);
+      setValue('experience', data.experience);
       const documentsArray = data.document_urls as string[];
       const documentsLength = documentsArray?.length || 0;
 
       documentsArray?.forEach((fileUrl, index) => {
         if (index < documentsLength) {
-          const fileName = extractFileNameFromUrl(fileUrl);
+          const fileName = extractFileNameFromUrl(fileUrl, data.user_id);
           setValue(`document${index + 1}` as keyof IDocumentVerification, { url: fileUrl, name: fileName });
         }
       });
@@ -89,7 +91,7 @@ const DocumentVerification = () => {
   }, [setValue, data]);
 
   const removeFile = (fieldName: keyof IDocumentVerification) => {
-    setValue(fieldName, null);
+    setValue(fieldName, {});
   };
 
   const openSummaryModal = () => {
@@ -105,8 +107,6 @@ const DocumentVerification = () => {
           if (value?.url) {
             return value.url;
           } else if (value?.[0]) {
-            console.log(value[0]);
-
             const files = new FormData();
             files.append(field, value[0]);
             const response = await uploadDocument(files);
@@ -115,7 +115,6 @@ const DocumentVerification = () => {
             }
             return response.path;
           } else {
-            console.log('error');
             throw new Error(`${field} is required`);
           }
         })
@@ -139,6 +138,7 @@ const DocumentVerification = () => {
       openSummaryModal();
     } catch (error: any) {
       errorToast(error.message || 'An unknown error occurred.');
+    } finally {
       setLoading(false);
     }
   };

@@ -35,14 +35,22 @@ export async function uploadDocument(files: FormData) {
     }
 
     return { path: data.path };
-
-    // TODO: Implement the following code to get the public URL of the uploaded document file.
-    // // Get the public URL of the uploaded document file.
-    // const { data } = await supabase.storage.from(bucketName).getPublicUrl(key);
-
-    // return data.publicUrl;
   } catch (error: any) {
     console.error('Error uploading file:', error);
+    return `Error: ${error.message}`;
+  }
+}
+
+export async function getDocumentUrl(key: string) {
+  try {
+    const supabase = await supabaseServerClient();
+
+    // Get the public URL of the uploaded document file.
+    const { data } = await supabase.storage.from(bucketName).getPublicUrl(key);
+
+    return data.publicUrl;
+  } catch (error: any) {
+    console.error('Error getting document URL:', error);
     return `Error: ${error.message}`;
   }
 }

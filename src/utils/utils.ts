@@ -11,11 +11,10 @@ export function cn(...inputs: ClassValue[]) {
 export const errorToast = (description: string, title?: string) =>
   toast({ title, description, variant: 'destructive' });
 
-export const extractFileNameFromUrl = (url: string) => {
+export const extractFileNameFromUrl = (url: string, userId: string) => {
   const decodedUrl = decodeURIComponent(url);
   const parts = decodedUrl.split('/');
-  const fileNameWithTimestamp = parts[parts.length - 1];
-  const fileNameParts = fileNameWithTimestamp.split('-');
-  const fileName = fileNameParts.slice(1).join('-');
+  const fileNameWithUserId = parts[parts.length - 1];
+  const fileName = fileNameWithUserId.replace(`${userId}-`, '');
   return fileName;
 };
