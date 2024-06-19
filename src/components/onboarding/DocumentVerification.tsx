@@ -142,6 +142,21 @@ const DocumentVerification = () => {
     setValue(fieldName, null);
   };
 
+  const handleShowSummary = () => {
+    if (
+      !data ||
+      !watch('document1') ||
+      !watch('document2') ||
+      !watch('document3') ||
+      !watch('document4') ||
+      !watch('vatNumber') ||
+      !watch('experience')
+    ) {
+      return errorToast('Please fill all the required fields to view summary', 'Fill Required Fields');
+    }
+    setShowModal(true);
+  };
+
   return (
     <>
       <NavigationButton showNext={!!data} />
@@ -236,7 +251,7 @@ const DocumentVerification = () => {
               </div>
               <div className='flex gap-2'>
                 <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
-                <Button size={'xl'} type='button' onClick={() => setShowModal(true)}>
+                <Button size={'xl'} type='button' onClick={handleShowSummary}>
                   Show Summary
                 </Button>
               </div>

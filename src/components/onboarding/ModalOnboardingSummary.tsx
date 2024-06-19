@@ -45,32 +45,35 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
   const sections = summaryFileds(data);
 
   useEffect(() => {
+    if (!isOpen) return;
+
     const observerOptions = {
       root: null,
       rootMargin: '10px',
       threshold: 0.7,
     };
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.map((entry) => {
-        if (entry.isIntersecting) {
-          const sectionId = entry.target.id;
+    setTimeout(() => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const sectionId = entry.target.id;
+            setSelectedItem(sectionId);
+          }
+        });
+      }, observerOptions);
 
-          setSelectedItem(sectionId);
+      Object.values(sectionRefs.current).forEach((sectionRef) => {
+        if (sectionRef) {
+          observer.observe(sectionRef);
         }
       });
-    }, observerOptions);
 
-    Object.values(sectionRefs.current).map((sectionRef) => {
-      if (sectionRef) {
-        observer.observe(sectionRef);
-      }
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [sections, sectionRefs]);
+      return () => {
+        observer.disconnect();
+      };
+    }, 100);
+  }, [sections, isOpen]);
 
   const handleRouteChange = (id: string) => {
     if (id === 'document-verification') return handleModalOpen();
