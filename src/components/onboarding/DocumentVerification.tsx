@@ -76,6 +76,7 @@ const DocumentVerification = () => {
 
   useEffect(() => {
     if (data) {
+      console.log(data);
       setValue('vatNumber', data.vat_number);
       setValue('experience', data.experience);
       const documentsArray = data.document_urls as string[];
@@ -209,7 +210,7 @@ const DocumentVerification = () => {
                         )}
                         {(uploadedFileName || rawFileName) && (
                           <>
-                            <div className='line-clamp-1 max-w-28'>{uploadedFileName || rawFileName}</div>
+                            <div className='truncate max-w-28 text-sm'>{uploadedFileName || rawFileName}</div>
                             <Button
                               size='icon'
                               variant='outline'

@@ -61,7 +61,6 @@ const BusinessDetail = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: ['getBusinessDetail'] });
-
       router.push('/onboarding/business-address');
     } catch (error: any) {
       errorToast(error || 'An unknown error occurred.');

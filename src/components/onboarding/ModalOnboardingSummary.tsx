@@ -76,8 +76,9 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
   }, [sections, isOpen]);
 
   const handleRouteChange = (id: string) => {
-    if (id === 'document-verification') return handleModalOpen();
-
+    if (id === 'document-verification') {
+      return handleModalOpen();
+    }
     router.push(`/onboarding/${id}`);
   };
 

@@ -59,7 +59,6 @@ type TableName =
   | 'personal_informations'
   | 'business_details'
   | 'business_addresses'
-  | 'business_informations'
   | 'bank_details'
   | 'business_addresses'
   | 'documents';
@@ -68,8 +67,8 @@ export async function saveData(data: string, tableName: TableName) {
   try {
     const supabase = await supabaseServerClient();
     const dataToSave = JSON.parse(data);
-    const user = await getUser();
 
+    const user = await getUser();
     if (!user) {
       throw new Error('You need to be logged in.');
     }
@@ -83,26 +82,18 @@ export async function saveData(data: string, tableName: TableName) {
       .select('id')
       .single();
 
-    if (error) throw error;
-
-    const onboardingData = {
-      user_id: user.id,
-      [tableName]: insert_data.id,
-    };
-
-    let onboardingError;
-
-    if (tableName === 'personal_informations') {
-      ({ error: onboardingError } = await supabase.from('onboarding').insert(onboardingData));
-    } else {
-      ({ error: onboardingError } = await supabase
-        .from('onboarding')
-        .update(onboardingData)
-        .eq('user_id', user.id)); // Add the WHERE clause
+    if (error) {
+      throw error;
     }
 
-    if (onboardingError) throw onboardingError;
-    return null; // Indicate success
+    const { error: onboardingError } = await supabase
+      .from('onboarding')
+      .update({ [tableName]: insert_data.id })
+      .eq('user_id', user.id);
+
+    if (onboardingError) {
+      throw onboardingError;
+    }
   } catch (error: any) {
     console.error('Error saving data:', error);
     return { error: error.message || 'An error occurred while saving data.' };
@@ -113,8 +104,8 @@ export async function updateData(data: string, tableName: TableName) {
   try {
     const supabase = await supabaseServerClient();
     const dataToUpdate = JSON.parse(data);
-    const user = await getUser();
 
+    const user = await getUser();
     if (!user) {
       throw new Error('You need to be logged in.');
     }

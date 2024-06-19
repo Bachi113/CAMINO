@@ -101,7 +101,6 @@ const BankDetails = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: ['getBankDetails'] });
-
       router.push('/onboarding/document-verification');
     } catch (error: any) {
       errorToast(error || 'An unknown error occurred.');

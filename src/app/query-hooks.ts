@@ -51,23 +51,6 @@ const useGetBusinessAddress = () => {
   });
 };
 
-const useGetBusinessInformation = () => {
-  const supabase = supabaseBrowserClient();
-
-  return useQuery({
-    queryKey: ['getBusinessInformation'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('business_informations').select('*').single();
-
-      if (error) {
-        throw error;
-      }
-      return data;
-    },
-    staleTime: 1000 * 60,
-  });
-};
-
 const useGetBankDetails = () => {
   const supabase = supabaseBrowserClient();
 
@@ -111,7 +94,7 @@ const useGetOnboardingData = () => {
       const { data, error } = await supabase
         .from('onboarding')
         .select(
-          `*,
+          `id,
           personal_informations (*),
           business_details (*),
           business_addresses (*),
@@ -135,7 +118,6 @@ export {
   useGetPersonalInfo,
   useGetBuinessDetail,
   useGetBusinessAddress,
-  useGetBusinessInformation,
   useGetBankDetails,
   useGetVerificationDocuments,
   useGetOnboardingData,

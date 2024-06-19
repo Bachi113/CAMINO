@@ -7,7 +7,7 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // refetchOnMount: false,
-      retry: 2,
+      retry: 1,
     },
   },
 });
