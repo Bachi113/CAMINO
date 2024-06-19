@@ -16,6 +16,8 @@ import { Separator } from '@/components/ui/separator';
 import { useGetOnboardingData } from '@/app/query-hooks';
 import { onboardingData } from '@/app/onboarding/[onboarding]/page';
 import { summaryFileds } from '@/utils/form-fields';
+import { BiEdit } from 'react-icons/bi';
+import { useRouter } from 'next/navigation';
 
 type ModalOnboardingSummaryProps = {
   isOpen: boolean;
@@ -27,6 +29,7 @@ const { sections: sidebarItems } = onboardingData;
 const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handleModalOpen }) => {
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const router = useRouter();
 
   const { data, isLoading } = useGetOnboardingData();
 
@@ -44,14 +47,15 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: '0px',
-      threshold: 0.5,
+      rootMargin: '10px',
+      threshold: 0.7,
     };
 
     const observer = new IntersectionObserver((entries) => {
       entries.map((entry) => {
         if (entry.isIntersecting) {
           const sectionId = entry.target.id;
+
           setSelectedItem(sectionId);
         }
       });
@@ -66,7 +70,13 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
     return () => {
       observer.disconnect();
     };
-  }, [sections]);
+  }, [sections, sectionRefs]);
+
+  const handleRouteChange = (id: string) => {
+    if (id === 'document-verification') return handleModalOpen();
+
+    router.push(`/onboarding/${id}`);
+  };
 
   return (
     <Dialog open={isOpen}>
@@ -81,7 +91,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
               <div
                 key={item.id}
                 className={cn(
-                  'flex items-center text-sm gap-4 px-4 py-2 text-default font-medium leading-6 cursor-pointer rounded-lg',
+                  'flex justify-between items-center text-sm gap-4 px-4 py-2 text-default font-medium leading-6 cursor-pointer rounded-lg',
                   { 'bg-primary/10 text-primary font-semibold': selectedItem === item.id }
                 )}
                 onClick={() => {
@@ -89,6 +99,9 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
                   setSelectedItem(item.id);
                 }}>
                 <p>{item.label}</p>
+                <span onClick={() => handleRouteChange(item.id)}>
+                  <BiEdit />
+                </span>
               </div>
             ))}
           </div>
@@ -119,7 +132,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
         <DialogFooter>
           <div className='flex gap-4 w-full'>
             <DialogClose asChild>
-              <Button variant='outline' className='w-full' onClick={handleModalOpen}>
+              <Button variant='outline' size={'lg'} className='w-full' onClick={handleModalOpen}>
                 Cancel
               </Button>
             </DialogClose>

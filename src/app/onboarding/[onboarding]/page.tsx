@@ -64,7 +64,7 @@ export default async function OnBoarding({ params }: TypeParams) {
               const activeIndex = sections.findIndex((sec) => sec.id === activeStep);
               const isActive = index <= activeIndex;
               return (
-                <div key={index} className='p-2 flex items-center gap-4'>
+                <div key={section.id} className='p-2 flex items-center gap-4'>
                   <FaCheck
                     className={cn(
                       isActive ? 'bg-primary' : 'bg-slate-400',

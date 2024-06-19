@@ -47,7 +47,9 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className='w-full'>Submit Form</Button>
+        <Button className='w-full' size={'lg'}>
+          Submit Form
+        </Button>
       </DialogTrigger>
       <DialogContent>
         {submitConfirmation && (

@@ -93,7 +93,7 @@ const DocumentVerification = () => {
         });
       }
     }
-  }, [setValue, documentsToUpload, data]);
+  }, [setValue, data]);
 
   const handleFormSubmit = async (formData: IDocumentVerification) => {
     setLoading(true);
@@ -188,59 +188,58 @@ const DocumentVerification = () => {
                 <div className='space-y-2'>
                   <label className='text-sm leading-none mb-2'>Upload the business documents</label>
                   {documentsToUpload.map((doc, index) => (
-                    <>
-                      <InputWrapper
-                        key={index}
-                        label={`Document Verification ${index + 1}`}
-                        className='flex justify-between items-center w-full'
-                        required>
-                        <Input
-                          type='file'
-                          id={doc.field}
-                          {...register(doc.field as keyof IDocumentVerification)}
-                          className='hidden'
-                        />
-                        <div className='flex items-center'>
-                          {(watch(doc.field as keyof IDocumentVerification)?.name ||
-                            watch(doc.field as keyof IDocumentVerification)?.[0]?.name) && (
-                            <div className='mr-2 line-clamp-1 max-w-28'>
-                              {watch(doc.field as keyof IDocumentVerification).name ||
-                                watch(doc.field as keyof IDocumentVerification)?.[0]?.name}
-                            </div>
+                    <InputWrapper
+                      key={doc.field}
+                      label={`Document Verification ${index + 1}`}
+                      className='flex justify-between items-center w-full'
+                      required
+                      error={
+                        errors[doc.field as keyof IDocumentVerification] &&
+                        String(errors[doc.field as keyof IDocumentVerification]?.message)
+                      }>
+                      <Input
+                        type='file'
+                        id={doc.field}
+                        {...register(doc.field as keyof IDocumentVerification)}
+                        className='hidden'
+                      />
+                      <div className='flex items-center'>
+                        {(watch(doc.field as keyof IDocumentVerification)?.name ||
+                          watch(doc.field as keyof IDocumentVerification)?.[0]?.name) && (
+                          <div className='mr-2 line-clamp-1 max-w-28'>
+                            {watch(doc.field as keyof IDocumentVerification).name ||
+                              watch(doc.field as keyof IDocumentVerification)?.[0]?.name}
+                          </div>
+                        )}
+                        {!watch(doc.field as keyof IDocumentVerification)?.url &&
+                          !watch(doc.field as keyof IDocumentVerification)?.[0]?.name && (
+                            <label
+                              htmlFor={doc.field}
+                              className={cn(buttonVariants({ variant: 'outline' }), 'gap-1 cursor-pointer')}>
+                              <LuUploadCloud /> Upload
+                            </label>
                           )}
-                          {!watch(doc.field as keyof IDocumentVerification)?.url &&
-                            !watch(doc.field as keyof IDocumentVerification)?.[0]?.name && (
-                              <label
-                                htmlFor={doc.field}
-                                className={cn(
-                                  buttonVariants({ variant: 'outline' }),
-                                  'gap-1 cursor-pointer'
-                                )}>
-                                <LuUploadCloud /> Upload
-                              </label>
-                            )}
-                          {(watch(doc.field as keyof IDocumentVerification)?.name ||
-                            watch(doc.field as keyof IDocumentVerification)?.[0]?.name) && (
-                            <Button
-                              size='icon'
-                              variant='outline'
-                              className='text-destructive'
-                              onClick={() => removeFile(doc.field as keyof IDocumentVerification)}>
-                              <FaRegTrashAlt />
-                            </Button>
-                          )}
-                        </div>
-                      </InputWrapper>
-                      {errors[doc?.field as keyof IDocumentVerification] && (
-                        <p className='text-xs mt-1 text-red-500 font-medium'>
-                          {String(errors[doc.field as keyof IDocumentVerification]?.message)}
-                        </p>
-                      )}
-                    </>
+                        {(watch(doc.field as keyof IDocumentVerification)?.name ||
+                          watch(doc.field as keyof IDocumentVerification)?.[0]?.name) && (
+                          <Button
+                            size='icon'
+                            variant='outline'
+                            className='text-destructive'
+                            onClick={() => removeFile(doc.field as keyof IDocumentVerification)}>
+                            <FaRegTrashAlt />
+                          </Button>
+                        )}
+                      </div>
+                    </InputWrapper>
                   ))}
                 </div>
               </div>
-              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+              <div className='flex gap-2'>
+                <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+                <Button size={'xl'} type='button' onClick={() => setShowModal(true)}>
+                  Show Summary
+                </Button>
+              </div>
             </div>
           </form>
         </div>
