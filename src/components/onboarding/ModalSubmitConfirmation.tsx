@@ -12,14 +12,44 @@ import {
 import { Button } from '@/components/ui/button';
 import { FaCheck } from 'react-icons/fa6';
 import Link from 'next/link';
+import { errorToast } from '@/utils/utils';
+import { supabaseBrowserClient } from '@/utils/supabase/client';
 
-const ModalSubmitConfirmation = () => {
+interface ModalSubmitConfirmationProps {
+  onBoardingId?: string;
+}
+const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps) => {
   const [submitConfirmation, setSubmitConfirmation] = useState(false);
+
+  const handleSubmit = async () => {
+    try {
+      const supabase = supabaseBrowserClient();
+
+      if (!onBoardingId) {
+        throw new Error('You need to be logged in.');
+      }
+
+      const { error } = await supabase
+        .from('onboarding')
+        .update({ onboarded_at: new Date().toISOString() })
+        .eq('id', onBoardingId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      setSubmitConfirmation(true);
+    } catch (error: any) {
+      errorToast(error.message);
+    }
+  };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className='w-full'>Submit Form</Button>
+        <Button className='w-full' size={'lg'}>
+          Submit Form
+        </Button>
       </DialogTrigger>
       <DialogContent>
         {submitConfirmation && (
@@ -47,7 +77,7 @@ const ModalSubmitConfirmation = () => {
                 </Link>
               </div>
             ) : (
-              <Button onClick={() => setSubmitConfirmation(true)} className='w-full'>
+              <Button onClick={handleSubmit} className='w-full'>
                 Submit and Continue
               </Button>
             )}

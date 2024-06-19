@@ -6,7 +6,7 @@ import { FC } from 'react';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { FiLogOut } from 'react-icons/fi';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 
 interface ButtonSignoutProps {
   className?: string;

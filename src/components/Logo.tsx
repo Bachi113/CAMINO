@@ -8,7 +8,7 @@ export default function Logo() {
   return (
     <Link href='/'>
       <div className='w-fit'>
-        <Image src='/logo.png' width={154} height={72} alt='logo' />
+        <Image src='/logo.png' width={164} height={72} alt='logo' />
       </div>
     </Link>
   );

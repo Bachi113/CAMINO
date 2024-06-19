@@ -22,11 +22,13 @@ export default async function Home() {
           </Link>
         </p>
       )}
-      {user && <ButtonSignout />}
       {user && (
-        <Link href='onboarding/personal_information'>
-          <Button>Go to onboarding</Button>
-        </Link>
+        <>
+          <ButtonSignout />
+          <Link href='/onboarding'>
+            <Button>Go to onboarding</Button>
+          </Link>
+        </>
       )}
     </div>
   );
