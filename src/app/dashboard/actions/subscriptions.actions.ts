@@ -2,9 +2,9 @@
 
 import stripe from '@/utils/stripe';
 
-async function getOrCreateCustomer() {}
+export async function getOrCreateCustomer() {}
 
-async function createSubscription() {
+export async function createSubscription() {
   const subscriptionSchedule = await stripe.subscriptionSchedules.create({
     customer: 'cus_Q6xx9eFd7O1evm',
     metadata: {
@@ -14,7 +14,7 @@ async function createSubscription() {
       {
         items: [
           {
-            price: 'price_1OCidWSJAHz9RUEIuDx9wHDQ',
+            price: 'price_1PTRpMSJAHz9RUEICqFxq8Vs', // price id
             quantity: 1,
           },
         ],
@@ -27,5 +27,3 @@ async function createSubscription() {
 
   console.log(subscriptionSchedule);
 }
-
-export { createSubscription, getOrCreateCustomer };

@@ -44,7 +44,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
   return (
     <div className={cn('w-full relative text-default font-medium', className)}>
       <div>
-        <label htmlFor={id} className='flex items-end gap-1 mb-1'>
+        <label htmlFor={id} className='flex items-end gap-1 mb-2'>
           {/* Displays extra options, aligning them with the label. Mostly Icons to be shown before the Label. */}
           {extraOption && <div className='w-4'>{extraOption}</div>}
           <div className='flex items-end gap-1 w-full'>
