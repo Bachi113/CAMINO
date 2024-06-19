@@ -126,45 +126,42 @@ export type Database = {
           },
         ];
       };
-      business_informations: {
+      customers: {
         Row: {
-          courier_company: boolean;
+          address: string | null;
           created_at: string;
+          customer_name: string | null;
+          email: string;
           id: string;
-          inside_uk: boolean;
-          online_service: boolean;
-          other: string | null;
-          outside_uk: boolean;
-          self_delivery: boolean;
-          user_id: string;
+          phone: string | null;
+          stripe_id: string | null;
+          user_id: string | null;
         };
         Insert: {
-          courier_company: boolean;
+          address?: string | null;
           created_at?: string;
+          customer_name?: string | null;
+          email: string;
           id?: string;
-          inside_uk: boolean;
-          online_service: boolean;
-          other?: string | null;
-          outside_uk: boolean;
-          self_delivery: boolean;
-          user_id: string;
+          phone?: string | null;
+          stripe_id?: string | null;
+          user_id?: string | null;
         };
         Update: {
-          courier_company?: boolean;
+          address?: string | null;
           created_at?: string;
+          customer_name?: string | null;
+          email?: string;
           id?: string;
-          inside_uk?: boolean;
-          online_service?: boolean;
-          other?: string | null;
-          outside_uk?: boolean;
-          self_delivery?: boolean;
-          user_id?: string;
+          phone?: string | null;
+          stripe_id?: string | null;
+          user_id?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: 'business_informations_user_id_fkey';
+            foreignKeyName: 'customers_user_id_fkey';
             columns: ['user_id'];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: 'users';
             referencedColumns: ['id'];
           },
@@ -210,10 +207,9 @@ export type Database = {
           bank_details: string | null;
           business_addresses: string | null;
           business_details: string | null;
-          business_informations: string | null;
           documents: string | null;
           id: string;
-          onboarded_at: string;
+          onboarded_at: string | null;
           personal_informations: string | null;
           user_id: string;
         };
@@ -221,10 +217,9 @@ export type Database = {
           bank_details?: string | null;
           business_addresses?: string | null;
           business_details?: string | null;
-          business_informations?: string | null;
           documents?: string | null;
           id?: string;
-          onboarded_at?: string;
+          onboarded_at?: string | null;
           personal_informations?: string | null;
           user_id: string;
         };
@@ -232,10 +227,9 @@ export type Database = {
           bank_details?: string | null;
           business_addresses?: string | null;
           business_details?: string | null;
-          business_informations?: string | null;
           documents?: string | null;
           id?: string;
-          onboarded_at?: string;
+          onboarded_at?: string | null;
           personal_informations?: string | null;
           user_id?: string;
         };
@@ -259,13 +253,6 @@ export type Database = {
             columns: ['business_details'];
             isOneToOne: false;
             referencedRelation: 'business_details';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'onboarding_business_informations_fkey';
-            columns: ['business_informations'];
-            isOneToOne: false;
-            referencedRelation: 'business_informations';
             referencedColumns: ['id'];
           },
           {
@@ -329,33 +316,51 @@ export type Database = {
           },
         ];
       };
-      users: {
+      products: {
         Row: {
-          avatar_url: string | null;
+          category: string | null;
           created_at: string;
-          email: string;
-          full_name: string | null;
+          currency: string;
           id: string;
+          price: string;
+          product_name: string;
+          remarks: string | null;
+          status: string;
+          stripe_id: string;
+          stripe_price_id: string;
+          user_id: string;
         };
         Insert: {
-          avatar_url?: string | null;
+          category?: string | null;
           created_at?: string;
-          email: string;
-          full_name?: string | null;
-          id: string;
+          currency: string;
+          id?: string;
+          price: string;
+          product_name: string;
+          remarks?: string | null;
+          status?: string;
+          stripe_id: string;
+          stripe_price_id: string;
+          user_id: string;
         };
         Update: {
-          avatar_url?: string | null;
+          category?: string | null;
           created_at?: string;
-          email?: string;
-          full_name?: string | null;
+          currency?: string;
           id?: string;
+          price?: string;
+          product_name?: string;
+          remarks?: string | null;
+          status?: string;
+          stripe_id?: string;
+          stripe_price_id?: string;
+          user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'users_id_fkey';
-            columns: ['id'];
-            isOneToOne: true;
+            foreignKeyName: 'products_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
             referencedRelation: 'users';
             referencedColumns: ['id'];
           },
@@ -366,7 +371,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      gen_unique_id: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
+      };
     };
     Enums: {
       [_ in never]: never;

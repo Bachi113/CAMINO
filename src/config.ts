@@ -20,8 +20,8 @@ const config = {
 
   // STRIPE: payment configuration similar in structure to Lemon Squeezy for processing payments.
   stripe: {
-    // Base URL for Stripe checkout sessions.
-    baseUrl: 'https://buy.stripe.com',
+    // Base URL for Stripe.
+    baseUrl: 'https://api.stripe.com',
   },
 };
 

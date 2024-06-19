@@ -10,7 +10,7 @@ export default async function Home() {
   const user = await getUser();
 
   return (
-    <div>
+    <div className='max-w-6xl mx-auto p-4'>
       <p>SaveX/Camino</p>
       {user ? (
         <p>Welcome back, {user.email}</p>
