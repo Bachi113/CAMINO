@@ -1,9 +1,9 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
-
 import Logo from '../Logo';
 import Link from 'next/link';
 
@@ -28,6 +28,7 @@ const ErrorCard = () => {
       }
     }
   }, []);
+
   return (
     <div className='h-screen flex flex-col bg-light-gray'>
       <Button

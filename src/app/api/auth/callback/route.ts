@@ -26,16 +26,16 @@ export async function GET(request: Request) {
     }
 
     if (error) {
-      throw new Error(error.message);
+      throw error.message;
     }
 
     // URL to redirect to after the authentication process completes
-    return NextResponse.redirect(`${origin}`);
+    return NextResponse.redirect(origin);
   } catch (error: any) {
-    console.error('Error during authentication:', error);
+    console.error(error);
 
     // Set cookie with error message and redirect
-    const response = NextResponse.redirect(`${origin}/error`);
+    const response = NextResponse.redirect(`${origin}/login/error`);
     response.cookies.set('auth_error', error.message || 'An unexpected error occurred.', {
       path: '/',
       httpOnly: false,
