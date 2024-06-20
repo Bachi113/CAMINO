@@ -6,7 +6,6 @@
 
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 export default function GoogleAuth() {
   const supabase = supabaseBrowserClient();
@@ -23,18 +22,16 @@ export default function GoogleAuth() {
         providers={['google']}
         redirectTo={redirectUrl}
         appearance={{
-          theme: ThemeSupa,
+          extend: false,
+          className: {
+            button:
+              'w-full py-3 rounded-md bg-gray-100 flex items-center justify-center gap-2 font-medium text-slate-700',
+          },
+        }}
+        localization={{
           variables: {
-            default: {
-              colors: {
-                defaultButtonText: 'text-black',
-                defaultButtonBackground: '#F7F7F7',
-                defaultButtonBackgroundHover: '#F7F7F7',
-                defaultButtonBorder: '#F7F7F7',
-              },
-              radii: {
-                borderRadiusButton: '6px',
-              },
+            sign_in: {
+              social_provider_text: 'Login with google',
             },
           },
         }}
@@ -42,6 +39,3 @@ export default function GoogleAuth() {
     </div>
   );
 }
-
-// You can also implement rate limiting or add additional logging for authentication attempts.
-// This can help mitigate brute force attacks and provide insights into potential security threats.

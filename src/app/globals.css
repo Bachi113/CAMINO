@@ -44,6 +44,9 @@
 .bg-light-purple-gradient {
   background: linear-gradient(180deg, #fff 36.49%, rgb(240, 228, 255, 0.5) 99.98%), var(--Color-Grey-0, #fff);
 }
+.bg-light-gray {
+  background: linear-gradient(rgba(255, 255, 255, 1) rgba(247, 241, 255, 1));
+}
 
 ::-webkit-scrollbar {
   width: 10px;
