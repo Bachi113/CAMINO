@@ -1,9 +1,9 @@
-import dynamic from 'next/dynamic';
 import Logo from '@/components/Logo';
 import { cn } from '@/utils/utils';
 import { FaCheck } from 'react-icons/fa';
 import { MdOutlineEmail } from 'react-icons/md';
 import Link from 'next/link';
+import { onboardingData } from './routes';
 
 type Section = {
   title: string;
@@ -13,23 +13,6 @@ type Section = {
 
 type TypeParams = {
   params: { onboarding: string };
-};
-
-export const onboardingData = {
-  sections: [
-    { id: 'personal-information', label: 'Personal Information' },
-    { id: 'business-details', label: 'Basic Business Details' },
-    { id: 'business-address', label: 'Business Address' },
-    { id: 'bank-account-details', label: 'Bank Account Details' },
-    { id: 'document-verification', label: 'Document Verification' },
-  ],
-  componentMap: {
-    'personal-information': dynamic(() => import('@/components/onboarding/PersonalInformation')),
-    'business-details': dynamic(() => import('@/components/onboarding/BusinessDetail')),
-    'business-address': dynamic(() => import('@/components/onboarding/BusinessAddress')),
-    'bank-account-details': dynamic(() => import('@/components/onboarding/BankDetails')),
-    'document-verification': dynamic(() => import('@/components/onboarding/DocumentVerification')),
-  } as { [key: string]: any },
 };
 
 const sections: Section[] = onboardingData.sections.map((section) => ({
