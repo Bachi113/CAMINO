@@ -202,6 +202,52 @@ export type Database = {
           },
         ];
       };
+      merchants_customers: {
+        Row: {
+          created_at: string;
+          cust_user_id: string | null;
+          customer_id: string;
+          id: string;
+          merchant_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          cust_user_id?: string | null;
+          customer_id: string;
+          id?: string;
+          merchant_id: string;
+        };
+        Update: {
+          created_at?: string;
+          cust_user_id?: string | null;
+          customer_id?: string;
+          id?: string;
+          merchant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'merchants_customers_cust_user_id_fkey';
+            columns: ['cust_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'customers';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'merchants_customers_customer_id_fkey';
+            columns: ['customer_id'];
+            isOneToOne: false;
+            referencedRelation: 'customers';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'merchants_customers_merchant_id_fkey';
+            columns: ['merchant_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       onboarding: {
         Row: {
           bank_details: string | null;
@@ -211,6 +257,7 @@ export type Database = {
           id: string;
           onboarded_at: string | null;
           personal_informations: string | null;
+          stripe_product_id: string | null;
           user_id: string;
         };
         Insert: {
@@ -221,6 +268,7 @@ export type Database = {
           id?: string;
           onboarded_at?: string | null;
           personal_informations?: string | null;
+          stripe_product_id?: string | null;
           user_id: string;
         };
         Update: {
@@ -231,6 +279,7 @@ export type Database = {
           id?: string;
           onboarded_at?: string | null;
           personal_informations?: string | null;
+          stripe_product_id?: string | null;
           user_id?: string;
         };
         Relationships: [
@@ -326,8 +375,7 @@ export type Database = {
           product_name: string;
           remarks: string | null;
           status: string;
-          stripe_id: string;
-          stripe_price_id: string;
+          stripe_id: string | null;
           user_id: string;
         };
         Insert: {
@@ -339,8 +387,7 @@ export type Database = {
           product_name: string;
           remarks?: string | null;
           status?: string;
-          stripe_id: string;
-          stripe_price_id: string;
+          stripe_id?: string | null;
           user_id: string;
         };
         Update: {
@@ -352,8 +399,7 @@ export type Database = {
           product_name?: string;
           remarks?: string | null;
           status?: string;
-          stripe_id?: string;
-          stripe_price_id?: string;
+          stripe_id?: string | null;
           user_id?: string;
         };
         Relationships: [

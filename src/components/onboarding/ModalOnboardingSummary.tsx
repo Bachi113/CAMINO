@@ -33,15 +33,6 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
 
   const { data, isLoading } = useGetOnboardingData();
 
-  const renderFields = (inputs: { label: string; id: string; value: string }[]) => {
-    return inputs.map(({ label, id, value }) => (
-      <div key={id} className='text-sm font-medium'>
-        <p className='text-default'>{label}</p>
-        <p className='border px-4 py-3 rounded-md mt-1 text-slate-800'>{value}</p>
-      </div>
-    ));
-  };
-
   const sections = summaryFileds(data);
 
   useEffect(() => {
@@ -94,18 +85,13 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
             {sidebarItems.map((item) => (
               <div
                 key={item.id}
-                className={cn(
-                  'flex justify-between items-center text-sm gap-4 px-4 py-2 text-default font-medium leading-6 cursor-pointer rounded-lg',
-                  { 'bg-primary/10 text-primary font-semibold': selectedItem === item.id }
-                )}
-                onClick={() => {
-                  document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' });
-                  setSelectedItem(item.id);
-                }}>
+                className={cn('flex justify-between items-center text-sm px-4 py-1 font-medium rounded-lg', {
+                  'bg-primary/10 text-primary font-semibold': selectedItem === item.id,
+                })}>
                 <p>{item.label}</p>
-                <span onClick={() => handleRouteChange(item.id)}>
+                <Button size='icon' variant='ghost' onClick={() => handleRouteChange(item.id)}>
                   <BiEdit />
-                </span>
+                </Button>
               </div>
             ))}
           </div>
@@ -133,19 +119,26 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
             )}
           </div>
         </div>
-        <DialogFooter>
-          <div className='flex gap-4 w-full'>
-            <DialogClose asChild>
-              <Button variant='outline' size={'lg'} className='w-full' onClick={handleModalOpen}>
-                Cancel
-              </Button>
-            </DialogClose>
-            <ModalSubmitConfirmation onBoardingId={data?.id} />
-          </div>
+        <DialogFooter className='sm:space-x-4'>
+          <DialogClose asChild>
+            <Button variant='outline' size='lg' className='w-full' onClick={handleModalOpen}>
+              Cancel
+            </Button>
+          </DialogClose>
+          <ModalSubmitConfirmation onBoardingId={data?.id} />
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
+};
+
+const renderFields = (inputs: { label: string; id: string; value: string }[]) => {
+  return inputs.map(({ label, id, value }) => (
+    <div key={id} className='text-sm space-y-1'>
+      <p className='font-medium'>{label}</p>
+      <p className='border px-4 py-3 rounded-md opacity-70'>{value != '' ? value : '-'}</p>
+    </div>
+  ));
 };
 
 export default ModalOnboardingSummary;

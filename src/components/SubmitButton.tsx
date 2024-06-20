@@ -11,13 +11,14 @@ import { LuLoader } from 'react-icons/lu';
 type Props = ComponentProps<'button'> &
   ButtonProps & {
     isCircleLoader?: ReactNode;
+    isLoading?: boolean;
   };
 
-export function SubmitButton({ children, ...props }: Props) {
+export function SubmitButton({ children, isLoading, ...props }: Props) {
   const { pending, action } = useFormStatus();
 
   // Checks if the form is pending and the action matches the form action
-  const isPending = pending && action === props.formAction;
+  const isPending = isLoading || (pending && action === props.formAction);
 
   return (
     <Button {...props} type='submit' size='xl' aria-disabled={pending} disabled={isPending || props.disabled}>

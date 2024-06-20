@@ -14,6 +14,7 @@ import { FaCheck } from 'react-icons/fa6';
 import Link from 'next/link';
 import { errorToast } from '@/utils/utils';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
+import { createProduct } from '@/app/actions/stripe.actions';
 
 interface ModalSubmitConfirmationProps {
   onBoardingId?: string;
@@ -26,16 +27,23 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
       const supabase = supabaseBrowserClient();
 
       if (!onBoardingId) {
-        throw new Error('You need to be logged in.');
+        throw 'You need to be logged in.';
       }
 
+      // Create merchant product in stripe
+      const product = await createProduct();
+      if (product.error) {
+        throw `${product.error}`;
+      }
       const { error } = await supabase
         .from('onboarding')
-        .update({ onboarded_at: new Date().toISOString() })
+        .update({
+          onboarded_at: new Date().toISOString(),
+          stripe_product_id: product.id,
+        })
         .eq('id', onBoardingId);
-
       if (error) {
-        throw new Error(error.message);
+        throw error.message;
       }
 
       setSubmitConfirmation(true);
@@ -63,25 +71,24 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
             Please confirm that all details are correct before submitting.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
-          <div className='flex gap-4 w-full'>
-            <DialogClose asChild>
-              <Button variant='outline' className='w-full'>
-                Back
-              </Button>
-            </DialogClose>
-            {submitConfirmation ? (
-              <div className='w-full'>
-                <Link href='/'>
-                  <Button className='w-full'>Take me to home</Button>
-                </Link>
-              </div>
-            ) : (
-              <Button onClick={handleSubmit} className='w-full'>
-                Submit and Continue
-              </Button>
-            )}
-          </div>
+
+        <DialogFooter className='sm:space-x-4'>
+          <DialogClose asChild>
+            <Button variant='outline' className='w-full'>
+              Back
+            </Button>
+          </DialogClose>
+          {submitConfirmation ? (
+            <div className='w-full'>
+              <Link href='/'>
+                <Button className='w-full'>Take me to home</Button>
+              </Link>
+            </div>
+          ) : (
+            <Button onClick={handleSubmit} className='w-full'>
+              Submit and Continue
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

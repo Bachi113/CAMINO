@@ -12,7 +12,7 @@ import { IBusinessAddress, businessAddressSchema } from '@/types/validations';
 import { useGetBusinessAddress } from '@/app/query-hooks';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { businessAddressFields } from '@/utils/form-fields';
-import { saveData, updateData } from '@/app/onboarding/actions';
+import { saveData, updateData } from '@/app/actions/onboarding.actions';
 import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
@@ -94,7 +94,7 @@ const BusinessAddress = () => {
                   </InputWrapper>
                 ))}
               </div>
-              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+              <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>
         </div>

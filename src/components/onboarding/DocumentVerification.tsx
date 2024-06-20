@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { cn, errorToast, extractFileNameFromUrl } from '@/utils/utils';
-import { saveData, updateData, uploadDocument } from '@/app/onboarding/actions';
+import { saveData, updateData, uploadDocument } from '@/app/actions/onboarding.actions';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { LuUploadCloud } from 'react-icons/lu';
 import ModalOnboardingSummary from './ModalOnboardingSummary';
@@ -76,7 +76,6 @@ const DocumentVerification = () => {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       setValue('vatNumber', data.vat_number);
       setValue('experience', data.experience);
       const documentsArray = data.document_urls as string[];
@@ -169,10 +168,7 @@ const DocumentVerification = () => {
                 label='How long have you been involved in business'
                 required
                 error={errors.experience?.message}>
-                <Select
-                  {...register('experience')}
-                  onValueChange={(val) => setValue('experience', val)}
-                  value={watch('experience')}>
+                <Select onValueChange={(val) => setValue('experience', val)} value={watch('experience')}>
                   <SelectTrigger>
                     <SelectValue placeholder='Select Duration' />
                   </SelectTrigger>
@@ -226,7 +222,7 @@ const DocumentVerification = () => {
                 })}
               </div>
               <div className='flex gap-2'>
-                <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+                <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
                 {data && (
                   <Button size='xl' variant='outline' type='button' onClick={openSummaryModal}>
                     View Summary

@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { TypeCreateProduct, createProduct } from '@/app/dashboard/actions/products.actions';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -22,6 +21,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { errorToast } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
+import { supabaseBrowserClient } from '@/utils/supabase/client';
+import { TypeCreateProduct } from '@/types/types';
 
 interface ModalAddNewProductProps {}
 
@@ -58,10 +59,10 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const {
+    reset,
     register,
     setValue,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<TypeCreateProduct>({
     resolver: yupResolver(validations),
@@ -69,16 +70,34 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
   });
 
   const handleCreateProduct = async (formData: TypeCreateProduct) => {
+    const supabase = supabaseBrowserClient();
+
     setIsPending(true);
-    const response = await createProduct(formData);
-    if (response) {
-      errorToast(`${response.error}`);
-    } else {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        throw 'User not found';
+      }
+
+      const { error } = await supabase.from('products').insert({
+        ...formData,
+        user_id: user.id,
+      });
+
+      if (error) {
+        throw error.message;
+      }
+
       // TODO: handle invalidate query for products
       setIsOpen(false);
       reset();
+    } catch (error: any) {
+      errorToast(error);
+    } finally {
+      setIsPending(false);
     }
-    setIsPending(false);
   };
 
   return (
@@ -126,7 +145,6 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
             <InputWrapper id='currency' label='Currency' required error={errors.currency?.message}>
               <Select
                 required
-                {...register('currency')}
                 defaultValue={currencyOptions[0]}
                 onValueChange={(val) => setValue('currency', val)}>
                 <SelectTrigger>
@@ -155,17 +173,15 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
             />
           </InputWrapper>
 
-          <DialogFooter>
-            <div className='w-full flex gap-4 mt-4'>
-              <DialogClose asChild>
-                <Button variant='outline' size='lg' className='w-full'>
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button type='submit' size='lg' disabled={isPending} className='w-full'>
-                {isPending ? <BarLoader height={1} color='white' /> : 'Add'}
+          <DialogFooter className='sm:space-x-4 !mt-8'>
+            <DialogClose asChild>
+              <Button variant='outline' size='lg' className='w-full'>
+                Cancel
               </Button>
-            </div>
+            </DialogClose>
+            <Button type='submit' size='lg' disabled={isPending} className='w-full'>
+              {isPending ? <BarLoader height={1} /> : 'Add'}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

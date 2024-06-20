@@ -13,7 +13,7 @@ import { bankFields } from '@/utils/form-fields';
 import { BankDetailsSchema, IBankDetails } from '@/types/validations';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BankIcon from '@/assets/icons/BankIcon';
-import { saveData, updateData } from '@/app/onboarding/actions';
+import { saveData, updateData } from '@/app/actions/onboarding.actions';
 import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
@@ -121,11 +121,7 @@ const BankDetails = () => {
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='space-y-4'>
               <InputWrapper id='bankName' label='Bank Name' required error={errors.bankName?.message}>
-                <Select
-                  required
-                  {...register('bankName')}
-                  onValueChange={(val) => setValue('bankName', val)}
-                  value={watch('bankName')}>
+                <Select required onValueChange={(val) => setValue('bankName', val)} value={watch('bankName')}>
                   <SelectTrigger>
                     <SelectValue placeholder='Select the bank' />
                   </SelectTrigger>
@@ -160,7 +156,6 @@ const BankDetails = () => {
                 required
                 error={errors.purchasingCurrency?.message}>
                 <Select
-                  {...register('purchasingCurrency')}
                   required
                   onValueChange={(val) => setValue('purchasingCurrency', val)}
                   value={watch('purchasingCurrency')}>
@@ -176,7 +171,7 @@ const BankDetails = () => {
                   </SelectContent>
                 </Select>
               </InputWrapper>
-              <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+              <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>
         </div>
