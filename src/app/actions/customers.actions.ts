@@ -12,8 +12,12 @@ export async function addNewCustomer(formData: TypeCreateCustomer) {
       throw 'You need to be logged in.';
     }
 
-    const { data } = await supabaseAdmin.from('customers').select('id').eq('email', formData.email).single();
-    if (data != null) {
+    const { data } = await supabaseAdmin
+      .from('customers')
+      .select('id, phone')
+      .eq('email', formData.email)
+      .single();
+    if (data && data.phone) {
       return { merchant: user.id, id: data.id };
     }
 
@@ -22,19 +26,31 @@ export async function addNewCustomer(formData: TypeCreateCustomer) {
       throw customer.error;
     }
 
-    const { data: newCustomer, error } = await supabaseAdmin
-      .from('customers')
-      .insert({
-        customer_name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        address: formData.address,
-        stripe_id: customer.id,
-      })
-      .select('id')
-      .single();
+    const customerData = {
+      customer_name: formData.name,
+      phone: formData.phone,
+      address: formData.address,
+      stripe_id: customer.id,
+      email: formData.email,
+    };
+
+    let result;
+    if (data && !data.phone) {
+      const response = await supabaseAdmin
+        .from('customers')
+        .update(customerData)
+        .eq('email', formData.email)
+        .select('id')
+        .single();
+      result = response;
+    } else {
+      const response = await supabaseAdmin.from('customers').insert(customerData).select('id').single();
+      result = response;
+    }
+
+    const { data: newCustomer, error } = result;
     if (error) {
-      throw `[Customer] ${error.message}`;
+      throw error.message;
     }
 
     return { merchant: user.id, id: newCustomer.id };
