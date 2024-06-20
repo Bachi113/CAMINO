@@ -12,13 +12,11 @@ export async function GET(request: Request) {
   const supabase = supabaseServerClient();
 
   let error = null;
-
   try {
     if (token_hash && type) {
-      // Handle OTP verification
-      const { error: otpError } = await supabase.auth.verifyOtp({ token_hash, type });
-      error = otpError;
-      console.log('OTP verification error:', error);
+      // Handle Magic Link verification
+      const { error: magicLinkError } = await supabase.auth.verifyOtp({ token_hash, type });
+      error = magicLinkError;
     } else if (code) {
       // Handle OAuth code exchange for session
       const { error: codeError } = await supabase.auth.exchangeCodeForSession(code);
@@ -36,7 +34,7 @@ export async function GET(request: Request) {
 
     // Set cookie with error message and redirect
     const response = NextResponse.redirect(`${origin}/login/error`);
-    response.cookies.set('auth_error', error.message || 'An unexpected error occurred.', {
+    response.cookies.set('auth_error', error || 'An unexpected error occurred.', {
       path: '/',
       httpOnly: false,
     });

@@ -11,7 +11,6 @@ import { LuLoader } from 'react-icons/lu';
 type Props = ComponentProps<'button'> &
   ButtonProps & {
     isCircleLoader?: ReactNode;
-    loaderColor?: string;
   };
 
 export function SubmitButton({ children, ...props }: Props) {
@@ -21,13 +20,8 @@ export function SubmitButton({ children, ...props }: Props) {
   const isPending = pending && action === props.formAction;
 
   return (
-    <Button
-      {...props}
-      type='submit'
-      size={'xl'}
-      aria-disabled={pending}
-      disabled={isPending || props.disabled}>
-      {isPending ? <LuLoader className='animate-[spin_3s_linear_infinite]' size={16} /> : children}
+    <Button {...props} type='submit' size='xl' aria-disabled={pending} disabled={isPending || props.disabled}>
+      {isPending ? <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} /> : children}
     </Button>
   );
 }
