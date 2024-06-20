@@ -17,16 +17,18 @@ export default async function Home() {
       ) : (
         <p>
           Welcome! Please{' '}
-          <Link href='/login' className='text-blue-500'>
+          <Link href='/login/merchant' className='text-blue-500'>
             sign in to continue.
           </Link>
         </p>
       )}
-      {user && <ButtonSignout />}
       {user && (
-        <Link href='onboarding/personal_information'>
-          <Button>Go to onboarding</Button>
-        </Link>
+        <>
+          <ButtonSignout />
+          <Link href='/onboarding'>
+            <Button>Go to onboarding</Button>
+          </Link>
+        </>
       )}
     </div>
   );
