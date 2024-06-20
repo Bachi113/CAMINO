@@ -1,9 +1,9 @@
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { onboardingData } from '@/app/onboarding/[onboarding]/page';
 import { IoIosArrowRoundBack } from 'react-icons/io';
 import { IoIosArrowRoundForward } from 'react-icons/io';
+import { onboardingData } from '@/app/onboarding/[onboarding]/routes';
 
 interface NavigationButtonProps {
   showNext: boolean;

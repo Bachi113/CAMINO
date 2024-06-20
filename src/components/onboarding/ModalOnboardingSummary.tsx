@@ -14,10 +14,10 @@ import ModalSubmitConfirmation from './ModalSubmitConfirmation';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { Separator } from '@/components/ui/separator';
 import { useGetOnboardingData } from '@/app/query-hooks';
-import { onboardingData } from '@/app/onboarding/[onboarding]/page';
 import { summaryFileds } from '@/utils/form-fields';
 import { BiEdit } from 'react-icons/bi';
 import { useRouter } from 'next/navigation';
+import { onboardingData } from '@/app/onboarding/[onboarding]/routes';
 
 type ModalOnboardingSummaryProps = {
   isOpen: boolean;
