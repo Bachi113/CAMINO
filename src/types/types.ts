@@ -1,4 +1,6 @@
-// Custom Types
+import { Database } from './supabase';
+
+export type TypePaymentLink = Database['public']['Tables']['payment_links']['Row'];
 
 // Create Product
 export type TypeCreateProduct = {
@@ -15,4 +17,24 @@ export type TypeCreateCustomer = {
   email: string;
   phone: string;
   address: string;
+};
+
+// Create Payment Link
+export type TypeCreatePaymentLink = {
+  stripe_cus_id: string;
+  product_id: string;
+  currency: string;
+  price: string;
+  quantity: number;
+  installments_options: number[];
+};
+
+// Create Subscription
+export type TypeCreateSubscription = {
+  customer_id: string;
+  product_id: string;
+  currency: string;
+  price: string;
+  quantity: number;
+  installments: number;
 };

@@ -1,6 +1,6 @@
 'use server';
 
-import { TypeCreateCustomer } from '@/types/types';
+import { TypeCreateCustomer, TypeCreateSubscription } from '@/types/types';
 import { getUser } from '@/utils/get-user';
 import stripe from '@/utils/stripe';
 import { supabaseServerClient } from '@/utils/supabase/server';
@@ -55,34 +55,53 @@ export async function createCustomer(data: TypeCreateCustomer) {
   }
 }
 
-// export async function createSubscription() {
-//   const subscriptionSchedule = await stripe.subscriptionSchedules.create({
-//     customer: 'cus_Q6xx9eFd7O1evm',
-//     metadata: {
-//       key: 'value',
-//     },
-//     phases: [
-//       {
-//         items: [
-//           {
-//             // price_data: {
-//             //   product: '', // product id
-//             //   currency: '',
-//             //   recurring: {
-//             //     interval: 'month',
-//             //   },
-//             //   unit_amount_decimal: '1000.00',
-//             // },
-//             price: '', // price id
-//             quantity: 1,
-//           },
-//         ],
-//         iterations: 3,
-//       },
-//     ],
-//     start_date: 'now',
-//     end_behavior: 'cancel',
-//   });
+export async function getDefaultPaymentMethod(customerId: string) {
+  try {
+    const paymentMethods = await stripe.customers.listPaymentMethods(customerId, {
+      limit: 1,
+    });
 
-//   console.log(subscriptionSchedule);
-// }
+    if (paymentMethods.data.length === 0) {
+      return { id: null };
+    }
+    return { id: paymentMethods.data[0].id };
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message ?? `${error}` };
+  }
+}
+
+export async function createSubscription(data: TypeCreateSubscription) {
+  try {
+    const subscriptionSchedule = await stripe.subscriptionSchedules.create({
+      customer: data.customer_id,
+      phases: [
+        {
+          items: [
+            {
+              price_data: {
+                product: data.product_id,
+                currency: data.currency,
+                recurring: {
+                  interval: 'month',
+                },
+                unit_amount_decimal: data.price,
+              },
+              quantity: data.quantity,
+            },
+          ],
+          iterations: data.installments,
+        },
+      ],
+      start_date: 'now',
+      end_behavior: 'cancel',
+    });
+
+    console.log(subscriptionSchedule);
+
+    return { id: subscriptionSchedule.id };
+  } catch (error) {
+    console.error(error);
+    return { error: `${error}` };
+  }
+}

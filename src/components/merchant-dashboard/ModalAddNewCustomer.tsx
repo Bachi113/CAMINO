@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -23,8 +22,12 @@ import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreateCustomer } from '@/types/types';
 import { addNewCustomer } from '@/app/actions/customers.actions';
 import { toast } from '../ui/use-toast';
+import { queryClient } from '@/app/providers';
 
-interface ModalAddNewCustomerProps {}
+interface ModalAddNewCustomerProps {
+  isOpen: boolean;
+  handleModalOpen: (value: boolean) => void;
+}
 
 const validations = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -33,9 +36,8 @@ const validations = yup.object().shape({
   address: yup.string().required('Address is required'),
 });
 
-const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = () => {
+const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ isOpen, handleModalOpen }) => {
   const [isPending, setIsPending] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   const {
     reset,
@@ -69,14 +71,19 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = () => {
       const { error: error } = await supabase.from('merchants_customers').insert({
         merchant_id: customer.merchant!,
         customer_id: customer.id!,
+        customer: {
+          name: formData.name,
+          email: formData.email,
+          stripe_id: customer.stripe_id,
+        },
       });
       if (error) {
         throw error.message;
       }
 
-      // TODO: handle invalidate query for products
+      queryClient.invalidateQueries({ queryKey: ['getCustomers'] });
+      handleModalOpen(false);
       reset();
-      setIsOpen(false);
       toast({ description: 'Customer added successfully' });
     } catch (error: any) {
       errorToast(error);
@@ -86,10 +93,10 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = () => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={handleModalOpen}>
+      {/* <DialogTrigger asChild>
         <Button>Add Customer</Button>
-      </DialogTrigger>
+      </DialogTrigger> */}
       <DialogContent>
         <DialogHeader className='mb-4'>
           <DialogTitle>Add New Customer</DialogTitle>

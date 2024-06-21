@@ -53,7 +53,7 @@ export async function addNewCustomer(formData: TypeCreateCustomer) {
       throw error.message;
     }
 
-    return { merchant: user.id, id: newCustomer.id };
+    return { merchant: user.id, id: newCustomer.id, stripe_id: customer.id };
   } catch (error) {
     console.error(error);
     return { error };
