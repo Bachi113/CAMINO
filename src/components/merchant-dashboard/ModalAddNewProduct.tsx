@@ -23,10 +23,12 @@ import { errorToast } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreateProduct } from '@/types/types';
+import { PlusIcon } from '@radix-ui/react-icons';
+import { queryClient } from '@/app/providers';
 
 interface ModalAddNewProductProps {}
 
-const categoryOptions = [
+export const categoryOptions = [
   { value: 'electronics', label: 'Electronics' },
   { value: 'fashion', label: 'Fashion' },
   { value: 'groceries', label: 'Groceries' },
@@ -90,8 +92,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
         throw error.message;
       }
 
-      // TODO: handle invalidate query for products
-      setIsOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['getMerchantProducts'] });
       reset();
     } catch (error: any) {
       errorToast(error);
@@ -103,7 +104,9 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Create Product</Button>
+        <Button>
+          <PlusIcon className='font-bold mr-1' /> Add new product
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className='mb-4'>

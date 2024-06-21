@@ -13,7 +13,6 @@ const useGetPersonalInfo = () => {
       }
       return data;
     },
-    staleTime: 1000 * 60,
   });
 };
 
@@ -30,7 +29,6 @@ const useGetBuinessDetail = () => {
       }
       return data;
     },
-    staleTime: 1000 * 60,
   });
 };
 
@@ -47,7 +45,6 @@ const useGetBusinessAddress = () => {
       }
       return data;
     },
-    staleTime: 1000 * 60,
   });
 };
 
@@ -64,7 +61,6 @@ const useGetBankDetails = () => {
       }
       return data;
     },
-    staleTime: 1000 * 60,
   });
 };
 
@@ -81,7 +77,6 @@ const useGetVerificationDocuments = () => {
       }
       return data;
     },
-    staleTime: 1000 * 60,
   });
 };
 
@@ -110,10 +105,40 @@ const useGetOnboardingData = () => {
 
       return data;
     },
-    staleTime: 1000 * 60,
   });
 };
 
+interface UseGetMerchantProductsParams {
+  page: number;
+  pageSize: number;
+  categoryFilter?: string;
+}
+
+const useGetMerchantProducts = ({ page, pageSize, categoryFilter }: UseGetMerchantProductsParams) => {
+  const supabase = supabaseBrowserClient();
+
+  return useQuery({
+    queryKey: ['getMerchantProducts', page, pageSize, categoryFilter],
+    queryFn: async () => {
+      let query = supabase
+        .from('products')
+        .select('*')
+        .range((page - 1) * pageSize, page * pageSize - 1);
+
+      if (categoryFilter) {
+        query = query.eq('category', categoryFilter);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        throw new Error(`Error fetching products: ${error.message}`);
+      }
+
+      return data;
+    },
+  });
+};
 export {
   useGetPersonalInfo,
   useGetBuinessDetail,
@@ -121,4 +146,5 @@ export {
   useGetBankDetails,
   useGetVerificationDocuments,
   useGetOnboardingData,
+  useGetMerchantProducts,
 };
