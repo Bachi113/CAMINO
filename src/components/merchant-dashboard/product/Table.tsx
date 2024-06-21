@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
   SortingState,
   flexRender,

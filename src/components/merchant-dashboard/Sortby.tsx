@@ -91,20 +91,20 @@ const SortBy: FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
             <DropdownMenuSubContent>
               <DropdownMenuItem
                 onSelect={() => handleSort('id', 'asc')}
-                className={
-                  selectedSort?.column === 'id' && selectedSort.direction === 'asc'
-                    ? 'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
-                    : ''
-                }>
+                className={cn(
+                  selectedSort?.column === 'id' &&
+                    selectedSort.direction === 'asc' &&
+                    'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
+                )}>
                 Ascending
               </DropdownMenuItem>
               <DropdownMenuItem
                 onSelect={() => handleSort('id', 'desc')}
-                className={
-                  selectedSort?.column === 'id' && selectedSort.direction === 'desc'
-                    ? 'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
-                    : ''
-                }>
+                className={cn(
+                  selectedSort?.column === 'id' &&
+                    selectedSort.direction === 'desc' &&
+                    'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
+                )}>
                 Descending
               </DropdownMenuItem>
               <DropdownMenuSeparator />
