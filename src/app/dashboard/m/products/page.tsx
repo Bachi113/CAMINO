@@ -4,7 +4,7 @@ import React from 'react';
 const Page = () => {
   return (
     <div className='py-5 w-full mr-5'>
-      <p className='text-xl text-slate-800 font-semibold'>Orders</p>
+      <p className='text-2xl text-slate-800 font-semibold'>Orders</p>
       <OrderTable />
     </div>
   );

@@ -7,6 +7,7 @@ import { DashboardIcon, CubeIcon, GearIcon } from '@radix-ui/react-icons';
 import { LuUsers2 } from 'react-icons/lu';
 import { HiOutlineBanknotes } from 'react-icons/hi2';
 import { TbBrandBitbucket } from 'react-icons/tb';
+import Image from 'next/image';
 
 const sidebarLinks = [
   { label: 'Dashboard', href: '/dashboard/m', logo: <DashboardIcon /> },
@@ -24,7 +25,7 @@ const Sidebar = () => {
   return (
     <div className='min-h-screen h-full p-6 min-w-[380px]'>
       <div className='mb-8'>
-        <Logo />
+        <Image src='/logo.png' width={120} height={72} alt='logo' />
       </div>
       <div className='space-y-2'>
         {sidebarLinks.map((link) => (
