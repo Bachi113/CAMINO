@@ -73,6 +73,7 @@ const SortBy: FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
                       key={category.value}
                       onSelect={() => handleCategorySelect(category.value)}
                       className={cn(
+                        'hover:cursor-pointer',
                         selectedCategory === category.value &&
                           'data-[selected]:bg-purple-700 data-[selected]:text-white'
                       )}>
@@ -92,20 +93,22 @@ const SortBy: FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
               <DropdownMenuItem
                 onSelect={() => handleSort('id', 'asc')}
                 className={cn(
+                  'hover:cursor-pointer',
                   selectedSort?.column === 'id' &&
                     selectedSort.direction === 'asc' &&
                     'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
                 )}>
-                Ascending
+                Newest First
               </DropdownMenuItem>
               <DropdownMenuItem
                 onSelect={() => handleSort('id', 'desc')}
                 className={cn(
+                  'hover:cursor-pointer',
                   selectedSort?.column === 'id' &&
                     selectedSort.direction === 'desc' &&
                     'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
                 )}>
-                Descending
+                Oldest First
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </DropdownMenuSubContent>

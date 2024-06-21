@@ -92,7 +92,8 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
         throw error.message;
       }
 
-      queryClient.invalidateQueries({ queryKey: ['getMerchantProducts'] });
+      // TODO: handle invalidate query for products
+      setIsOpen(false);
       reset();
     } catch (error: any) {
       errorToast(error);
@@ -104,9 +105,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <PlusIcon className='font-bold mr-1' /> Add new product
-        </Button>
+        <Button>Create Product</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className='mb-4'>
