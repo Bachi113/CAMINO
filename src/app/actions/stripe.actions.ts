@@ -58,13 +58,13 @@ export async function createCustomer(data: TypeCreateCustomer) {
 export async function getDefaultPaymentMethod(customerId: string) {
   try {
     const paymentMethods = await stripe.customers.listPaymentMethods(customerId, {
-      limit: 1,
+      limit: 5,
     });
 
     if (paymentMethods.data.length === 0) {
       return { id: null };
     }
-    return { id: paymentMethods.data[0].id };
+    return { data: paymentMethods.data };
   } catch (error: any) {
     console.error(error);
     return { error: error.message ?? `${error}` };
@@ -75,6 +75,9 @@ export async function createSubscription(data: TypeCreateSubscription) {
   try {
     const subscriptionSchedule = await stripe.subscriptionSchedules.create({
       customer: data.customer_id,
+      default_settings: {
+        default_payment_method: data.payment_method_id,
+      },
       phases: [
         {
           items: [

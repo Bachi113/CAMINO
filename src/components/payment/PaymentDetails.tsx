@@ -11,6 +11,7 @@ import { getDefaultPaymentMethod } from '@/app/actions/stripe.actions';
 import { errorToast } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
 import { BarLoader } from 'react-spinners';
+import { supabaseBrowserClient } from '@/utils/supabase/client';
 
 interface PaymentDetailsProps {
   data: TypePaymentLink;
@@ -26,16 +27,22 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
   const handleVerifyPaymentMethod = async () => {
     setIsPending(true);
 
-    const pm = await getDefaultPaymentMethod(data.stripe_cus_id);
-    if (pm.error) {
-      errorToast(pm.error);
+    const supabase = supabaseBrowserClient();
+    await supabase
+      .from('payment_links')
+      .update({ period: Number(installments) })
+      .eq('id', data.id);
+
+    const paymentMethods = await getDefaultPaymentMethod(data.stripe_cus_id);
+    if (paymentMethods.error) {
+      errorToast(paymentMethods.error);
       return;
     }
 
-    if (pm.id === null) {
+    if (paymentMethods.data?.length === 0) {
       // TODO: PM setup page
     } else {
-      router.push(`/payment/${data.id}/confirm?pm_id=${pm.id}`);
+      router.push(`/payment/${data.id}/confirm`);
     }
   };
 

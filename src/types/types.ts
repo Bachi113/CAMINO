@@ -32,6 +32,7 @@ export type TypeCreatePaymentLink = {
 // Create Subscription
 export type TypeCreateSubscription = {
   customer_id: string;
+  payment_method_id?: string;
   product_id: string;
   currency: string;
   price: string;

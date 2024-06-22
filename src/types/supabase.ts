@@ -326,6 +326,7 @@ export type Database = {
           currency: string;
           id: string;
           installments_options: number[];
+          period: number | null;
           price: string;
           product_id: string;
           quantity: number;
@@ -337,6 +338,7 @@ export type Database = {
           currency: string;
           id?: string;
           installments_options: number[];
+          period?: number | null;
           price: string;
           product_id: string;
           quantity: number;
@@ -348,6 +350,7 @@ export type Database = {
           currency?: string;
           id?: string;
           installments_options?: number[];
+          period?: number | null;
           price?: string;
           product_id?: string;
           quantity?: number;
