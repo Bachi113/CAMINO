@@ -1,5 +1,5 @@
-import MerchantLogin from '@/components/auth/MerchantLogin';
+import MagicLinkLogin from '@/components/auth/MagicLinkLogin';
 
 export default async function MerchantLoginPage() {
-  return <MerchantLogin />;
+  return <MagicLinkLogin />;
 }

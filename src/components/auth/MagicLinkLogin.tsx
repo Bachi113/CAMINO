@@ -8,11 +8,11 @@ import InputWrapper from '@/components/InputWrapper';
 import GoogleAuth from '@/components/auth/GoogleAuth';
 import { SubmitButton } from '../SubmitButton';
 import { errorToast } from '@/utils/utils';
-import { signInWithEmail } from '@/app/login/actions';
+import { signInWithEmail } from '@/app/actions/login.actions';
 import { Button } from '../ui/button';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 
-const MerchantLogin = () => {
+const MagicLinkLogin = () => {
   const [emailAddress, setEmailAddress] = useState('');
   const [isMagicLinkSent, setIsMagicLinkSent] = useState(false);
 
@@ -86,4 +86,4 @@ const MerchantLogin = () => {
   );
 };
 
-export default MerchantLogin;
+export default MagicLinkLogin;

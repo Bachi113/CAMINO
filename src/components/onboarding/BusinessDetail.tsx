@@ -12,7 +12,7 @@ import NavigationButton from '@/components/onboarding/NavigationButton';
 import { useGetBuinessDetail } from '@/app/query-hooks';
 import { IBusinessDetail, businessDetailSchema } from '@/types/validations';
 import { businessDetailsFields } from '@/utils/form-fields';
-import { saveData, updateData } from '@/app/onboarding/actions';
+import { saveData, updateData } from '@/app/actions/onboarding.actions';
 import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
@@ -92,7 +92,7 @@ const BusinessDetail = () => {
                 </InputWrapper>
               ))}
             </div>
-            <SubmitButton disabled={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+            <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
           </form>
         </div>
       </div>

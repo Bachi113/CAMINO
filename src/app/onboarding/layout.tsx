@@ -13,7 +13,7 @@ const OnboardingLayout = async ({ children }: Props) => {
 
   // Redirects to login page if user is not authenticated
   if (!user) {
-    redirect('/login');
+    redirect('/login/merchant');
   }
 
   const supabase = supabaseServerClient();

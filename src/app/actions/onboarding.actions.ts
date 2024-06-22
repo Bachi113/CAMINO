@@ -15,12 +15,12 @@ export async function uploadDocument(files: FormData) {
     const file = fileEntry.value[1] as File;
 
     if (!file) {
-      throw new Error('Document does not exist.');
+      throw 'Document does not exist.';
     }
 
     const user = await getUser();
     if (!user) {
-      throw new Error('Please login to get started.');
+      throw 'Please login to get started.';
     }
 
     const key = `${user.id}-${file.name}`;
@@ -31,7 +31,7 @@ export async function uploadDocument(files: FormData) {
     });
 
     if (error) {
-      throw new Error(error.message);
+      throw error.message;
     }
 
     return { path: data.path };
@@ -70,7 +70,7 @@ export async function saveData(data: string, tableName: TableName) {
 
     const user = await getUser();
     if (!user) {
-      throw new Error('You need to be logged in.');
+      throw 'You need to be logged in.';
     }
 
     const { data: insert_data, error } = await supabase
@@ -107,7 +107,7 @@ export async function updateData(data: string, tableName: TableName) {
 
     const user = await getUser();
     if (!user) {
-      throw new Error('You need to be logged in.');
+      throw 'You need to be logged in.';
     }
 
     const { error } = await supabase
@@ -117,7 +117,7 @@ export async function updateData(data: string, tableName: TableName) {
       })
       .eq('user_id', user.id);
 
-    if (error) throw new Error(error.message);
+    if (error) throw error.message;
 
     return null; // Indicate success
   } catch (error: any) {
