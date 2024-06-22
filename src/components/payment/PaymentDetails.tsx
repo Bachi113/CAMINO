@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import InputWrapper from '@/components/InputWrapper';
 import { TypePaymentLink } from '@/types/types';
-import { getDefaultPaymentMethod } from '@/app/actions/stripe.actions';
+import { createSetupCheckoutSession, getCustomerPaymentMethods } from '@/app/actions/stripe.actions';
 import { errorToast } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
 import { BarLoader } from 'react-spinners';
@@ -33,14 +33,24 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
       .update({ period: Number(installments) })
       .eq('id', data.id);
 
-    const paymentMethods = await getDefaultPaymentMethod(data.stripe_cus_id);
+    const paymentMethods = await getCustomerPaymentMethods(data.stripe_cus_id);
     if (paymentMethods.error) {
       errorToast(paymentMethods.error);
       return;
     }
 
     if (paymentMethods.data?.length === 0) {
-      // TODO: PM setup page
+      // Create setup checkout session for user to add payment method
+      const session = await createSetupCheckoutSession({
+        currency: data.currency,
+        customer_id: data.stripe_cus_id,
+        paymentId: data.id,
+      });
+      if (session.error) {
+        errorToast(session.error);
+        return;
+      }
+      router.push(session.url!);
     } else {
       router.push(`/payment/${data.id}/confirm`);
     }

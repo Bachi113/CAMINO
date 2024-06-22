@@ -39,3 +39,10 @@ export type TypeCreateSubscription = {
   quantity: number;
   installments: number;
 };
+
+// Create Payment Method CS
+export type TypeCreatePaymentMethodCS = {
+  currency: string;
+  customer_id: string;
+  paymentId: string;
+};

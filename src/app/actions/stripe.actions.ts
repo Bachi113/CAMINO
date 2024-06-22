@@ -1,6 +1,6 @@
 'use server';
 
-import { TypeCreateCustomer, TypeCreateSubscription } from '@/types/types';
+import { TypeCreateCustomer, TypeCreatePaymentMethodCS, TypeCreateSubscription } from '@/types/types';
 import { getUser } from '@/utils/get-user';
 import stripe from '@/utils/stripe';
 import { supabaseServerClient } from '@/utils/supabase/server';
@@ -55,15 +55,11 @@ export async function createCustomer(data: TypeCreateCustomer) {
   }
 }
 
-export async function getDefaultPaymentMethod(customerId: string) {
+export async function getCustomerPaymentMethods(customerId: string) {
   try {
     const paymentMethods = await stripe.customers.listPaymentMethods(customerId, {
       limit: 5,
     });
-
-    if (paymentMethods.data.length === 0) {
-      return { id: null };
-    }
     return { data: paymentMethods.data };
   } catch (error: any) {
     console.error(error);
@@ -106,5 +102,27 @@ export async function createSubscription(data: TypeCreateSubscription) {
   } catch (error) {
     console.error(error);
     return { error: `${error}` };
+  }
+}
+
+export async function createSetupCheckoutSession(data: TypeCreatePaymentMethodCS) {
+  const appUrl = process.env.APP_URL;
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'setup',
+      currency: data.currency,
+      customer: data.customer_id,
+      success_url: `${appUrl}/payment/${data.paymentId}/confirm?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/payment/cancel`,
+    });
+    if (session.url == null) {
+      throw 'Session URL not found';
+    }
+
+    return { url: session.url };
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message ?? `${error}` };
   }
 }

@@ -95,7 +95,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
         throw 'User not found';
       }
 
-      const installmentOptions = formData.installments_options.sort();
+      const installmentOptions = formData.installments_options.sort((a, b) => a - b);
       const { data: paymentLink, error } = await supabase
         .from('payment_links')
         .insert({

@@ -7,6 +7,10 @@ import { BarLoader } from 'react-spinners';
 import { FC, useState } from 'react';
 import Stripe from 'stripe';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { createSubscription } from '@/app/actions/stripe.actions';
+import { errorToast } from '@/utils/utils';
+import { toast } from '../ui/use-toast';
+import { parse, format } from 'date-fns';
 
 interface PaymentMethodDetailsProps {
   data: TypePaymentLink;
@@ -17,10 +21,26 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
   const [isPending, setIsPending] = useState(false);
   const [paymentMethodId, setPaymentMethodId] = useState(paymentMethods[0].id);
 
-  const handleSubscription = () => {
+  const handleSubscription = async () => {
     setIsPending(true);
-    // TODO: Call the API to start the subscription
-    setIsPending(false);
+
+    const subscription = await createSubscription({
+      customer_id: data.stripe_cus_id,
+      payment_method_id: paymentMethodId,
+      product_id: (data as any).products.stripe_id,
+      currency: data.currency,
+      price: data.price,
+      quantity: data.quantity,
+      installments: data.period!,
+    });
+    if (subscription.error) {
+      errorToast(subscription.error);
+      return;
+    }
+
+    // TODO: Handle subscription created successfully
+    console.log(subscription.id);
+    return toast({ description: 'Subscription Created Successfully.' });
   };
 
   return (
@@ -36,18 +56,25 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
 
         <div>
           <p className='text-lg font-medium'>Payment Method</p>
-          <RadioGroup
-            value={paymentMethodId}
-            onValueChange={setPaymentMethodId}
-            className='flex flex-col space-y-2'>
-            {paymentMethods.map((option) => (
-              <div key={option.id} className='h-16 flex items-center space-x-2 border-b'>
-                <RadioGroupItem value={option.id} id={option.id} />
+          <RadioGroup value={paymentMethodId} onValueChange={setPaymentMethodId} className='my-2'>
+            {paymentMethods.map((pm) => (
+              <div key={pm.id} className='h-14 flex items-center space-x-2 border-b'>
+                <RadioGroupItem value={pm.id} id={pm.id} />
                 <div className='w-full flex items-center justify-between'>
-                  <label htmlFor={option.id} className='cursor-pointer'>
-                    Ending in ...<span className='font-medium'>{option.card?.last4}</span>
+                  <label htmlFor={pm.id} className='cursor-pointer capitalize space-x-1'>
+                    <span>{pm.card?.brand} </span>
+                    <span>••••</span>
+                    <span className='font-medium'>{pm.card?.last4}</span>
                   </label>
-                  <p className='border rounded px-3 py-0.5'>{option.card?.brand}</p>
+                  <p className='text-sm space-x-2 opacity-60'>
+                    <span>Expires</span>
+                    <span>
+                      {format(
+                        parse(`${pm.card?.exp_month}/${pm.card?.exp_year}`, 'M/yyyy', new Date()),
+                        'MMM yyyy'
+                      )}
+                    </span>
+                  </p>
                 </div>
               </div>
             ))}

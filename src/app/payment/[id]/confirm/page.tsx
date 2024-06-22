@@ -1,4 +1,4 @@
-import { createSubscription, getDefaultPaymentMethod } from '@/app/actions/stripe.actions';
+import { createSubscription, getCustomerPaymentMethods } from '@/app/actions/stripe.actions';
 import PaymentMethodDetails from '@/components/payment/PaymentMethodDetails';
 import { Card, CardHeader } from '@/components/ui/card';
 import stripe from '@/utils/stripe';
@@ -35,41 +35,36 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
 
   if (searchParams.session_id) {
     try {
-      const session = await stripe.checkout.sessions.retrieve(searchParams.session_id);
+      await stripe.checkout.sessions.retrieve(searchParams.session_id);
 
-      if (session.status === 'complete') {
-        const subscription = await createSubscription({
-          customer_id: data.stripe_cus_id,
-          product_id: (data as any).products.stripe_id,
-          currency: data.currency,
-          price: data.price,
-          quantity: data.quantity,
-          installments: data.period!,
-        });
-        if (subscription.error) {
-          return <div>{subscription.error}</div>;
-        }
-
-        if (subscription?.id) {
-          return <p>Subscription Created Successfully.</p>;
-        }
-
-        return (
-          <div className='flex flex-col items-center gap-4'>
-            <LuLoader className='animate-[spin_2s_linear_infinite]' size={26} />
-            <p className='text-lg font-light'>Creating your subscription.</p>
-          </div>
-        );
-      } else {
-        // TODO: check until status is 'complete'
-        return <div>Payment method not attached yet.</div>;
+      const subscription = await createSubscription({
+        customer_id: data.stripe_cus_id,
+        product_id: (data as any).products.stripe_id,
+        currency: data.currency,
+        price: data.price,
+        quantity: data.quantity,
+        installments: data.period!,
+      });
+      if (subscription.error) {
+        return <div>{subscription.error}</div>;
       }
+      if (subscription?.id) {
+        // TODO: Handle subscription created successfully
+        return <p>Subscription Created Successfully.</p>;
+      }
+
+      return (
+        <div className='flex flex-col items-center gap-4'>
+          <LuLoader className='animate-[spin_2s_linear_infinite]' size={26} />
+          <p className='text-lg font-light'>Creating your subscription.</p>
+        </div>
+      );
     } catch (error: any) {
       return <div>{error.message}</div>;
     }
   }
 
-  const paymentMethods = await getDefaultPaymentMethod(data.stripe_cus_id);
+  const paymentMethods = await getCustomerPaymentMethods(data.stripe_cus_id);
 
   if (paymentMethods.data?.length === 0 || paymentMethods.error) {
     return <div>Payment method not found for the user.</div>;

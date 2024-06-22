@@ -80,12 +80,13 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
           </DialogClose>
           {submitConfirmation ? (
             <div className='w-full'>
-              <Link href='/'>
-                <Button className='w-full'>Take me to home</Button>
+              <Link href='/dashboard'>
+                <Button className='w-full'>Go to Dashboard</Button>
               </Link>
             </div>
           ) : (
             <Button onClick={handleSubmit} className='w-full'>
+              {/* TODO: add loader */}
               Submit and Continue
             </Button>
           )}
