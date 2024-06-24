@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useState } from 'react';
+import React, { ChangeEvent, FC, useState } from 'react';
 import {
   SortingState,
   flexRender,
@@ -15,17 +15,19 @@ import SortBy from '@/components/merchant-dashboard/Sortby';
 import { useGetMerchantProducts } from '@/app/query-hooks';
 import ProductDescription from './ProductDescription';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 interface TableProps {}
 
 const ProductsTable: FC<TableProps> = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
 
-  const { data, isLoading } = useGetMerchantProducts({ page, pageSize, categoryFilter });
+  const { data, isLoading } = useGetMerchantProducts({ page, pageSize, categoryFilter, searchQuery });
 
   const table = useReactTable({
     data: data || [],
@@ -36,6 +38,11 @@ const ProductsTable: FC<TableProps> = () => {
     getFilteredRowModel: getFilteredRowModel(),
     state: { sorting },
   });
+
+  const handleGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+  };
 
   const handleRowClick = (data: any) => {
     setSelectedProduct(data);
@@ -56,7 +63,14 @@ const ProductsTable: FC<TableProps> = () => {
   return (
     <>
       <div className='mt-5 flex justify-between w-full'>
-        <div>search</div>
+        <div>
+          <Input
+            placeholder='Search order details'
+            value={searchQuery}
+            onChange={handleGlobalFilterChange}
+            className='w-[350px]'
+          />
+        </div>
         <div className='flex gap-5'>
           <SortBy setCategoryFilter={setCategoryFilter} setSorting={setSorting} />
           <ModalAddNewProduct />

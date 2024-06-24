@@ -112,9 +112,15 @@ interface UseGetMerchantProductsParams {
   page: number;
   pageSize: number;
   categoryFilter?: string;
+  searchQuery?: string;
 }
 
-const useGetMerchantProducts = ({ page, pageSize, categoryFilter }: UseGetMerchantProductsParams) => {
+const useGetMerchantProducts = ({
+  page,
+  pageSize,
+  categoryFilter,
+  searchQuery,
+}: UseGetMerchantProductsParams) => {
   const supabase = supabaseBrowserClient();
 
   return useQuery({
@@ -128,6 +134,10 @@ const useGetMerchantProducts = ({ page, pageSize, categoryFilter }: UseGetMercha
       if (categoryFilter) {
         query = query.eq('category', categoryFilter);
       }
+      if (searchQuery) {
+        query = query.ilike('product_name', `%${searchQuery}%`);
+      }
+      console.log(searchQuery);
 
       const { data, error } = await query;
 
