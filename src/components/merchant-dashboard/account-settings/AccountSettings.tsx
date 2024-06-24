@@ -7,6 +7,8 @@ import { useGetOnboardingData } from '@/app/query-hooks';
 import { summaryFileds } from '@/utils/form-fields';
 import { onboardingData } from '@/app/onboarding/[onboarding]/routes';
 import { useState, useRef, useEffect } from 'react';
+import ModalDeleteAccount from './ModalDeleteAccount';
+import { redirect } from 'next/navigation';
 
 const { sections: sidebarItems } = onboardingData;
 const AccountSettings = () => {
@@ -15,6 +17,9 @@ const AccountSettings = () => {
 
   const { data, isLoading } = useGetOnboardingData();
 
+  if (!data && !isLoading) {
+    redirect('/onboarding');
+  }
   const sections = summaryFileds(data);
 
   useEffect(() => {
@@ -61,6 +66,7 @@ const AccountSettings = () => {
             <p>{item.label}</p>
           </div>
         ))}
+        <ModalDeleteAccount userId={data?.personal_informations?.user_id} />
       </div>
       <div className='p-4 w-5/12 mx-auto max-h-[65vh] overflow-y-auto rounded-md bg-gray-100'>
         {isLoading ? (
