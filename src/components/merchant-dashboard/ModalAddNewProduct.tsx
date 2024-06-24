@@ -23,8 +23,6 @@ import { errorToast } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreateProduct } from '@/types/types';
-import { PlusIcon } from '@radix-ui/react-icons';
-import { queryClient } from '@/app/providers';
 
 interface ModalAddNewProductProps {}
 

@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { TbLogout2 } from 'react-icons/tb';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { errorToast } from '@/utils/utils';
-import { useRouter } from 'next/navigation';
 
 const SignOutButton = () => {
   const handleSignOut = async () => {
