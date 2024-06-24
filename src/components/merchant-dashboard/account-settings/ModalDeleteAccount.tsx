@@ -20,7 +20,7 @@ const ModalDeleteAccount = ({ userId }: ModalDeleteAccountProps) => {
   const handleSubmit = async () => {
     try {
       const response = await deleteUser(userId);
-      if (response.typeof === 'string') {
+      if (typeof response === 'string') {
         throw response;
       }
     } catch (error: any) {
