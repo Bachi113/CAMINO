@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 
 interface TableProps {}
 
-const OrderTable: FC<TableProps> = () => {
+const ProductsTable: FC<TableProps> = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
@@ -129,4 +129,4 @@ const OrderTable: FC<TableProps> = () => {
   );
 };
 
-export default OrderTable;
+export default ProductsTable;

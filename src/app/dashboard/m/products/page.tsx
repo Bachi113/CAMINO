@@ -1,11 +1,12 @@
-import OrderTable from '@/components/merchant-dashboard/product/Table';
+import NavTitle from '@/components/merchant-dashboard/NavTitle';
+import ProductsTable from '@/components/merchant-dashboard/product/Table';
 import React from 'react';
 
 const Page = () => {
   return (
-    <div className='py-5 w-full mr-5'>
-      <p className='text-2xl text-slate-800 font-semibold'>Orders</p>
-      <OrderTable />
+    <div className='p-8 w-full mr-5 bg-slate-50'>
+      <NavTitle />
+      <ProductsTable />
     </div>
   );
 };
