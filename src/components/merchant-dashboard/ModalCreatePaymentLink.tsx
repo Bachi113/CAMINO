@@ -141,7 +141,8 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
   return (
     <>
-      <ModalAddNewCustomer isOpen={openCustomerModal} handleModalOpen={setOpenCustomerModal} />
+      {/* Note: Removing isOpen and handleModal open from ModalAddNewCustomer for now as currently using this in the customers page for testing */}
+      <ModalAddNewCustomer />
       <ModalAddNewProduct isOpen={openProductModal} handleModalOpen={setOpenProductModal} />
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
