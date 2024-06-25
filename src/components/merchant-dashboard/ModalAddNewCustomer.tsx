@@ -9,6 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -24,10 +25,7 @@ import { addNewCustomer } from '@/app/actions/customers.actions';
 import { toast } from '../ui/use-toast';
 import { queryClient } from '@/app/providers';
 
-interface ModalAddNewCustomerProps {
-  isOpen: boolean;
-  handleModalOpen: (value: boolean) => void;
-}
+interface ModalAddNewCustomerProps {}
 
 const validations = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -36,8 +34,9 @@ const validations = yup.object().shape({
   address: yup.string().required('Address is required'),
 });
 
-const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ isOpen, handleModalOpen }) => {
+const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = () => {
   const [isPending, setIsPending] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const {
     reset,
@@ -82,7 +81,6 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ isOpen, handleModal
       }
 
       queryClient.invalidateQueries({ queryKey: ['getCustomers'] });
-      handleModalOpen(false);
       reset();
       toast({ description: 'Customer added successfully' });
     } catch (error: any) {
@@ -93,10 +91,10 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ isOpen, handleModal
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleModalOpen}>
-      {/* <DialogTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
         <Button>Add Customer</Button>
-      </DialogTrigger> */}
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader className='mb-4'>
           <DialogTitle>Add New Customer</DialogTitle>

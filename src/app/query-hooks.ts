@@ -136,6 +136,76 @@ const useGetProducts = () => {
     },
   });
 };
+interface UseGetMerchantCustomersParams {
+  page: number;
+  pageSize: number;
+  nameFilter?: string;
+  idFilter?: string;
+  searchQuery?: string;
+}
+const useGetMerchantCustomers = ({
+  page,
+  pageSize,
+  nameFilter,
+  idFilter,
+  searchQuery,
+}: UseGetMerchantCustomersParams) => {
+  const supabase = supabaseBrowserClient();
+
+  return useQuery({
+    queryKey: ['getMerchantCustomers', page, pageSize, nameFilter, idFilter, searchQuery],
+    queryFn: async () => {
+      let query = supabase
+        .from('merchants_customers')
+        .select(
+          `
+          *,
+          customers:customer_id (*)
+        `
+        )
+        .range((page - 1) * pageSize, page * pageSize - 1);
+
+      // if (idFilter) {
+      //   query = query.eq('customer_id', idFilter);
+      // }
+      if (nameFilter) {
+        query = query.ilike('customer->>name', `%${nameFilter}%`);
+      }
+      if (searchQuery) {
+        query = query.or(`customer->>name.ilike.%${searchQuery}%,customer->>email.ilike.%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
+
+      console.log(data);
+
+      if (error) {
+        console.error('Error fetching merchant customers:', error);
+        throw new Error(`Error fetching merchant customers: ${error.message}`);
+      }
+
+      return data;
+    },
+    staleTime: 60000, // 1 minute
+  });
+};
+
+const useGetMerchantCustomerIdAndNames = () => {
+  const supabase = supabaseBrowserClient();
+  return useQuery({
+    queryKey: ['getMerchantCustomerIdAndNames'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('merchants_customers')
+        .select('customer_id, customer->>name');
+
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+  });
+};
 
 export {
   useGetPersonalInfo,
@@ -146,4 +216,6 @@ export {
   useGetOnboardingData,
   useGetCustomers,
   useGetProducts,
+  useGetMerchantCustomers,
+  useGetMerchantCustomerIdAndNames,
 };
