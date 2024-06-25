@@ -10,7 +10,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { PiCaretUpDownFill } from 'react-icons/pi';
 import {
   Command,
   CommandEmpty,
@@ -21,6 +20,7 @@ import {
 } from '@/components/ui/command';
 import { categoryOptions } from './ModalAddNewProduct';
 import { cn } from '@/utils/utils';
+import SortIcon from '@/assets/icons/SortIcon';
 
 interface SortByProps {
   setCategoryFilter: (category: string) => void;
@@ -48,8 +48,8 @@ const SortBy: React.FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className='border h-10 px-2.5 text-slate-500 text-sm font-medium border-slate-400/50 flex rounded-md items-center gap-2'>
-        <PiCaretUpDownFill /> Sort By
+      <DropdownMenuTrigger className='border h-10 px-2.5 text-slate-500 text-sm font-medium border-slate-400/20 flex rounded-md items-center gap-2'>
+        <SortIcon /> Sort By
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-[194px] text-sm font-medium text-slate-700'>
         <DropdownMenuSub>
