@@ -17,6 +17,7 @@ import { debounce } from '@/utils/utils';
 import ModalAddNewCustomer from '../ModalAddNewCustomer';
 import { useGetMerchantCustomers } from '@/app/query-hooks';
 import CustomerDetails from './CustomerDetails';
+import DownloadButton from '../DowloadCsvButton';
 
 const CustomersTable: React.FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -78,6 +79,7 @@ const CustomersTable: React.FC = () => {
         />
         <div className='flex gap-5'>
           <SortBy setCategoryFilter={setCategoryFilter} setSorting={setSorting} />
+          <DownloadButton data={data} fileName='customers' />
           <ModalAddNewCustomer />
         </div>
       </div>

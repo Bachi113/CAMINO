@@ -93,7 +93,7 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Add Customer</Button>
+        <Button className='h-10'>Add Customer</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className='mb-4'>
