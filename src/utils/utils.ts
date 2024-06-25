@@ -19,34 +19,58 @@ export const extractFileNameFromUrl = (url: string, userId: string) => {
   return fileName;
 };
 
-const replacer = (key: string, value: any) => {
-  if (value === null) {
-    return '';
-  }
-  return value;
-};
-
 const headerMapping: { [key: string]: string } = {
   created_at: 'Created At',
-  customer_d: 'Customer ID',
+  customer_id: 'Customer ID',
   order_id: 'Order ID',
-  email: 'Email',
   phone: 'Phone',
-  customer_name: 'Customer name',
+  'customer.email': 'Email',
+  'customer.name': 'Name',
   address: 'Address',
 };
 
+const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, any> => {
+  return Object.keys(obj).reduce<Record<string, any>>((acc, k) => {
+    const pre = prefix.length ? prefix + '.' : '';
+    if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
+      Object.assign(acc, flattenObject(obj[k], pre + k));
+    } else {
+      acc[pre + k] = obj[k];
+    }
+
+    return acc;
+  }, {});
+};
+
 const convertToCSV = (data: Record<string, any>[]) => {
-  // Determine headers based on headerMapping and include 'SR No.' as the first header
+  // Flatten all objects in the data array
+  const flattenedData = data.map((item) => flattenObject(item));
+
+  // Function to filter out unwanted headers
+  const filterHeaders = (header: string) => {
+    const excludedFields = [
+      'id',
+      'user_id',
+      'stripe_id',
+      'merchant_id',
+      'customer.id',
+      'customer.user_id',
+      'customer.stripe_id',
+      'customers',
+    ];
+    return !excludedFields.some((field) => header === field || header.endsWith(`.${field}`));
+  };
+
+  // Determine headers based on headerMapping
   const headers = [
     'SR No.',
-    ...Object.keys(data[0])
-      .filter((header) => header !== 'id' && header !== 'user_id' && header !== 'stripe_id')
-      .map((header) => headerMapping[header] || header),
+    ...Array.from(new Set(flattenedData.flatMap((item) => Object.keys(item).filter(filterHeaders)))).map(
+      (header) => headerMapping[header] || header
+    ),
   ];
 
   // Map rows and include 'SR No.' as the first column
-  const csvRows = data.map((row, index) =>
+  const csvRows = flattenedData.map((row, index) =>
     [
       index + 1,
       ...headers.slice(1).map((header) => {
@@ -59,6 +83,14 @@ const convertToCSV = (data: Record<string, any>[]) => {
 
   return [headers.join(','), ...csvRows].join('\r\n');
 };
+
+const replacer = (_key: string, value: any) => {
+  if (typeof value === 'string') {
+    return value.replace(/"/g, '""');
+  }
+  return value;
+};
+
 export const downloadCSV = (data: Record<string, any>[], fileName: string) => {
   try {
     const csvData = convertToCSV(data);

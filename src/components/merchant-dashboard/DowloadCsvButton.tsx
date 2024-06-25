@@ -19,7 +19,7 @@ const DownloadButton = ({ data, fileName }: DownloadButtonProps) => {
 
   return (
     <Button className='flex gap-2 h-10 rounded-sm' onClick={handleDownload}>
-      <DownloadIcon /> Download Csv
+      <DownloadIcon /> Download as CSV
     </Button>
   );
 };
