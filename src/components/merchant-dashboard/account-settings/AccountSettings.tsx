@@ -12,6 +12,8 @@ import { redirect } from 'next/navigation';
 import { updateData } from '@/app/actions/onboarding.actions';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
+import InputWrapper from '@/components/InputWrapper';
+import { Input } from '@/components/ui/input';
 
 type Input = {
   label: string;
@@ -29,6 +31,7 @@ const { sections: sidebarItems } = onboardingData;
 const AccountSettings = () => {
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const [loading, setLoading] = useState(false);
   const { data, isLoading } = useGetOnboardingData();
 
   const [editableValues, setEditableValues] = useState<EditableValues>({
@@ -91,17 +94,19 @@ const AccountSettings = () => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
     const dataToUpdate = {
       first_name: editableValues.field1,
       last_name: editableValues.field2,
     };
     const res = await await updateData(JSON.stringify(dataToUpdate), 'personal_informations');
     if (res?.error) return errorToast(res.error);
+    setLoading(false);
     toast({ description: 'Data saved successfully', variant: 'default' });
   };
 
   return (
-    <div className='flex gap-12 mt-6'>
+    <div className='flex gap-64 mt-6'>
       <div className='w-3/12 sticky top-0 h-[calc(100vh-200px)]'>
         {sidebarItems.map((item) => (
           <div
@@ -109,7 +114,7 @@ const AccountSettings = () => {
             className={cn(
               'flex justify-between items-center text-slate-700 text-sm px-4 py-2.5 font-medium rounded-lg',
               {
-                'bg-slate-700 text-white font-semibold': selectedItem === item.id,
+                'bg-slate-800/90 text-white font-semibold': selectedItem === item.id,
               }
             )}>
             <p>{item.label}</p>
@@ -117,7 +122,7 @@ const AccountSettings = () => {
         ))}
         <ModalDeleteAccount userId={data?.personal_informations?.user_id} />
       </div>
-      <div className='p-4 w-5/12 mx-auto max-h-[65vh] overflow-y-auto rounded-md bg-gray-100'>
+      <div className='p-4 w-[350px] max-h-[65vh]  overflow-y-auto rounded-md'>
         {isLoading ? (
           <div className='flex flex-col items-center justify-center gap-3 h-60'>
             <AiOutlineLoading3Quarters className='size-6 animate-spin' />
@@ -135,7 +140,10 @@ const AccountSettings = () => {
                   key={id}>
                   {renderFields(inputs, editableValues, handleInputChange, index === 0)}
                   {index === 0 && (
-                    <Button onClick={handleSave} className='bg-slate-800 text-white px-4 py-2 rounded-md'>
+                    <Button
+                      onClick={handleSave}
+                      disabled={loading}
+                      className='bg-slate-800 text-white px-4 py-2 rounded-md'>
                       Save
                     </Button>
                   )}
@@ -158,22 +166,25 @@ const renderFields = (
   return inputs.map(({ label, id, value }, index) => {
     if (isFirstSection && index < 2) {
       return (
-        <div key={id} className='text-sm space-y-1'>
-          <p className='font-medium text-slate-800'>{label}</p>
-          <input
-            type='text'
-            name={`field${index + 1}`}
-            value={editableValues[`field${index + 1}` as keyof EditableValues]}
-            onChange={handleInputChange}
-            className='border px-4 py-3 rounded-md opacity-70'
-          />
+        <div key={id} className='text-sm space-y-1 w-full'>
+          <InputWrapper label={label} required>
+            <Input
+              type='text'
+              name={`field${index + 1}`}
+              value={editableValues[`field${index + 1}` as keyof EditableValues]}
+              onChange={handleInputChange}
+              className='border px-4 h-11 rounded-md font-medium  w-full'
+            />
+          </InputWrapper>
         </div>
       );
     }
     return (
-      <div key={id} className='text-sm space-y-1'>
-        <p className='font-medium text-slate-800'>{label}</p>
-        <p className='border px-4 py-3 rounded-md opacity-70'>{value !== '' ? value : '-'}</p>
+      <div key={id} className='text-sm space-y-1 w-full'>
+        <p className='font-medium text-slate-800'>
+          {label} <span className='text-red-500'>*</span>
+        </p>
+        <p className='border px-4 py-2.5 rounded-md opacity-70 w-full'>{value !== '' ? value : '-'}</p>
       </div>
     );
   });

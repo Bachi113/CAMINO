@@ -12,7 +12,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className='flex'>
+    <div className='flex merchant-bg'>
       <Sidebar />
       {children}
     </div>

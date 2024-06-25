@@ -35,7 +35,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'remarks',
     header: 'Description',
     cell: ({ row }) => {
-      return <div className='text-gray-400'>{row.original.remarks}</div>;
+      return <div className='text-gray-400 font-medium'>{row.original.remarks}</div>;
     },
   },
 ];

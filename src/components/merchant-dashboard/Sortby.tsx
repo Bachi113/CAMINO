@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,57 +27,49 @@ interface SortByProps {
   setSorting: (sorting: { id: string; desc: boolean }[]) => void;
 }
 
-const SortBy: FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
+const SortBy: React.FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSort, setSelectedSort] = useState<{ column: string; direction: 'asc' | 'desc' } | null>(
     null
   );
 
   const handleCategorySelect = (category: string) => {
-    if (selectedCategory === category) {
-      setSelectedCategory(null); // Deselect if already selected
-      setCategoryFilter('');
-    } else {
-      setSelectedCategory(category);
-      setCategoryFilter(category);
-    }
+    const newCategory = selectedCategory === category ? null : category;
+    setSelectedCategory(newCategory);
+    setCategoryFilter(newCategory || '');
   };
 
   const handleSort = (column: string, direction: 'asc' | 'desc') => {
-    if (selectedSort?.column === column && selectedSort.direction === direction) {
-      setSelectedSort(null);
-      setSorting([]);
-    } else {
-      setSelectedSort({ column, direction });
-      setSorting([{ id: column, desc: direction === 'desc' }]);
-    }
+    const newSort =
+      selectedSort?.column === column && selectedSort.direction === direction ? null : { column, direction };
+    setSelectedSort(newSort);
+    setSorting(newSort ? [{ id: column, desc: direction === 'desc' }] : []);
   };
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className='border p-2 text-slate-500 text-sm font-medium border-slate-400/50 flex rounded-md items-center gap-1'>
+      <DropdownMenuTrigger className='border h-10 px-2.5 text-slate-500 text-sm font-medium border-slate-400/50 flex rounded-md items-center gap-2'>
         <PiCaretUpDownFill /> Sort By
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuSeparator />
+      <DropdownMenuContent className='w-[194px] text-sm font-medium text-slate-700'>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Category</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
-              <Command>
+              <Command className='w-[194px] text-sm font-medium text-slate-700'>
                 <CommandInput placeholder='Category' />
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
-                  {categoryOptions.map((category) => (
+                  {categoryOptions.map(({ value, label }) => (
                     <CommandItem
-                      key={category.value}
-                      onSelect={() => handleCategorySelect(category.value)}
+                      key={value}
+                      onSelect={() => handleCategorySelect(value)}
                       className={cn(
                         'hover:cursor-pointer',
-                        selectedCategory === category.value &&
+                        selectedCategory === value &&
                           'data-[selected]:bg-purple-700 data-[selected]:text-white'
                       )}>
-                      {category.label}
+                      {label}
                     </CommandItem>
                   ))}
                   <CommandSeparator />
@@ -89,27 +81,23 @@ const SortBy: FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Product ID</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem
-                onSelect={() => handleSort('id', 'asc')}
-                className={cn(
-                  'hover:cursor-pointer',
-                  selectedSort?.column === 'id' &&
-                    selectedSort.direction === 'asc' &&
-                    'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
-                )}>
-                Newest First
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => handleSort('id', 'desc')}
-                className={cn(
-                  'hover:cursor-pointer',
-                  selectedSort?.column === 'id' &&
-                    selectedSort.direction === 'desc' &&
-                    'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
-                )}>
-                Oldest First
-              </DropdownMenuItem>
+            <DropdownMenuSubContent className='w-[194px] text-sm font-medium text-slate-700'>
+              {[
+                { label: 'Newest First', column: 'id', direction: 'asc' as const },
+                { label: 'Oldest First', column: 'id', direction: 'desc' as const },
+              ].map(({ label, column, direction }) => (
+                <DropdownMenuItem
+                  key={direction}
+                  onSelect={() => handleSort(column, direction)}
+                  className={cn(
+                    'hover:cursor-pointer',
+                    selectedSort?.column === column &&
+                      selectedSort.direction === direction &&
+                      'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
+                  )}>
+                  {label}
+                </DropdownMenuItem>
+              ))}
               <DropdownMenuSeparator />
             </DropdownMenuSubContent>
           </DropdownMenuPortal>

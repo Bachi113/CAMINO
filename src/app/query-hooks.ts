@@ -124,7 +124,7 @@ const useGetMerchantProducts = ({
   const supabase = supabaseBrowserClient();
 
   return useQuery({
-    queryKey: ['getMerchantProducts', page, pageSize, categoryFilter],
+    queryKey: ['getMerchantProducts', page, pageSize, categoryFilter, searchQuery],
     queryFn: async () => {
       let query = supabase
         .from('products')
@@ -137,18 +137,20 @@ const useGetMerchantProducts = ({
       if (searchQuery) {
         query = query.ilike('product_name', `%${searchQuery}%`);
       }
-      console.log(searchQuery);
 
       const { data, error } = await query;
 
       if (error) {
+        console.error('Error fetching products:', error);
         throw new Error(`Error fetching products: ${error.message}`);
       }
 
       return data;
     },
+    staleTime: 60000, // 1 minute
   });
 };
+
 export {
   useGetPersonalInfo,
   useGetBuinessDetail,

@@ -11,21 +11,21 @@ const ProductDescription = ({ setIsOpen, data }: ProductDescriptionProps) => {
   return (
     <Sheet open={true} onOpenChange={setIsOpen}>
       <SheetContent className='w-[500px]'>
-        <SheetHeader className='space-y-5 text-sm font-medium text-slate-800'>
-          <SheetTitle className='text-lg font-semibold -mb-5'>Product Details</SheetTitle>
+        <SheetHeader className='space-y-5 text-sm font-medium text-slate-700'>
+          <SheetTitle className='text-lg font-semibold -mb-5 text-slate-700'>Product Details</SheetTitle>
           <p className='font-normal'>
             Product ID: <span className='font-bold mt-1'>{data.id}</span>{' '}
           </p>
           <div className='flex items-center gap-4 my-5'>
             <div className='w-full'>
               <p>Product name</p>
-              <p className='bg-gray-100 text-slate-500 px-2.5 py-4 mt-1 rounded-lg border'>
+              <p className='bg-gray-100 text-slate-500 px-4 py-2.5 mt-1 rounded-lg border'>
                 {data.product_name}
               </p>
             </div>
             <div className='w-full'>
               <p>Product Added on</p>
-              <p className='bg-gray-100 text-slate-500 px-2.5 py-4 mt-1 rounded-lg border'>
+              <p className='bg-gray-100 text-slate-500 px-4 py-2.5 mt-1 rounded-lg border'>
                 {format(new Date(data.created_at), 'MMM dd, yyyy')}
               </p>
             </div>
@@ -33,7 +33,7 @@ const ProductDescription = ({ setIsOpen, data }: ProductDescriptionProps) => {
 
           <div>
             <p>Category</p>
-            <div className='flex mt-1 justify-between items-center  text-slate-500 px-2.5 py-4 rounded-lg border'>
+            <div className='flex mt-1 justify-between items-center  text-slate-500 px-4 py-2.5 rounded-lg border'>
               <p className=''>{data.category}</p>
               <ChevronDownIcon />
             </div>

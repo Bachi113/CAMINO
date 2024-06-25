@@ -1,10 +1,9 @@
 'use client';
-import React, { ChangeEvent, FC, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import {
   SortingState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -16,18 +15,23 @@ import { useGetMerchantProducts } from '@/app/query-hooks';
 import ProductDescription from './ProductDescription';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { debounce } from '@/utils/utils';
 
-interface TableProps {}
-
-const ProductsTable: FC<TableProps> = () => {
+const ProductsTable: React.FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const pageSize = 10;
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading } = useGetMerchantProducts({ page, pageSize, categoryFilter, searchQuery });
+  const { data, isLoading } = useGetMerchantProducts({
+    page,
+    pageSize,
+    categoryFilter,
+    searchQuery,
+  });
 
   const table = useReactTable({
     data: data || [],
@@ -35,95 +39,92 @@ const ProductsTable: FC<TableProps> = () => {
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     state: { sorting },
   });
 
+  useEffect(() => {
+    if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [data]);
+
   const handleGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchQuery(value);
-  };
-
-  const handleRowClick = (data: any) => {
-    setSelectedProduct(data);
+    debounce(() => setSearchQuery(value), 300)();
   };
 
   const handlePreviousPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
+    setPage((prevPage) => Math.max(prevPage - 1, 1));
   };
 
   const handleNextPage = () => {
     if (data?.length === pageSize) {
-      setPage(page + 1);
+      setPage((prevPage) => prevPage + 1);
     }
   };
 
   return (
     <>
-      <div className='mt-5 flex justify-between w-full'>
-        <div>
-          <Input
-            placeholder='Search order details'
-            value={searchQuery}
-            onChange={handleGlobalFilterChange}
-            className='w-[350px]'
-          />
-        </div>
+      <div className='mt-10 flex justify-between items-center w-full'>
+        <Input
+          ref={searchInputRef}
+          placeholder='Search order details'
+          defaultValue={searchQuery}
+          disabled={isLoading}
+          onChange={handleGlobalFilterChange}
+          className='w-[350px] h-10'
+        />
         <div className='flex gap-5'>
           <SortBy setCategoryFilter={setCategoryFilter} setSorting={setSorting} />
           <ModalAddNewProduct />
         </div>
       </div>
 
-      <div className='h-[calc(100vh-270px)] rounded-md border overflow-auto mt-10'>
+      <div className='mt-10'>
         {isLoading ? (
           <div className='flex gap-3 justify-center items-center h-full'>
             <div className='spinner-border animate-spin inline-block size-8 border-4 rounded-full' />
             <span className='text-slate-500 font-medium'>Loading...</span>
           </div>
         ) : (
-          data && (
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
+          <Table className='bg-white border rounded-md'>
+            <TableHeader className='h-[54px]'>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    onClick={() => setSelectedProduct(row.original)}
+                    className='cursor-pointer text-slate-700 font-medium h-16'>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && 'selected'}
-                      onClick={() => handleRowClick(row.original)}
-                      className='cursor-pointer text-slate-700 font-medium h-12'>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className='h-24 text-center'>
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          )
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className='h-24 text-center'>
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         )}
       </div>
       <div className='flex justify-end gap-2 mt-4'>
@@ -134,7 +135,7 @@ const ProductsTable: FC<TableProps> = () => {
           variant='outline'
           size='sm'
           onClick={handleNextPage}
-          disabled={data && data.length < pageSize}>
+          disabled={!data || data.length < pageSize}>
           Next
         </Button>
       </div>

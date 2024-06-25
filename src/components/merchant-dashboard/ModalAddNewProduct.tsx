@@ -23,6 +23,7 @@ import { errorToast } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreateProduct } from '@/types/types';
+import PlusIcon from '@/assets/icons/PlusIcon';
 
 interface ModalAddNewProductProps {}
 
@@ -103,7 +104,9 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Create Product</Button>
+        <Button className='gap-1 p-3 h-10 rounded font-normal'>
+          <PlusIcon /> Add new product
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className='mb-4'>

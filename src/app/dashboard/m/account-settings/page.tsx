@@ -7,9 +7,9 @@ const Page = () => {
   return (
     <div className='p-8 w-full bg-slate-50'>
       <NavTitle />
-      <div className='flex justify-between mt-9'>
+      <div className='flex justify-between my-9'>
         <div>
-          <h2 className='text-lg text-slate-800 font-semibold'>Account details</h2>
+          <h2 className='text-lg text-slate-700 font-semibold'>Account details</h2>
           <p className='text-slate-500 font-medium mt-2 text-sm'>Access and Manage Details of your account</p>
         </div>
         <SignOutButton />
