@@ -32,7 +32,7 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return <div>{format(new Date(row.original?.created_at), 'MMM dd, yyyy')}</div>;
     },
-    sortDescFirst: true, // Set to sort descending by default
+    sortDescFirst: true,
     sortingFn: 'datetime',
   },
 
@@ -50,7 +50,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'remarks',
     header: 'Description',
     cell: ({ row }) => {
-      return <div className='text-gray-400 font-medium'>{row.original.remarks}</div>;
+      return <div className='text-[#A6A6A6] font-medium'>{row.original.remarks}</div>;
     },
   },
 ];

@@ -48,15 +48,15 @@ const SortBy: React.FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className='border h-10 px-2.5 text-slate-500 text-sm font-medium border-slate-400/20 flex rounded-md items-center gap-2'>
+      <DropdownMenuTrigger className='border h-10 px-2.5 bg-white text-slate-500 text-sm font-medium border-slate-400/20 flex rounded-md items-center gap-2'>
         <SortIcon /> Sort By
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-[194px] text-sm font-medium text-slate-700'>
+      <DropdownMenuContent className='w-[194px] text-sm font-medium text-[#363A4E]'>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Category</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
-              <Command className='w-[194px] text-sm font-medium text-slate-700'>
+              <Command className='w-[194px] text-sm font-medium text-[#363A4E]'>
                 <CommandInput placeholder='Category' />
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
@@ -81,7 +81,7 @@ const SortBy: React.FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Product ID</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent className='w-[194px] text-sm font-medium text-slate-700'>
+            <DropdownMenuSubContent className='w-[194px] text-sm font-medium text-[#363A4E]'>
               {[
                 { label: 'Newest First', column: 'id', direction: 'asc' as const },
                 { label: 'Oldest First', column: 'id', direction: 'desc' as const },

@@ -18,7 +18,7 @@ const SignOutButton = () => {
     <Button
       variant={'ghost'}
       size={'lg'}
-      className='gap-2 px-2.5 mr-10 font-medium shadow-none border text-slate-700'
+      className='gap-2 px-2.5 mr-10 font-medium shadow-none border text-[#363A4E]'
       onClick={handleSignOut}>
       <LogoutIcon /> Sign out
     </Button>

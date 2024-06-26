@@ -16,6 +16,7 @@ import ProductDescription from './ProductDescription';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { debounce } from '@/utils/utils';
+import SearchIcon from '@/assets/icons/SearchIcon';
 
 const ProductsTable: React.FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -66,14 +67,19 @@ const ProductsTable: React.FC = () => {
   return (
     <>
       <div className='mt-10 flex justify-between items-center w-full'>
-        <Input
-          ref={searchInputRef}
-          placeholder='Search order details'
-          defaultValue={searchQuery}
-          disabled={isLoading}
-          onChange={handleGlobalFilterChange}
-          className='w-[350px] h-10'
-        />
+        <div className='relative'>
+          <span className='absolute left-2 top-2.5'>
+            <SearchIcon />
+          </span>
+          <Input
+            ref={searchInputRef}
+            placeholder='Search product details'
+            defaultValue={searchQuery}
+            disabled={isLoading}
+            onChange={handleGlobalFilterChange}
+            className='w-[350px] h-10 pl-8'
+          />
+        </div>
         <div className='flex gap-5'>
           <SortBy setCategoryFilter={setCategoryFilter} setSorting={setSorting} />
           <ModalAddNewProduct />
@@ -92,7 +98,7 @@ const ProductsTable: React.FC = () => {
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className='pl-6'>
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -108,9 +114,9 @@ const ProductsTable: React.FC = () => {
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={() => setSelectedProduct(row.original)}
-                    className='cursor-pointer text-slate-700 font-medium h-16'>
+                    className='cursor-pointer text-[#363A4E] font-medium h-16'>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell key={cell.id} className='pl-6'>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}

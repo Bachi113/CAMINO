@@ -112,7 +112,7 @@ const AccountSettings = () => {
           <div
             key={item.id}
             className={cn(
-              'flex justify-between items-center text-slate-700 text-sm px-4 py-2.5 font-medium rounded-lg',
+              'flex justify-between items-center text-[#363A4E] text-sm px-4 py-2.5 font-medium rounded-lg',
               {
                 'bg-slate-800/90 text-white font-semibold': selectedItem === item.id,
               }

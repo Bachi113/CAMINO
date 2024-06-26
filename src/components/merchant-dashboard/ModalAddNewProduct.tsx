@@ -104,7 +104,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className='gap-1 p-3 h-10 rounded font-normal'>
+        <Button className='gap-2 p-3.5 h-10 rounded font-normal'>
           <PlusIcon /> Add new product
         </Button>
       </DialogTrigger>
