@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/utils/utils';
 import { format } from 'date-fns';
@@ -41,7 +42,7 @@ const OrderSummary = ({ setIsOpen, data }: OrderSummaryProps) => {
 
   return (
     <Sheet open={true} onOpenChange={setIsOpen}>
-      <SheetContent className='w-[500px] p-6'>
+      <SheetContent className='flex flex-col justify-between p-6'>
         <SheetHeader className='text-sm font-medium text-[#363A4E]'>
           <div>
             <SheetTitle className='text-[#363A4E]'>Order Details</SheetTitle>
@@ -85,6 +86,7 @@ const OrderSummary = ({ setIsOpen, data }: OrderSummaryProps) => {
             </div>
           </div>
         </SheetHeader>
+        <Button className='w-full h-11'>Send Payment Reminder</Button>
       </SheetContent>
     </Sheet>
   );
