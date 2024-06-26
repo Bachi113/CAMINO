@@ -22,7 +22,7 @@ import { errorToast } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreatePaymentLink } from '@/types/types';
-import { useGetCustomers, useGetProducts } from '@/app/query-hooks';
+import { useGetMerchantCustomers, useGetProducts } from '@/app/query-hooks';
 import ModalAddNewCustomer from './ModalAddNewCustomer';
 import { FiPlus } from 'react-icons/fi';
 import ModalAddNewProduct, { currencyOptions } from './ModalAddNewProduct';
@@ -57,7 +57,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
-  const { data: customers } = useGetCustomers();
+  const { data: merchantCustomers } = useGetMerchantCustomers();
   const { data: products } = useGetProducts();
 
   const router = useRouter();
@@ -170,9 +170,9 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                       <FiPlus /> Add new customer
                     </div>
                   </SelectItem>
-                  {customers?.map((option) => (
-                    <SelectItem key={option.id} value={(option.customer as any)?.stripe_id}>
-                      {(option.customer as any)?.name}
+                  {merchantCustomers?.map((data) => (
+                    <SelectItem key={data.id} value={data.customers?.stripe_id as string}>
+                      {data.customers?.customer_name}
                     </SelectItem>
                   ))}
                 </SelectContent>

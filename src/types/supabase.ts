@@ -205,21 +205,18 @@ export type Database = {
       merchants_customers: {
         Row: {
           created_at: string;
-          customer: Json;
           customer_id: string;
           id: string;
           merchant_id: string;
         };
         Insert: {
           created_at?: string;
-          customer: Json;
           customer_id: string;
           id?: string;
           merchant_id: string;
         };
         Update: {
           created_at?: string;
-          customer?: Json;
           customer_id?: string;
           id?: string;
           merchant_id?: string;

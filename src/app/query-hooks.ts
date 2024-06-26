@@ -101,14 +101,14 @@ const useGetOnboardingData = () => {
   });
 };
 
-const useGetCustomers = () => {
+const useGetMerchantCustomers = () => {
   const supabase = supabaseBrowserClient();
   return useQuery({
     queryKey: ['getCustomers'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('merchants_customers')
-        .select()
+        .select('*, customers (*)')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -144,6 +144,6 @@ export {
   useGetBankDetails,
   useGetVerificationDocuments,
   useGetOnboardingData,
-  useGetCustomers,
+  useGetMerchantCustomers,
   useGetProducts,
 };
