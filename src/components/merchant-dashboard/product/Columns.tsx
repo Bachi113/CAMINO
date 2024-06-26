@@ -1,3 +1,5 @@
+import SortIcon from '@/assets/icons/SortIcon';
+import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
@@ -16,11 +18,24 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: 'created_at',
-    header: 'Date Added',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='gap-2 p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          Date Added
+          <SortIcon />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       return <div>{format(new Date(row.original?.created_at), 'MMM dd, yyyy')}</div>;
     },
+    sortDescFirst: true, // Set to sort descending by default
+    sortingFn: 'datetime',
   },
+
   {
     accessorKey: 'product_name',
     header: 'Product Name',
