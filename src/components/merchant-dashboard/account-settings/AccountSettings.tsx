@@ -184,7 +184,7 @@ const renderFields = (
         <p className='font-medium text-slate-800'>
           {label} <span className='text-red-500'>*</span>
         </p>
-        <p className='border px-4 py-2.5 rounded-md opacity-70 w-full'>{value !== '' ? value : '-'}</p>
+        <p className='border px-4 py-2.5 rounded-md opacity-50 w-full'>{value !== '' ? value : '-'}</p>
       </div>
     );
   });
