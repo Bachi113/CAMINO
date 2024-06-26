@@ -143,29 +143,17 @@ interface UseGetMerchantCustomersParams {
   idFilter?: string;
   searchQuery?: string;
 }
-const useGetMerchantCustomers = ({
-  page,
-  pageSize,
-  nameFilter,
-  idFilter,
-  searchQuery,
-}: UseGetMerchantCustomersParams) => {
+const useGetMerchantCustomers = ({ page, pageSize, searchQuery }: UseGetMerchantCustomersParams) => {
   const supabase = supabaseBrowserClient();
 
   return useQuery({
-    queryKey: ['getMerchantCustomers', page, pageSize, nameFilter, idFilter, searchQuery],
+    queryKey: ['getMerchantCustomers', page, pageSize, searchQuery],
     queryFn: async () => {
       let query = supabase
         .from('merchants_customers')
         .select('*, customers (*)')
         .range((page - 1) * pageSize, page * pageSize - 1);
 
-      if (idFilter) {
-        query = query.eq('customer_id', idFilter);
-      }
-      if (nameFilter) {
-        query = query.ilike('customers->>customer_name', `%${nameFilter}%`);
-      }
       if (searchQuery) {
         query = query.or(
           `customer_id->>customer_name.ilike.%${searchQuery}%, customers->>email.ilike.%${searchQuery}%`

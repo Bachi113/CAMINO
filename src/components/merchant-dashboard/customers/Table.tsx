@@ -23,7 +23,6 @@ const CustomersTable: React.FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -31,8 +30,6 @@ const CustomersTable: React.FC = () => {
   const { data, isLoading } = useGetMerchantCustomers({
     page,
     pageSize,
-    nameFilter: categoryFilter,
-    idFilter: '',
     searchQuery,
   });
 
