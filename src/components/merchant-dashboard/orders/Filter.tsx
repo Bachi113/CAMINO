@@ -33,12 +33,12 @@ const Filter: React.FC<FilterProps> = () => {
       <DropdownMenuTrigger className='border h-10 px-2.5 text-slate-500 bg-white text-sm font-medium border-slate-400/20 flex rounded-md items-center gap-2'>
         <FilterIcon /> Filter By
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-[194px] text-sm font-medium text-slate-700'>
+      <DropdownMenuContent className='w-[194px] text-sm font-medium text-[#363A4E]'>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Customer Name</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
-              <Command className='w-[194px] text-sm font-medium text-slate-700'>
+              <Command className='w-[194px] text-sm font-medium text-[#363A4E]'>
                 <CommandInput placeholder='Search customer' />
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>

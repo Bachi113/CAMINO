@@ -10,7 +10,7 @@ const NavTitle = () => {
 
   const title = currentLink ? currentLink.label : 'Dashboard';
 
-  return <h1 className='text-2xl text-slate-700 font-semibold'>{title}</h1>;
+  return <h1 className='text-2xl text-[#363A4E] font-semibold'>{title}</h1>;
 };
 
 export default NavTitle;

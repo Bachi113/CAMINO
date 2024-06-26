@@ -40,7 +40,7 @@ const OrderSummary = ({ setIsOpen, data }: OrderSummaryProps) => {
 
   return (
     <Sheet open={true} onOpenChange={setIsOpen}>
-      <SheetContent className='w-[500px]'>
+      <SheetContent className='w-[500px] p-6'>
         <SheetHeader className='space-y-12 text-sm font-medium text-[#363A4E]'>
           <div>
             <SheetTitle className='text-lg font-semibold text-[#363A4E]'>Order Details</SheetTitle>
