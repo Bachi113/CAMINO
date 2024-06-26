@@ -13,7 +13,7 @@ import SortBy from '@/components/merchant-dashboard/orders/Sortby';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { debounce } from '@/utils/utils';
-import TransactionSummary from './OrderSummary';
+import OrderSummary from './OrderSummary';
 import DownloadButton from '../DowloadCsvButton';
 import Filter from './Filter';
 import SearchIcon from '@/assets/icons/SearchIcon';
@@ -68,7 +68,7 @@ const data = [
 
 const customerNames = data.map((order) => order.customer_name);
 
-const ProductsTable: React.FC = () => {
+const OrdersTable: React.FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
@@ -199,9 +199,9 @@ const ProductsTable: React.FC = () => {
           Next
         </Button>
       </div>
-      {selectedProduct && <TransactionSummary setIsOpen={setSelectedProduct} data={selectedProduct} />}
+      {selectedProduct && <OrderSummary setIsOpen={setSelectedProduct} data={selectedProduct} />}
     </>
   );
 };
 
-export default ProductsTable;
+export default OrdersTable;
