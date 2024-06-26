@@ -2,7 +2,6 @@ import React from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuSub,
   DropdownMenuSubContent,
@@ -19,15 +18,12 @@ import {
 } from '@/components/ui/command';
 import FilterIcon from '@/assets/icons/FilterIcon';
 
-interface FilterProps {}
+interface FilterProps {
+  customerNames: string[];
+  onFilterChange: (customerName: string | null) => void;
+}
 
-const customerNames = [
-  { value: 'john doe', label: 'John Doe' },
-  { value: 'jane smith', label: 'Jane Smith' },
-  { value: 'Michael Johnson', label: 'Michael Johnson' },
-];
-
-const Filter: React.FC<FilterProps> = () => {
+const Filter: React.FC<FilterProps> = ({ customerNames, onFilterChange }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className='border h-10 px-2.5 text-slate-500 bg-white text-sm font-medium border-slate-400/20 flex rounded-md items-center gap-2'>
@@ -42,9 +38,18 @@ const Filter: React.FC<FilterProps> = () => {
                 <CommandInput placeholder='Search customer' />
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
-                  {customerNames.map(({ value, label }) => (
-                    <CommandItem key={value} className='hover:cursor-pointer'>
-                      {label}
+                  <CommandItem
+                    key='all'
+                    className='hover:cursor-pointer'
+                    onSelect={() => onFilterChange(null)}>
+                    All Customers
+                  </CommandItem>
+                  {customerNames.map((name) => (
+                    <CommandItem
+                      key={name}
+                      className='hover:cursor-pointer'
+                      onSelect={() => onFilterChange(name)}>
+                      {name}
                     </CommandItem>
                   ))}
                   <CommandSeparator />
@@ -53,12 +58,6 @@ const Filter: React.FC<FilterProps> = () => {
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
-        <DropdownMenuItem className='gap-2'>
-          <span>Quantity</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className='gap-2'>
-          <span>Instalments</span>
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

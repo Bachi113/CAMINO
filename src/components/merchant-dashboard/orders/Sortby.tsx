@@ -74,13 +74,12 @@ const SortBy: React.FC<SortByProps> = ({ setSorting }) => {
                   {customerNames.map(({ value, label }) => (
                     <CommandItem
                       key={value}
-                      onSelect={() => handleSort('customer_name')}
                       className={cn(
                         'hover:cursor-pointer',
                         selectedSort?.column === 'customer_name' &&
                           'data-[selected]:bg-purple-700 data-[selected]:text-white'
                       )}>
-                      {label} {getSortIcon('customer_name')}
+                      {label}
                     </CommandItem>
                   ))}
                   <CommandSeparator />
