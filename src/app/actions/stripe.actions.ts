@@ -1,6 +1,6 @@
 'use server';
 
-import { TypeCreateCustomer } from '@/types/types';
+import { TypeCreateCustomer, TypeCreatePaymentMethodCS, TypeCreateSubscription } from '@/types/types';
 import { getUser } from '@/utils/get-user';
 import stripe from '@/utils/stripe';
 import { supabaseServerClient } from '@/utils/supabase/server';
@@ -55,34 +55,77 @@ export async function createCustomer(data: TypeCreateCustomer) {
   }
 }
 
-// export async function createSubscription() {
-//   const subscriptionSchedule = await stripe.subscriptionSchedules.create({
-//     customer: 'cus_Q6xx9eFd7O1evm',
-//     metadata: {
-//       key: 'value',
-//     },
-//     phases: [
-//       {
-//         items: [
-//           {
-//             // price_data: {
-//             //   product: '', // product id
-//             //   currency: '',
-//             //   recurring: {
-//             //     interval: 'month',
-//             //   },
-//             //   unit_amount_decimal: '1000.00',
-//             // },
-//             price: '', // price id
-//             quantity: 1,
-//           },
-//         ],
-//         iterations: 3,
-//       },
-//     ],
-//     start_date: 'now',
-//     end_behavior: 'cancel',
-//   });
+export async function getCustomerPaymentMethods(customerId: string) {
+  try {
+    const paymentMethods = await stripe.customers.listPaymentMethods(customerId, {
+      limit: 5,
+    });
+    return { data: paymentMethods.data };
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message ?? `${error}` };
+  }
+}
 
-//   console.log(subscriptionSchedule);
-// }
+export async function createSubscription(data: TypeCreateSubscription) {
+  try {
+    const subscription = await stripe.subscriptionSchedules.create({
+      customer: data.customer_id,
+      default_settings: {
+        default_payment_method: data.payment_method_id,
+      },
+      phases: [
+        {
+          items: [
+            {
+              price_data: {
+                product: data.product_id,
+                currency: data.currency,
+                recurring: {
+                  interval: 'month',
+                },
+                unit_amount_decimal: data.price,
+              },
+              quantity: data.quantity,
+            },
+          ],
+          iterations: data.installments,
+        },
+      ],
+      start_date: 'now',
+      end_behavior: 'cancel',
+    });
+
+    await supabaseServerClient()
+      .from('orders')
+      .update({ stripe_id: subscription.id, status: 'not_started' })
+      .eq('id', data.id);
+
+    return { id: subscription.id };
+  } catch (error) {
+    console.error(error);
+    return { error: `${error}` };
+  }
+}
+
+export async function createSetupCheckoutSession(data: TypeCreatePaymentMethodCS) {
+  const appUrl = process.env.APP_URL;
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'setup',
+      currency: data.currency,
+      customer: data.customer_id,
+      success_url: `${appUrl}/payment/${data.paymentId}/confirm?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/payment/cancel`,
+    });
+    if (session.url == null) {
+      throw 'Session URL not found';
+    }
+
+    return { url: session.url };
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message ?? `${error}` };
+  }
+}

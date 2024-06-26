@@ -55,7 +55,7 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className='w-full' size={'lg'}>
+        <Button className='w-full' size='lg'>
           Submit Form
         </Button>
       </DialogTrigger>
@@ -80,12 +80,13 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
           </DialogClose>
           {submitConfirmation ? (
             <div className='w-full'>
-              <Link href='/'>
-                <Button className='w-full'>Take me to home</Button>
+              <Link href='/dashboard'>
+                <Button className='w-full'>Go to Dashboard</Button>
               </Link>
             </div>
           ) : (
             <Button onClick={handleSubmit} className='w-full'>
+              {/* TODO: add loader */}
               Submit and Continue
             </Button>
           )}
