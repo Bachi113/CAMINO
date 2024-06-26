@@ -44,34 +44,38 @@ const OrderSummary = ({ setIsOpen, data }: OrderSummaryProps) => {
       <SheetContent className='w-[500px] p-6'>
         <SheetHeader className='text-sm font-medium text-[#363A4E]'>
           <div>
-            <SheetTitle className='text-lg font-semibold text-[#363A4E]'>Order Details</SheetTitle>
-            <p className='font-normal text-base mb-2'>
-              Order ID: <span className='font-bold mt-1.5'>{data.order_id}</span>
+            <SheetTitle className='text-[#363A4E]'>Order Details</SheetTitle>
+            <p className='font-normal text-base mt-1.5 mb-[22px]'>
+              Order ID: <span className='font-bold'>{data.order_id}</span>
             </p>
           </div>
           <div className='text-center bg-[#F9F9F9] py-8 rounded-md'>
-            <p className='text-base font-medium'>Outstanding Balance</p>
-            <p className='text-4xl font-semibold mt-1'>{data.total_amount}</p>
+            <p className='text-base leading-7 font-medium text-black'>Outstanding Balance</p>
+            <p className='text-[32px] leading-10 font-semibold mt-1'>{data.total_amount}</p>
           </div>
           <div>
-            <p className='text-sm text-orange-700 my-4 bg-orange-100 px-2 py-[2px] w-fit rounded-md'>
-              status: <span className='font-bold'>{data.status}</span>
+            <p className='text-sm text-[#C1410C] my-[22px] bg-orange-100 px-2 py-[2px] w-fit rounded-md'>
+              Status: <span className='font-bold'>{data.status}</span>
             </p>
             <div className='grid grid-cols-2 gap-4'>
               <div className='mb-3'>
                 <p>Next Instalment Date</p>
-                <p className='text-[#6B7280] mt-1 font-semibold'>{data.next_instalment_date}</p>
+                <p className='text-[#6B7280] mt-1 font-semibold'>
+                  {format(new Date(data.next_instalment_date), 'MMM dd, yyyy')}
+                </p>
               </div>
               <div className='mb-3'>
                 <p>Subscription End Date</p>
-                <p className='text-[#6B7280] mt-1 font-semibold'>{data.end_instalment_date}</p>
+                <p className='text-[#6B7280] mt-1 font-semibold'>
+                  {format(new Date(data?.end_instalment_date), 'MMM dd, yyyy')}
+                </p>
               </div>
               {dataToDisplay.map((item: OrderDetailsData, index) => (
                 <div key={index} className='w-full mb-3'>
                   <p>{item.label}</p>
                   <p
                     className={cn(
-                      'bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-lg border',
+                      'bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-md border',
                       (item.label.includes('ID') || item.label.includes('Date')) && 'font-semibold'
                     )}>
                     {item.value}

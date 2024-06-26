@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import {
   SortingState,
   flexRender,
@@ -66,9 +66,12 @@ const data = [
   },
 ];
 
+const customerNames = data.map((order) => order.customer_name);
+
 const ProductsTable: React.FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -76,8 +79,12 @@ const ProductsTable: React.FC = () => {
 
   const isLoading = false;
 
+  const filteredData = useMemo(() => {
+    return data.filter((order) => (selectedCustomer ? order.customer_name === selectedCustomer : true));
+  }, [data, selectedCustomer]);
+
   const table = useReactTable({
-    data: data || [],
+    data: filteredData || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
@@ -106,6 +113,10 @@ const ProductsTable: React.FC = () => {
     }
   };
 
+  const handleFilterChange = (customerName: string | null) => {
+    setSelectedCustomer(customerName);
+  };
+
   return (
     <>
       <div className='mt-10 flex justify-between items-center w-full'>
@@ -124,7 +135,7 @@ const ProductsTable: React.FC = () => {
         </div>
         <div className='flex gap-2'>
           <SortBy setSorting={setSorting} />
-          <Filter />
+          <Filter customerNames={customerNames} onFilterChange={handleFilterChange} />
           <DownloadButton fileName='orders' data={data} />
         </div>
       </div>
