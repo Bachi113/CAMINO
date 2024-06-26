@@ -46,7 +46,7 @@ const CustomerDetails = ({ setIsOpen, data }: CustomerDetailsProps) => {
                 <p>{item.label}</p>
                 <p
                   className={cn(
-                    'bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-lg border',
+                    'bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-md border',
                     (item.label.includes('ID') || item.label.includes('Date')) && 'font-semibold'
                   )}>
                   {item.value}
@@ -55,7 +55,7 @@ const CustomerDetails = ({ setIsOpen, data }: CustomerDetailsProps) => {
             ))}
             <div className='w-full'>
               <p>Address</p>
-              <p className='bg-[#F4F4F4] h-36 text-[#6B7280] px-4 py-2.5 mt-1 rounded-lg border'>
+              <p className='bg-[#F4F4F4] h-36 text-[#6B7280] px-4 py-2.5 mt-1 rounded-md border'>
                 {data?.customers?.address}
               </p>
             </div>
