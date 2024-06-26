@@ -46,7 +46,7 @@ const OrderSummary = ({ setIsOpen, data }: OrderSummaryProps) => {
         <SheetHeader className='text-sm font-medium text-[#363A4E]'>
           <div>
             <SheetTitle className='text-[#363A4E]'>Order Details</SheetTitle>
-            <p className='font-normal text-base mt-1.5 mb-[22px]'>
+            <p className='font-normal text-base mt-1 mb-[22px]'>
               Order ID: <span className='font-bold'>{data.order_id}</span>
             </p>
           </div>
