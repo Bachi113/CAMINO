@@ -28,10 +28,11 @@ const data = [
     total_amount: '$200.00',
     instalments: 3,
     status: 'Due',
-    next_instalment_date: '2024-07-25',
-    end_instalment_date: '2024-09-25',
-    paid_amount: '$150.00', // Example of paid_amount
-    product_id: 'PROD001', // Example of product_id
+    next_instalment_date: '2024-07-25T00:00:00Z',
+    end_instalment_date: '2024-09-25T00:00:00Z',
+    paid_amount: '$150.00',
+    product_id: 'PROD001',
+    product_date: '2024-06-20T00:00:00Z',
   },
   {
     order_id: 'ORD002',
@@ -42,10 +43,11 @@ const data = [
     total_amount: '$150.00',
     instalments: 2,
     status: 'Completed',
-    next_instalment_date: '2024-07-24',
-    end_instalment_date: '2024-08-24',
-    paid_amount: '$120.00', // Example of paid_amount
-    product_id: 'PROD002', // Example of product_id
+    next_instalment_date: '2024-07-24T00:00:00Z',
+    end_instalment_date: '2024-08-24T00:00:00Z',
+    paid_amount: '$120.00',
+    product_id: 'PROD002',
+    product_date: '2024-06-19T00:00:00Z',
   },
   {
     order_id: 'ORD003',
@@ -56,10 +58,11 @@ const data = [
     total_amount: '$300.00',
     instalments: 4,
     status: 'On Course',
-    next_instalment_date: '2024-07-23',
-    end_instalment_date: '2024-10-23',
-    paid_amount: '$250.00', // Example of paid_amount
-    product_id: 'PROD003', // Example of product_id
+    next_instalment_date: '2024-07-23T00:00:00Z',
+    end_instalment_date: '2024-10-23T00:00:00Z',
+    paid_amount: '$250.00',
+    product_id: 'PROD003',
+    product_date: '2024-06-18T00:00:00Z',
   },
 ];
 
@@ -119,7 +122,7 @@ const ProductsTable: React.FC = () => {
             className='w-[350px] h-10 pl-8'
           />
         </div>
-        <div className='flex gap-5'>
+        <div className='flex gap-2'>
           <SortBy setSorting={setSorting} />
           <Filter />
           <DownloadButton fileName='orders' data={data} />
@@ -133,7 +136,7 @@ const ProductsTable: React.FC = () => {
             <span className='text-slate-500 font-medium'>Loading...</span>
           </div>
         ) : (
-          <Table className='bg-white border rounded-md'>
+          <Table className='bg-white border rounded-md w-full'>
             <TableHeader className='h-[54px]'>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
