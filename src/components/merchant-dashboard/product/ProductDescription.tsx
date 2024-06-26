@@ -12,9 +12,9 @@ const ProductDescription = ({ setIsOpen, data }: ProductDescriptionProps) => {
     <Sheet open={true} onOpenChange={setIsOpen}>
       <SheetContent>
         <SheetHeader className='space-y-5 text-sm font-medium text-[#363A4E]'>
-          <SheetTitle className='text-lg font-semibold -mb-5 text-[#363A4E]'>Product Details</SheetTitle>
-          <p className='font-normal'>
-            Product ID: <span className='font-bold mt-1'>{data.id}</span>{' '}
+          <SheetTitle className='text-lg font-semibold -mb-4 text-[#363A4E]'>Product Details</SheetTitle>
+          <p className='font-normal text-base leading-5'>
+            Product ID: <span className='font-bold'>{data.id}</span>{' '}
           </p>
           <div className='flex items-center gap-4 my-5'>
             <div className='w-full'>

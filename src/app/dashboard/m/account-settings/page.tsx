@@ -5,7 +5,7 @@ import AccountSettings from '@/components/merchant-dashboard/account-settings/Ac
 
 const Page = () => {
   return (
-    <div className='p-8 w-full bg-slate-50'>
+    <div className='p-8 w-full'>
       <NavTitle />
       <div className='flex justify-between my-9'>
         <div>

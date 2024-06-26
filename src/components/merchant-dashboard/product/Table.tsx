@@ -93,7 +93,7 @@ const ProductsTable: React.FC = () => {
             <span className='text-slate-500 font-medium'>Loading...</span>
           </div>
         ) : (
-          <Table className='bg-white border rounded-md'>
+          <Table className='bg-white overflow-auto rounded-md w-full'>
             <TableHeader className='h-[54px]'>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
