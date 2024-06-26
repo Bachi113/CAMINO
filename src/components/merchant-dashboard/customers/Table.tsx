@@ -10,7 +10,6 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { columns } from './Columns';
 import SortBy from '@/components/merchant-dashboard/customers/Sortby';
-// import { useGetMerchantCustomers } from '@/app/query-hooks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { debounce } from '@/utils/utils';
@@ -18,6 +17,7 @@ import ModalAddNewCustomer from '../ModalAddNewCustomer';
 import { useGetMerchantCustomers } from '@/app/query-hooks';
 import CustomerDetails from './CustomerDetails';
 import DownloadButton from '../DowloadCsvButton';
+import SearchIcon from '@/assets/icons/SearchIcon';
 
 const CustomersTable: React.FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -69,15 +69,20 @@ const CustomersTable: React.FC = () => {
   return (
     <>
       <div className='mt-10 flex justify-between items-center w-full'>
-        <Input
-          ref={searchInputRef}
-          placeholder='Search order details'
-          defaultValue={searchQuery}
-          disabled={isLoading}
-          onChange={handleGlobalFilterChange}
-          className='w-[350px] h-10'
-        />
-        <div className='flex gap-5'>
+        <div className='relative'>
+          <span className='absolute left-2 top-2.5'>
+            <SearchIcon />
+          </span>
+          <Input
+            ref={searchInputRef}
+            placeholder='Search order details'
+            defaultValue={searchQuery}
+            disabled={isLoading}
+            onChange={handleGlobalFilterChange}
+            className='w-[350px] h-10 pl-8'
+          />
+        </div>
+        <div className='flex gap-2'>
           <SortBy />
           <DownloadButton data={data} fileName='customers' />
           <ModalAddNewCustomer />
@@ -91,12 +96,12 @@ const CustomersTable: React.FC = () => {
             <span className='text-slate-500 font-medium'>Loading...</span>
           </div>
         ) : (
-          <Table className='bg-white border rounded-md'>
+          <Table className='bg-white overflow-auto rounded-md'>
             <TableHeader className='h-[54px]'>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className='pl-6'>
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -112,9 +117,9 @@ const CustomersTable: React.FC = () => {
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={() => setSelectedCustomer(row.original)}
-                    className='cursor-pointer text-slate-700 font-medium h-16'>
+                    className='cursor-pointer text-[#363A4E] font-medium h-16'>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell key={cell.id} className='pl-6'>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}

@@ -23,10 +23,10 @@ const headerMapping: { [key: string]: string } = {
   created_at: 'Created At',
   customer_id: 'Customer ID',
   order_id: 'Order ID',
-  phone: 'Phone',
-  'customer.email': 'Email',
-  'customer.name': 'Name',
-  address: 'Address',
+  'customers.email': 'Email',
+  'customers.customer_name': 'Name',
+  'customers.phone': 'Number',
+  'customers.address': 'Address',
 };
 
 const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, any> => {
@@ -54,10 +54,14 @@ const convertToCSV = (data: Record<string, any>[]) => {
       'stripe_id',
       'merchant_id',
       'customer.id',
-      'customer.user_id',
       'customer.stripe_id',
-      'customers',
+      'customers.user_id',
+      'customers.stripe_id',
+      'customers.email',
+      'customers.customer_name',
+      'customers.created_at',
     ];
+
     return !excludedFields.some((field) => header === field || header.endsWith(`.${field}`));
   };
 

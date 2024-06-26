@@ -34,19 +34,19 @@ export const columns: ColumnDef<any>[] = [
     },
   },
   {
-    accessorFn: (row) => row.customer?.name,
+    accessorFn: (row) => row.customers?.customer_name,
     id: 'customer_name',
     header: 'Customer Name',
     cell: (info) => info.getValue(),
   },
   {
-    accessorFn: (row) => row.customer?.email,
+    accessorFn: (row) => row.customers?.email,
     id: 'customer_email',
     header: 'Email',
     cell: (info) => info.getValue(),
   },
   {
-    accessorFn: (row) => row.customers?.number,
+    accessorFn: (row) => row.customers?.phone,
     accessorKey: 'number',
     header: 'Number',
     cell: (info) => info.getValue(),

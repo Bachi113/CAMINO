@@ -1,4 +1,5 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { cn } from '@/utils/utils';
 import { format } from 'date-fns';
 
 interface CustomerDetailsProps {
@@ -19,40 +20,42 @@ const CustomerDetails = ({ setIsOpen, data }: CustomerDetailsProps) => {
     },
     {
       label: 'Customer Name',
-      value: data?.customer?.name,
+      value: data?.customers?.customer_name || '-',
     },
     {
       label: 'Email',
-      value: data?.customer?.email,
+      value: data?.customers?.email || '-',
     },
     {
       label: 'Number',
-      value: data?.customers?.number,
-    },
-    {
-      label: 'Address',
-      value: data?.customers?.address,
+      value: data?.customers?.phone || '-',
     },
   ];
 
   return (
     <Sheet open={true} onOpenChange={setIsOpen}>
-      <SheetContent className='w-[500px]'>
-        <SheetHeader className='space-y-5 text-sm font-medium text-slate-800'>
-          <SheetTitle className='text-lg font-semibold -mb-5'>Customer Details</SheetTitle>
-          <p className='font-normal'>
-            Customer ID: <span className='font-bold mt-1'>CUId23324</span>
+      <SheetContent>
+        <SheetHeader className='space-y-5 text-sm font-medium text-[#363A4E]'>
+          <SheetTitle className='text-lg font-semibold -mb-5 text-[#363A4E]'>Customer Details</SheetTitle>
+          <p className='font-normal text-base'>
+            Customer ID: <span className='font-bold mt-1'>{data.customer_id}</span>
           </p>
           <div className='my-5'>
             {dataToDisplay.map((item: CustomerDetailsData, index) => (
               <div key={index} className='w-full mb-5'>
                 <p>{item.label}</p>
-                <p className='bg-gray-100 text-slate-500 px-2.5 py-3 mt-1 rounded-lg border'>{item.value}</p>
+                <p
+                  className={cn(
+                    'bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-lg border',
+                    (item.label.includes('ID') || item.label.includes('Date')) && 'font-semibold'
+                  )}>
+                  {item.value}
+                </p>
               </div>
             ))}
             <div className='w-full'>
               <p>Address</p>
-              <p className='bg-gray-100 h-36 text-slate-500 px-2.5 py-3 mt-1 rounded-lg border'>
+              <p className='bg-[#F4F4F4] h-36 text-[#6B7280] px-4 py-2.5 mt-1 rounded-lg border'>
                 {data?.customers?.address}
               </p>
             </div>

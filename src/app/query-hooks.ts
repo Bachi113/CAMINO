@@ -157,27 +157,22 @@ const useGetMerchantCustomers = ({
     queryFn: async () => {
       let query = supabase
         .from('merchants_customers')
-        .select(
-          `
-          *,
-          customers:customer_id (*)
-        `
-        )
+        .select('*, customers (*)')
         .range((page - 1) * pageSize, page * pageSize - 1);
 
-      // if (idFilter) {
-      //   query = query.eq('customer_id', idFilter);
-      // }
+      if (idFilter) {
+        query = query.eq('customer_id', idFilter);
+      }
       if (nameFilter) {
-        query = query.ilike('customer->>name', `%${nameFilter}%`);
+        query = query.ilike('customers->>customer_name', `%${nameFilter}%`);
       }
       if (searchQuery) {
-        query = query.or(`customer->>name.ilike.%${searchQuery}%,customer->>email.ilike.%${searchQuery}%`);
+        query = query.or(
+          `customer_id->>customer_name.ilike.%${searchQuery}%, customers->>email.ilike.%${searchQuery}%`
+        );
       }
 
       const { data, error } = await query;
-
-      console.log(data);
 
       if (error) {
         console.error('Error fetching merchant customers:', error);
@@ -197,11 +192,12 @@ const useGetMerchantCustomerIdAndNames = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('merchants_customers')
-        .select('customer_id, customer->>name');
+        .select('customer_id, customers (customer_name)');
 
       if (error) {
         throw error;
       }
+
       return data;
     },
   });
