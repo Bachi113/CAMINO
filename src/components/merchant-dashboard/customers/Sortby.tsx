@@ -22,49 +22,53 @@ import { cn } from '@/utils/utils';
 import SortIcon from '@/assets/icons/SortIcon';
 import { useGetMerchantCustomerIdAndNames } from '@/app/query-hooks';
 
-interface SortByProps {
-  setCategoryFilter: (category: string) => void;
-  setSorting: (sorting: { id: string; desc: boolean }[]) => void;
-}
 interface Customer {
-  name: string;
-  customer_id: string;
+  value: string;
+  label: string;
 }
 
-const SortBy: React.FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedSort, setSelectedSort] = useState<{ column: string; direction: 'asc' | 'desc' } | null>(
-    null
-  );
+const SortBy: React.FC = () => {
+  const [selectedName, setSelectedName] = useState<Customer | null>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<Customer | null>(null);
 
   const [uniqueCustomers, setUniqueCustomers] = useState<Customer[]>([]);
+  const [customerIds, setCustomerIds] = useState<Customer[]>([]);
 
   const { data: customers } = useGetMerchantCustomerIdAndNames();
 
   useEffect(() => {
-    const uniqueNames = new Set<string>();
-    const uniqueCustomersArray: Customer[] = [];
+    if (customers) {
+      // Process customer IDs
+      const ids = customers.map((customer) => ({
+        value: customer.customer_id,
+        label: customer.customer_id.toUpperCase(),
+      }));
+      setCustomerIds(ids);
 
-    customers?.forEach((customer) => {
-      if (!uniqueNames.has(customer.name)) {
-        uniqueNames.add(customer.name);
-        uniqueCustomersArray.push(customer);
-      }
-    });
+      // Process unique names
+      const uniqueNames = new Set<string>();
+      const uniqueCustomersArray: Customer[] = [];
 
-    setUniqueCustomers(uniqueCustomersArray);
+      customers.forEach((customer) => {
+        if (!uniqueNames.has(customer.name)) {
+          uniqueNames.add(customer.name);
+          uniqueCustomersArray.push({
+            value: customer.name,
+            label: customer.name.toUpperCase(),
+          });
+        }
+      });
+
+      setUniqueCustomers(uniqueCustomersArray);
+    }
   }, [customers]);
-  const handleCategorySelect = (category: string) => {
-    const newCategory = selectedCategory === category ? null : category;
-    setSelectedCategory(newCategory);
-    setCategoryFilter(newCategory || '');
+
+  const handleNameSelect = (customer: Customer) => {
+    setSelectedName(selectedName?.value === customer.value ? null : customer);
   };
 
-  const handleSort = (column: string, direction: 'asc' | 'desc') => {
-    const newSort =
-      selectedSort?.column === column && selectedSort.direction === direction ? null : { column, direction };
-    setSelectedSort(newSort);
-    setSorting(newSort ? [{ id: column, desc: direction === 'desc' }] : []);
+  const handleCustomerIdSelect = (customer: Customer) => {
+    setSelectedCustomerId(selectedCustomerId?.value === customer.value ? null : customer);
   };
 
   return (
@@ -74,23 +78,23 @@ const SortBy: React.FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-[194px] text-sm font-medium text-slate-700'>
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Category</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger>Name</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
               <Command className='w-[194px] text-sm font-medium text-slate-700'>
-                <CommandInput placeholder='Category' />
+                <CommandInput placeholder='Name' />
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
-                  {uniqueCustomers.map(({ name }) => (
+                  {uniqueCustomers.map((customer) => (
                     <CommandItem
-                      key={name}
-                      onSelect={() => handleCategorySelect(name)}
+                      key={customer.value}
+                      onSelect={() => handleNameSelect(customer)}
                       className={cn(
                         'hover:cursor-pointer',
-                        selectedCategory === name &&
+                        selectedName?.value === customer.value &&
                           'data-[selected]:bg-purple-700 data-[selected]:text-white'
                       )}>
-                      {name}
+                      {customer.label}
                     </CommandItem>
                   ))}
                   <CommandSeparator />
@@ -103,23 +107,24 @@ const SortBy: React.FC<SortByProps> = ({ setCategoryFilter, setSorting }) => {
           <DropdownMenuSubTrigger>Customer ID</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent className='w-[194px] text-sm font-medium text-slate-700'>
-              {[
-                { label: 'Newest First', column: 'customer_id', direction: 'asc' as const },
-                { label: 'Oldest First', column: 'customer_id', direction: 'desc' as const },
-              ].map(({ label, column, direction }) => (
-                <DropdownMenuItem
-                  key={direction}
-                  onSelect={() => handleSort(column, direction)}
-                  className={cn(
-                    'hover:cursor-pointer',
-                    selectedSort?.column === column &&
-                      selectedSort.direction === direction &&
-                      'bg-purple-700 focus:bg-purple-700 text-white focus:text-white'
-                  )}>
-                  {label}
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
+              <Command>
+                <CommandInput placeholder='Customer ID' />
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  {customerIds.map((customer) => (
+                    <CommandItem
+                      key={customer.value}
+                      onSelect={() => handleCustomerIdSelect(customer)}
+                      className={cn(
+                        'hover:cursor-pointer',
+                        selectedCustomerId?.value === customer.value &&
+                          'data-[selected]:bg-purple-700 data-[selected]:text-white'
+                      )}>
+                      {customer.label}
+                    </CommandItem>
+                  ))}
+                </CommandList>
+              </Command>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
