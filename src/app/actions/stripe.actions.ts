@@ -69,7 +69,7 @@ export async function getCustomerPaymentMethods(customerId: string) {
 
 export async function createSubscription(data: TypeCreateSubscription) {
   try {
-    const subscriptionSchedule = await stripe.subscriptionSchedules.create({
+    const subscription = await stripe.subscriptionSchedules.create({
       customer: data.customer_id,
       default_settings: {
         default_payment_method: data.payment_method_id,
@@ -96,9 +96,12 @@ export async function createSubscription(data: TypeCreateSubscription) {
       end_behavior: 'cancel',
     });
 
-    console.log(subscriptionSchedule);
+    await supabaseServerClient()
+      .from('orders')
+      .update({ stripe_id: subscription.id, status: 'not_started' })
+      .eq('id', data.id);
 
-    return { id: subscriptionSchedule.id };
+    return { id: subscription.id };
   } catch (error) {
     console.error(error);
     return { error: `${error}` };

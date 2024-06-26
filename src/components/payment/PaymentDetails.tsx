@@ -6,7 +6,7 @@ import { CardContent, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import InputWrapper from '@/components/InputWrapper';
-import { TypePaymentLink } from '@/types/types';
+import { TypeOrder } from '@/types/types';
 import { createSetupCheckoutSession, getCustomerPaymentMethods } from '@/app/actions/stripe.actions';
 import { errorToast } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,7 @@ import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 
 interface PaymentDetailsProps {
-  data: TypePaymentLink;
+  data: TypeOrder;
 }
 
 const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
@@ -29,7 +29,7 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
 
     const supabase = supabaseBrowserClient();
     await supabase
-      .from('payment_links')
+      .from('orders')
       .update({ period: Number(installments) })
       .eq('id', data.id);
 

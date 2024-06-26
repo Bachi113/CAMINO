@@ -1,6 +1,6 @@
 'use client';
 
-import { TypePaymentLink } from '@/types/types';
+import { TypeOrder } from '@/types/types';
 import { Button } from '../ui/button';
 import { CardContent, CardFooter } from '../ui/card';
 import { BarLoader } from 'react-spinners';
@@ -13,7 +13,7 @@ import { toast } from '../ui/use-toast';
 import { parse, format } from 'date-fns';
 
 interface PaymentMethodDetailsProps {
-  data: TypePaymentLink;
+  data: TypeOrder;
   paymentMethods: Stripe.PaymentMethod[];
 }
 
@@ -25,6 +25,7 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
     setIsPending(true);
 
     const subscription = await createSubscription({
+      id: data.id,
       customer_id: data.stripe_cus_id,
       payment_method_id: paymentMethodId,
       product_id: (data as any).products.stripe_id,
@@ -35,12 +36,11 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
     });
     if (subscription.error) {
       errorToast(subscription.error);
-      return;
+    } else {
+      toast({ description: 'Subscription Created Successfully.' });
     }
 
-    // TODO: Handle subscription created successfully
-    console.log(subscription.id);
-    return toast({ description: 'Subscription Created Successfully.' });
+    setIsPending(false);
   };
 
   return (

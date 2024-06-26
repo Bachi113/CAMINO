@@ -26,8 +26,9 @@ import { useGetMerchantCustomers, useGetProducts } from '@/app/query-hooks';
 import ModalAddNewCustomer from './ModalAddNewCustomer';
 import { FiPlus } from 'react-icons/fi';
 import ModalAddNewProduct, { currencyOptions } from './ModalAddNewProduct';
-import { useRouter } from 'next/navigation';
 import { Checkbox } from '../ui/checkbox';
+import { IoCopyOutline } from 'react-icons/io5';
+import { toast } from '../ui/use-toast';
 
 interface ModalCreatePaymentLinkProps {}
 
@@ -56,11 +57,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   const [openProductModal, setOpenProductModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [paymentLinkId, setPaymentLinkId] = useState('');
 
   const { data: merchantCustomers } = useGetMerchantCustomers();
   const { data: products } = useGetProducts();
-
-  const router = useRouter();
 
   const {
     register,
@@ -97,7 +97,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
       const installmentOptions = formData.installments_options.sort((a, b) => a - b);
       const { data: paymentLink, error } = await supabase
-        .from('payment_links')
+        .from('orders')
         .insert({
           ...formData,
           installments_options: installmentOptions,
@@ -110,9 +110,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
       }
 
       // TODO: handle invalidate query for payment links
-      router.push(`/payment/${paymentLink.id}`);
+      setPaymentLinkId(paymentLink.id);
     } catch (error: any) {
       errorToast(error);
+    } finally {
       setIsPending(false);
     }
   };
@@ -137,6 +138,23 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
       selectedInstallments.splice(index, 1);
     }
     setValue('installments_options', selectedInstallments);
+  };
+
+  const handleCopyPaymentLink = () => {
+    navigator.clipboard
+      .writeText(`${process.env.NEXT_PUBLIC_APP_URL}/payment/${paymentLinkId}`)
+      .then(() => {
+        toast({ description: 'Payment Link copied to clipboard!' });
+      })
+      .catch((err) => {
+        console.error(err);
+        errorToast('Could not copy the payment link', `${err}`);
+      });
+  };
+
+  const truncatedPaymentLink = () => {
+    const linkSplitArray = paymentLinkId.split('-');
+    return `${process.env.NEXT_PUBLIC_APP_URL}/payment/${linkSplitArray[0]}...${linkSplitArray.pop()}`;
   };
 
   return (
@@ -238,18 +256,35 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
               label='Installment Options'
               required
               error={errors.installments_options?.message}>
-              {installmentOptions.map((option) => (
-                <div key={option} className='flex items-center text-sm space-x-2 mb-2'>
-                  <Checkbox
-                    id={`intslmnt${option}`}
-                    onCheckedChange={(checked) => handleInstallmentChange(Number(option), checked as boolean)}
-                  />
-                  <label htmlFor={`intslmnt${option}`} className='cursor-pointer'>
-                    {option} months
-                  </label>
-                </div>
-              ))}
+              <div className='grid grid-cols-2'>
+                {installmentOptions.map((option) => (
+                  <div key={option} className='flex items-center text-sm space-x-2 mb-2'>
+                    <Checkbox
+                      id={`intslmnt${option}`}
+                      onCheckedChange={(checked) =>
+                        handleInstallmentChange(Number(option), checked as boolean)
+                      }
+                    />
+                    <label htmlFor={`intslmnt${option}`} className='cursor-pointer'>
+                      {option} months
+                    </label>
+                  </div>
+                ))}
+              </div>
             </InputWrapper>
+
+            {paymentLinkId && (
+              <InputWrapper label='Payment Link'>
+                <Button
+                  type='button'
+                  variant='secondary'
+                  size='sm'
+                  onClick={handleCopyPaymentLink}
+                  className='w-full justify-between border'>
+                  {truncatedPaymentLink()} <IoCopyOutline />
+                </Button>
+              </InputWrapper>
+            )}
 
             <DialogFooter className='sm:space-x-4 !mt-8'>
               <DialogClose asChild>
@@ -257,9 +292,15 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type='submit' size='lg' disabled={isPending} className='w-full'>
-                {isPending ? <BarLoader height={1} /> : 'Send link'}
-              </Button>
+              {paymentLinkId ? (
+                <Button size='lg' onClick={handleCopyPaymentLink} className='w-full'>
+                  Copy link
+                </Button>
+              ) : (
+                <Button size='lg' disabled={isPending} className='w-full'>
+                  {isPending ? <BarLoader height={1} /> : 'Create link'}
+                </Button>
+              )}
             </DialogFooter>
           </form>
         </DialogContent>

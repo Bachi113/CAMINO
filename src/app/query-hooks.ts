@@ -108,7 +108,7 @@ const useGetMerchantCustomers = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('merchants_customers')
-        .select('*, customers (*)')
+        .select('*, customers (stripe_id, customer_name)')
         .order('created_at', { ascending: false });
 
       if (error) {
