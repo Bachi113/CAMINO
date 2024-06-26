@@ -78,7 +78,7 @@ const CustomersTable: React.FC = () => {
           className='w-[350px] h-10'
         />
         <div className='flex gap-5'>
-          <SortBy setCategoryFilter={setCategoryFilter} setSorting={setSorting} />
+          <SortBy />
           <DownloadButton data={data} fileName='customers' />
           <ModalAddNewCustomer />
         </div>
