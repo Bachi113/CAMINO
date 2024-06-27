@@ -144,6 +144,60 @@ const useGetProducts = () => {
     },
   });
 };
+interface UseGetMerchantCustomersParams {
+  page: number;
+  pageSize: number;
+  nameFilter?: string;
+  idFilter?: string;
+  searchQuery?: string;
+}
+const useGetMerchantCustomers = ({ page, pageSize, searchQuery }: UseGetMerchantCustomersParams) => {
+  const supabase = supabaseBrowserClient();
+
+  return useQuery({
+    queryKey: ['getMerchantCustomers', page, pageSize, searchQuery],
+    queryFn: async () => {
+      let query = supabase
+        .from('merchants_customers')
+        .select('*, customers (*)')
+        .range((page - 1) * pageSize, page * pageSize - 1);
+
+      if (searchQuery) {
+        query = query.or(
+          `customer_id->>customer_name.ilike.%${searchQuery}%, customers->>email.ilike.%${searchQuery}%`
+        );
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching merchant customers:', error);
+        throw new Error(`Error fetching merchant customers: ${error.message}`);
+      }
+
+      return data;
+    },
+    staleTime: 60000, // 1 minute
+  });
+};
+
+const useGetMerchantCustomerIdAndNames = () => {
+  const supabase = supabaseBrowserClient();
+  return useQuery({
+    queryKey: ['getMerchantCustomerIdAndNames'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('merchants_customers')
+        .select('customer_id, customers (customer_name)');
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+  });
+};
 
 interface UseGetMerchantProductsParams {
   page: number;
@@ -197,5 +251,7 @@ export {
   useGetOrders,
   useGetMerchantCustomers,
   useGetProducts,
+  useGetMerchantCustomers,
+  useGetMerchantCustomerIdAndNames,
   useGetMerchantProducts,
 };
