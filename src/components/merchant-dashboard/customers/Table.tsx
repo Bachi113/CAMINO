@@ -20,6 +20,7 @@ import DownloadButton from '../DowloadCsvButton';
 import SearchIcon from '@/assets/icons/SearchIcon';
 
 const CustomersTable: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -82,7 +83,7 @@ const CustomersTable: React.FC = () => {
         <div className='flex gap-2'>
           <SortBy />
           <DownloadButton data={data} fileName='customers' />
-          <ModalAddNewCustomer />
+          <ModalAddNewCustomer isOpen={isModalOpen} handleModalOpen={setIsModalOpen} triggerButton={true} />
         </div>
       </div>
 

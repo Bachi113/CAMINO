@@ -9,7 +9,6 @@ import DashboardIcon from '@/assets/icons/DashboardIcon';
 import OrdersIcon from '@/assets/icons/OrdersIcon';
 import ProductsIcon from '@/assets/icons/ProductsIcon';
 import UsersIcon from '@/assets/icons/UsersIcon';
-import TransactionsIcon from '@/assets/icons/TransactionsIcon';
 import SettingsIcon from '@/assets/icons/SettingsIcon';
 
 export const sidebarLinks = [
