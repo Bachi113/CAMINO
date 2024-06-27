@@ -30,7 +30,7 @@ interface ModalAddNewProductProps {
   handleModalOpen: (value: boolean) => void;
 }
 
-const categoryOptions = [
+export const categoryOptions = [
   { value: 'electronics', label: 'Electronics' },
   { value: 'fashion', label: 'Fashion' },
   { value: 'groceries', label: 'Groceries' },
@@ -109,6 +109,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ isOpen, handleModalOp
       {/* <DialogTrigger asChild>
         <Button>Create Product</Button>
       </DialogTrigger> */}
+
       <DialogContent>
         <DialogHeader className='mb-4'>
           <DialogTitle>Add New Product</DialogTitle>

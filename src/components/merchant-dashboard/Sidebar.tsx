@@ -52,7 +52,7 @@ const Sidebar = () => {
                 'flex items-center gap-2.5 px-2 py-3 rounded-md text-slate-600 text-sm font-semibold',
                 isSelected && 'bg-indigo-50 text-purple-800'
               )}>
-              <link.logo isSelected={true} />
+              <link.logo isSelected={isSelected} />
               {link.label}
             </Link>
           );

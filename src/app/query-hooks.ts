@@ -145,6 +145,48 @@ const useGetProducts = () => {
   });
 };
 
+interface UseGetMerchantProductsParams {
+  page: number;
+  pageSize: number;
+  categoryFilter?: string;
+  searchQuery?: string;
+}
+
+const useGetMerchantProducts = ({
+  page,
+  pageSize,
+  categoryFilter,
+  searchQuery,
+}: UseGetMerchantProductsParams) => {
+  const supabase = supabaseBrowserClient();
+
+  return useQuery({
+    queryKey: ['getMerchantProducts', page, pageSize, categoryFilter, searchQuery],
+    queryFn: async () => {
+      let query = supabase
+        .from('products')
+        .select('*')
+        .range((page - 1) * pageSize, page * pageSize - 1);
+
+      if (categoryFilter) {
+        query = query.eq('category', categoryFilter);
+      }
+      if (searchQuery) {
+        query = query.ilike('product_name', `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching products:', error);
+        throw new Error(`Error fetching products: ${error.message}`);
+      }
+
+      return data;
+    },
+  });
+};
+
 export {
   useGetPersonalInfo,
   useGetBuinessDetail,
@@ -155,4 +197,5 @@ export {
   useGetOrders,
   useGetMerchantCustomers,
   useGetProducts,
+  useGetMerchantProducts,
 };
