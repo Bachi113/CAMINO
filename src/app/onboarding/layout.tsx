@@ -1,5 +1,4 @@
 import { getUser } from '@/utils/get-user';
-import { supabaseServerClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
@@ -15,11 +14,6 @@ const OnboardingLayout = async ({ children }: Props) => {
   if (!user) {
     redirect('/login/merchant');
   }
-
-  const supabase = supabaseServerClient();
-  const { data: onboarding } = await supabase.from('onboarding').select('*').single();
-
-  // TODO: logic for redirection.
 
   return children;
 };

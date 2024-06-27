@@ -107,22 +107,21 @@ const AccountSettings = () => {
 
   return (
     <div className='flex gap-64 mt-6'>
-      <div className='w-3/12 sticky top-0 h-[calc(100vh-200px)]'>
+      <div className='w-3/12'>
         {sidebarItems.map((item) => (
           <div
             key={item.id}
             className={cn(
               'flex justify-between items-center text-[#363A4E] text-sm px-4 py-2.5 font-medium rounded-lg',
-              {
-                'bg-slate-800/90 text-white font-semibold': selectedItem === item.id,
-              }
+              { 'bg-slate-800/90 text-white font-semibold': selectedItem === item.id }
             )}>
             <p>{item.label}</p>
           </div>
         ))}
         <ModalDeleteAccount userId={data?.personal_informations?.user_id} />
       </div>
-      <div className='p-4 w-[350px] max-h-[65vh]  overflow-y-auto rounded-md'>
+
+      <div className='p-4 max-h-[65vh]  overflow-y-auto rounded-md'>
         {isLoading ? (
           <div className='flex flex-col items-center justify-center gap-3 h-60'>
             <AiOutlineLoading3Quarters className='size-6 animate-spin' />
@@ -140,11 +139,8 @@ const AccountSettings = () => {
                   key={id}>
                   {renderFields(inputs, editableValues, handleInputChange, index === 0)}
                   {index === 0 && (
-                    <Button
-                      onClick={handleSave}
-                      disabled={loading}
-                      className='bg-slate-800 text-white px-4 py-2 rounded-md'>
-                      Save
+                    <Button onClick={handleSave} disabled={loading} className='bg-slate-800'>
+                      Update
                     </Button>
                   )}
                   <Separator />

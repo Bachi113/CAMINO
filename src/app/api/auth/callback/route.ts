@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     }
 
     // URL to redirect to after the authentication process completes
-    return NextResponse.redirect(origin);
+    return NextResponse.redirect(`${origin}/onboarding`);
   } catch (error: any) {
     console.error(error);
 

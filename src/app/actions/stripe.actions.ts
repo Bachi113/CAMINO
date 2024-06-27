@@ -96,6 +96,12 @@ export async function createSubscription(data: TypeCreateSubscription) {
       end_behavior: 'cancel',
     });
 
+    // const status = subscription.status === 'active' ? 'active' : 'not_started';
+    // await supabaseServerClient()
+    //   .from('orders')
+    //   .update({ stripe_id: subscription.id, status })
+    //   .eq('id', data.id);
+
     await supabaseServerClient()
       .from('orders')
       .update({ stripe_id: subscription.id, status: 'not_started' })

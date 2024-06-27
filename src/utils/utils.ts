@@ -11,6 +11,18 @@ export function cn(...inputs: ClassValue[]) {
 export const errorToast = (description: string, title?: string) =>
   toast({ title, description, variant: 'destructive' });
 
+export const handleCopyPaymentLink = (paymentLink: string) => {
+  navigator.clipboard
+    .writeText(paymentLink)
+    .then(() => {
+      toast({ description: 'Payment Link copied to clipboard!' });
+    })
+    .catch((err) => {
+      console.error(err);
+      errorToast('Could not copy the payment link', `${err}`);
+    });
+};
+
 export const extractFileNameFromUrl = (url: string, userId: string) => {
   const decodedUrl = decodeURIComponent(url);
   const parts = decodedUrl.split('/');

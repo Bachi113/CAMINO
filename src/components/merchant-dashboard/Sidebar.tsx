@@ -17,7 +17,7 @@ export const sidebarLinks = [
   { label: 'Orders', path: '/orders', logo: OrdersIcon },
   { label: 'Products', path: '/products', logo: ProductsIcon },
   { label: 'Customers', path: '/customers', logo: UsersIcon },
-  { label: 'Transactions', path: '/transactions', logo: TransactionsIcon },
+  // { label: 'Transactions', path: '/transactions', logo: TransactionsIcon },
   { label: 'Account Settings', path: '/account-settings', logo: SettingsIcon },
 ];
 

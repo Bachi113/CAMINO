@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import getSymbolFromCurrency from 'currency-symbol-map';
+import { TypeOrder } from '@/types/types';
 
-// TODO: Add proper types
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<TypeOrder>[] = [
   {
     accessorFn: (row, index) => index + 1,
     id: 'sr_no',
@@ -38,11 +38,7 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'product_name',
     header: 'Product',
-    cell: ({
-      row: {
-        original: { products },
-      },
-    }) => <div className='w-24'>{products.product_name}</div>,
+    cell: ({ row: { original } }) => <div className='w-24'>{(original as any).products.product_name}</div>,
   },
   {
     accessorKey: 'quantity',
@@ -52,11 +48,7 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'customer_name',
     header: 'Customer Name',
-    cell: ({
-      row: {
-        original: { customers },
-      },
-    }) => customers.customer_name,
+    cell: ({ row: { original } }) => (original as any).customers.customer_name,
   },
 
   {
@@ -92,8 +84,17 @@ export const columns: ColumnDef<any>[] = [
         original: { status },
       },
     }) => {
+      const buttonVariant =
+        status === 'active'
+          ? 'default'
+          : status === 'not_started'
+            ? 'outline'
+            : status === 'pending'
+              ? 'warning'
+              : 'destructive';
+
       return (
-        <Badge variant={status === 'active' ? 'default' : 'warning'} className='capitalize'>
+        <Badge variant={buttonVariant} className='capitalize'>
           {status}
         </Badge>
       );

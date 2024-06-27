@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
-import { errorToast } from '@/utils/utils';
+import { errorToast, handleCopyPaymentLink } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreatePaymentLink } from '@/types/types';
@@ -28,7 +28,6 @@ import { FiPlus } from 'react-icons/fi';
 import ModalAddNewProduct, { currencyOptions } from './ModalAddNewProduct';
 import { Checkbox } from '../ui/checkbox';
 import { IoCopyOutline } from 'react-icons/io5';
-import { toast } from '../ui/use-toast';
 import { HiPlus } from 'react-icons/hi';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { queryClient } from '@/app/providers';
@@ -60,7 +59,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   const [openProductModal, setOpenProductModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  const [paymentLinkId, setPaymentLinkId] = useState('');
+  const [paymentLink, setPaymentLink] = useState('');
 
   const { data: merchantCustomers } = useGetCustomers();
   const { data: products } = useGetProducts();
@@ -91,6 +90,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
     setIsPending(true);
     try {
+      if (Number(formData.price) < 0) {
+        throw 'Price must be a positive number';
+      }
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -113,7 +116,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: ['getOrders'] });
-      setPaymentLinkId(paymentLink.id);
+      setPaymentLink(`${process.env.NEXT_PUBLIC_APP_URL}/payment/${paymentLink.id}`);
     } catch (error: any) {
       errorToast(error);
     } finally {
@@ -143,27 +146,9 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
     setValue('installments_options', selectedInstallments);
   };
 
-  const handleCopyPaymentLink = () => {
-    navigator.clipboard
-      .writeText(`${process.env.NEXT_PUBLIC_APP_URL}/payment/${paymentLinkId}`)
-      .then(() => {
-        toast({ description: 'Payment Link copied to clipboard!' });
-      })
-      .catch((err) => {
-        console.error(err);
-        errorToast('Could not copy the payment link', `${err}`);
-      });
-  };
-
-  const truncatedPaymentLink = () => {
-    const linkSplitArray = paymentLinkId.split('-');
-    return `${process.env.NEXT_PUBLIC_APP_URL}/payment/${linkSplitArray[0]}...${linkSplitArray.pop()}`;
-  };
-
   return (
     <>
-      {/* Note: Removing isOpen and handleModal open from ModalAddNewCustomer for now as currently using this in the customers page for testing */}
-      <ModalAddNewCustomer />
+      <ModalAddNewCustomer isOpen={openCustomerModal} handleModalOpen={setOpenCustomerModal} />
       <ModalAddNewProduct isOpen={openProductModal} handleModalOpen={setOpenProductModal} />
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -280,15 +265,15 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
               </div>
             </InputWrapper>
 
-            {paymentLinkId && (
+            {paymentLink && (
               <InputWrapper label='Payment Link'>
                 <Button
                   type='button'
                   variant='secondary'
                   size='sm'
-                  onClick={handleCopyPaymentLink}
+                  onClick={() => handleCopyPaymentLink(paymentLink)}
                   className='w-full justify-between border'>
-                  {truncatedPaymentLink()} <IoCopyOutline />
+                  {paymentLink} <IoCopyOutline />
                 </Button>
               </InputWrapper>
             )}
@@ -299,8 +284,8 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                   Cancel
                 </Button>
               </DialogClose>
-              {paymentLinkId ? (
-                <Button size='lg' onClick={handleCopyPaymentLink} className='w-full'>
+              {paymentLink ? (
+                <Button size='lg' onClick={() => handleCopyPaymentLink(paymentLink)} className='w-full'>
                   Copy link
                 </Button>
               ) : (

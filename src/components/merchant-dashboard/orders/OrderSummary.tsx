@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { cn } from '@/utils/utils';
+import { cn, handleCopyPaymentLink } from '@/utils/utils';
 import { format } from 'date-fns';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { Badge } from '@/components/ui/badge';
+import { IoCopyOutline } from 'react-icons/io5';
 
 interface OrderSummaryProps {
   data: any;
@@ -16,6 +17,8 @@ interface OrderDetailsData {
 }
 
 const OrderSummary = ({ data, handleSheetOpen }: OrderSummaryProps) => {
+  const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${data.id}`;
+
   const dataToDisplay: OrderDetailsData[] = data && [
     {
       label: 'Total Amount',
@@ -72,7 +75,7 @@ const OrderSummary = ({ data, handleSheetOpen }: OrderSummaryProps) => {
               <span className='font-bold'>{data.status}</span>
             </Badge>
 
-            <div className='grid grid-cols-2 gap-4'>
+            <div className='grid grid-cols-2 gap-4 mb-3'>
               {/* <div className='mb-3'>
                 <p>Next Instalment Date</p>
                 <p className='text-[#6B7280] mt-1 font-semibold'>
@@ -87,11 +90,11 @@ const OrderSummary = ({ data, handleSheetOpen }: OrderSummaryProps) => {
               </div> */}
 
               {dataToDisplay.map((item: OrderDetailsData, index) => (
-                <div key={index} className='w-full mb-3'>
+                <div key={index} className='w-full mb-3 space-y-1'>
                   <p>{item.label}</p>
                   <p
                     className={cn(
-                      'bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-md border',
+                      'bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 rounded-md border',
                       (item.label.includes('ID') || item.label.includes('Date')) && 'font-semibold'
                     )}>
                     {item.value}
@@ -99,6 +102,20 @@ const OrderSummary = ({ data, handleSheetOpen }: OrderSummaryProps) => {
                 </div>
               ))}
             </div>
+
+            {data.status === 'pending' && (
+              <div className='space-y-1'>
+                <p>Payment Link</p>
+                <Button
+                  type='button'
+                  variant='secondary'
+                  size='sm'
+                  onClick={() => handleCopyPaymentLink(paymentLink)}
+                  className='w-full justify-between border'>
+                  {paymentLink} <IoCopyOutline />
+                </Button>
+              </div>
+            )}
           </div>
         </SheetHeader>
         <Button className='w-full h-11'>Send Payment Reminder</Button>
