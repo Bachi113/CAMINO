@@ -1,9 +1,9 @@
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
+import { getOrdersByMerchant } from './actions/supabase.actions';
 
 const useGetPersonalInfo = () => {
   const supabase = supabaseBrowserClient();
-
   return useQuery({
     queryKey: ['getPersonalInfo'],
     queryFn: async () => {
@@ -18,7 +18,6 @@ const useGetPersonalInfo = () => {
 
 const useGetBuinessDetail = () => {
   const supabase = supabaseBrowserClient();
-
   return useQuery({
     queryKey: ['getBusinessDetail'],
     queryFn: async () => {
@@ -34,7 +33,6 @@ const useGetBuinessDetail = () => {
 
 const useGetBusinessAddress = () => {
   const supabase = supabaseBrowserClient();
-
   return useQuery({
     queryKey: ['getBusinessAddress'],
     queryFn: async () => {
@@ -50,7 +48,6 @@ const useGetBusinessAddress = () => {
 
 const useGetBankDetails = () => {
   const supabase = supabaseBrowserClient();
-
   return useQuery({
     queryKey: ['getBankDetails'],
     queryFn: async () => {
@@ -66,7 +63,6 @@ const useGetBankDetails = () => {
 
 const useGetVerificationDocuments = () => {
   const supabase = supabaseBrowserClient();
-
   return useQuery({
     queryKey: ['getDocumentes'],
     queryFn: async () => {
@@ -82,7 +78,6 @@ const useGetVerificationDocuments = () => {
 
 const useGetOnboardingData = () => {
   const supabase = supabaseBrowserClient();
-
   return useQuery({
     queryKey: ['getOnboardingData'],
     queryFn: async () => {
@@ -102,7 +97,49 @@ const useGetOnboardingData = () => {
       if (error) {
         throw error;
       }
+      return data;
+    },
+  });
+};
 
+const useGetOrders = (page: number, pageSize: number) => {
+  return useQuery({
+    queryKey: ['getOrders', page, pageSize],
+    queryFn: () => getOrdersByMerchant(page, pageSize),
+  });
+};
+
+const useGetMerchantCustomers = () => {
+  const supabase = supabaseBrowserClient();
+  return useQuery({
+    queryKey: ['getCustomers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('merchants_customers')
+        .select('*, customers (stripe_id, customer_name)')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+  });
+};
+
+const useGetProducts = () => {
+  const supabase = supabaseBrowserClient();
+  return useQuery({
+    queryKey: ['getProducts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select()
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
       return data;
     },
   });
@@ -147,7 +184,6 @@ const useGetMerchantProducts = ({
 
       return data;
     },
-    staleTime: 60000, // 1 minute
   });
 };
 
@@ -158,5 +194,8 @@ export {
   useGetBankDetails,
   useGetVerificationDocuments,
   useGetOnboardingData,
+  useGetOrders,
+  useGetMerchantCustomers,
+  useGetProducts,
   useGetMerchantProducts,
 };

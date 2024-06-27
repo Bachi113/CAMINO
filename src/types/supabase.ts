@@ -205,33 +205,23 @@ export type Database = {
       merchants_customers: {
         Row: {
           created_at: string;
-          cust_user_id: string | null;
           customer_id: string;
           id: string;
           merchant_id: string;
         };
         Insert: {
           created_at?: string;
-          cust_user_id?: string | null;
           customer_id: string;
           id?: string;
           merchant_id: string;
         };
         Update: {
           created_at?: string;
-          cust_user_id?: string | null;
           customer_id?: string;
           id?: string;
           merchant_id?: string;
         };
         Relationships: [
-          {
-            foreignKeyName: 'merchants_customers_cust_user_id_fkey';
-            columns: ['cust_user_id'];
-            isOneToOne: false;
-            referencedRelation: 'customers';
-            referencedColumns: ['user_id'];
-          },
           {
             foreignKeyName: 'merchants_customers_customer_id_fkey';
             columns: ['customer_id'];
@@ -322,6 +312,66 @@ export type Database = {
             foreignKeyName: 'onboarding_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: true;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      orders: {
+        Row: {
+          created_at: string;
+          currency: string;
+          id: string;
+          installments_options: number[];
+          period: number | null;
+          price: string;
+          product_id: string;
+          quantity: number;
+          status: Database['public']['Enums']['orderstatus'];
+          stripe_cus_id: string;
+          stripe_id: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          currency: string;
+          id?: string;
+          installments_options: number[];
+          period?: number | null;
+          price: string;
+          product_id: string;
+          quantity: number;
+          status?: Database['public']['Enums']['orderstatus'];
+          stripe_cus_id: string;
+          stripe_id?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          installments_options?: number[];
+          period?: number | null;
+          price?: string;
+          product_id?: string;
+          quantity?: number;
+          status?: Database['public']['Enums']['orderstatus'];
+          stripe_cus_id?: string;
+          stripe_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'orders_product_id_fkey';
+            columns: ['product_id'];
+            isOneToOne: false;
+            referencedRelation: 'products';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'orders_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
             referencedRelation: 'users';
             referencedColumns: ['id'];
           },
@@ -423,7 +473,7 @@ export type Database = {
       };
     };
     Enums: {
-      [_ in never]: never;
+      orderstatus: 'pending' | 'not_started' | 'failed' | 'active' | 'canceled' | 'completed';
     };
     CompositeTypes: {
       [_ in never]: never;

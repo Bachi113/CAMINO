@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -23,9 +22,13 @@ import { errorToast } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreateProduct } from '@/types/types';
-import PlusIcon from '@/assets/icons/PlusIcon';
+import { queryClient } from '@/app/providers';
+import getSymbolFromCurrency from 'currency-symbol-map';
 
-interface ModalAddNewProductProps {}
+interface ModalAddNewProductProps {
+  isOpen: boolean;
+  handleModalOpen: (value: boolean) => void;
+}
 
 export const categoryOptions = [
   { value: 'electronics', label: 'Electronics' },
@@ -38,7 +41,7 @@ export const categoryOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-const currencyOptions = ['GBP', 'USD', 'CAD', 'EUR'];
+export const currencyOptions = ['GBP', 'USD', 'CAD', 'EUR'];
 
 const initialData = {
   product_name: '',
@@ -55,13 +58,12 @@ const validations = yup.object().shape({
   remarks: yup.string(),
 });
 
-const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
+const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ isOpen, handleModalOpen }) => {
   const [isPending, setIsPending] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-
   const {
     reset,
     register,
+    watch,
     setValue,
     handleSubmit,
     formState: { errors },
@@ -73,6 +75,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
   const handleCreateProduct = async (formData: TypeCreateProduct) => {
     const supabase = supabaseBrowserClient();
 
+    handleModalOpen(true);
     setIsPending(true);
     try {
       const {
@@ -91,8 +94,8 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
         throw error.message;
       }
 
-      // TODO: handle invalidate query for products
-      setIsOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['getProducts'] });
+      handleModalOpen(false);
       reset();
     } catch (error: any) {
       errorToast(error);
@@ -102,12 +105,11 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className='gap-2 p-3.5 h-10 rounded-md font-normal'>
-          <PlusIcon /> Add new product
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={handleModalOpen}>
+      {/* <DialogTrigger asChild>
+        <Button>Create Product</Button>
+      </DialogTrigger> */}
+
       <DialogContent>
         <DialogHeader className='mb-4'>
           <DialogTitle>Add New Product</DialogTitle>
@@ -127,7 +129,6 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
 
           <InputWrapper id='category' label='Category' required error={errors.category?.message}>
             <Select
-              required
               {...register('category')}
               defaultValue={categoryOptions[0].value}
               onValueChange={(val) => setValue('category', val)}>
@@ -146,17 +147,14 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = () => {
 
           <div className='flex gap-4'>
             <InputWrapper id='currency' label='Currency' required error={errors.currency?.message}>
-              <Select
-                required
-                defaultValue={currencyOptions[0]}
-                onValueChange={(val) => setValue('currency', val)}>
+              <Select value={watch('currency')} onValueChange={(val) => setValue('currency', val)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {currencyOptions.map((option) => (
                     <SelectItem key={option} value={option}>
-                      {option}
+                      {option} ({getSymbolFromCurrency(option)})
                     </SelectItem>
                   ))}
                 </SelectContent>
