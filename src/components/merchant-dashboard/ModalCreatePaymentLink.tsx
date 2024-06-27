@@ -22,7 +22,7 @@ import { errorToast } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreatePaymentLink } from '@/types/types';
-import { useGetMerchantCustomers, useGetProducts } from '@/app/query-hooks';
+import { useGetCustomers, useGetProducts } from '@/app/query-hooks';
 import ModalAddNewCustomer from './ModalAddNewCustomer';
 import { FiPlus } from 'react-icons/fi';
 import ModalAddNewProduct, { currencyOptions } from './ModalAddNewProduct';
@@ -62,7 +62,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   const [isPending, setIsPending] = useState(false);
   const [paymentLinkId, setPaymentLinkId] = useState('');
 
-  const { data: merchantCustomers } = useGetMerchantCustomers();
+  const { data: merchantCustomers } = useGetCustomers();
   const { data: products } = useGetProducts();
 
   const {

@@ -109,7 +109,7 @@ const useGetOrders = (page: number, pageSize: number) => {
   });
 };
 
-const useGetMerchantCustomers = () => {
+const useGetCustomers = () => {
   const supabase = supabaseBrowserClient();
   return useQuery({
     queryKey: ['getCustomers'],
@@ -251,7 +251,7 @@ export {
   useGetOrders,
   useGetMerchantCustomers,
   useGetProducts,
-  useGetMerchantCustomers,
+  useGetCustomers,
   useGetMerchantCustomerIdAndNames,
   useGetMerchantProducts,
 };
