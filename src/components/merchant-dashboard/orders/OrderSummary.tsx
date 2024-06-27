@@ -2,9 +2,12 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/utils/utils';
 import { format } from 'date-fns';
+import getSymbolFromCurrency from 'currency-symbol-map';
+import { Badge } from '@/components/ui/badge';
+
 interface OrderSummaryProps {
-  setIsOpen: (isOpen: boolean) => void;
   data: any;
+  handleSheetOpen: () => void;
 }
 
 interface OrderDetailsData {
@@ -12,54 +15,64 @@ interface OrderDetailsData {
   value: string;
 }
 
-const OrderSummary = ({ setIsOpen, data }: OrderSummaryProps) => {
+const OrderSummary = ({ data, handleSheetOpen }: OrderSummaryProps) => {
   const dataToDisplay: OrderDetailsData[] = data && [
     {
       label: 'Total Amount',
-      value: data.total_amount,
+      value: (
+        <div>
+          {getSymbolFromCurrency(data.currency)} {Number(data.price) * data.quantity}
+        </div>
+      ),
     },
     {
       label: 'Amount Paid till date',
-      value: data?.paid_amount,
+      value: data.paid_amount ?? '-',
     },
     {
       label: 'Order Date',
-      value: format(new Date(data?.product_date), 'MMM dd, yyyy'),
+      value: format(new Date(data.created_at), 'MMM dd, yyyy'),
     },
     {
       label: 'Product Name',
-      value: data?.product_name,
+      value: data.products.product_name,
     },
     {
       label: 'Customer Name',
-      value: data?.customer_name,
+      value: data.customers.customer_name,
     },
     {
       label: 'Instalments',
-      value: data?.instalments,
+      value: <div>{data.period ?? '-'}</div>,
     },
   ];
 
   return (
-    <Sheet open={true} onOpenChange={setIsOpen}>
+    <Sheet open={data} onOpenChange={handleSheetOpen}>
       <SheetContent className='flex flex-col justify-between p-6'>
         <SheetHeader className='text-sm font-medium text-[#363A4E]'>
           <div>
             <SheetTitle className='text-[#363A4E]'>Order Details</SheetTitle>
-            <p className='font-normal text-base mt-1 mb-[22px]'>
-              Order ID: <span className='font-bold'>{data.order_id}</span>
+            <p className='font-normal text-base mt-2 mb-6'>
+              Order ID: <span className='font-bold'>{data.id}</span>
             </p>
           </div>
           <div className='text-center bg-[#F9F9F9] py-8 rounded-md'>
-            <p className='text-base leading-7 font-medium text-black'>Outstanding Balance</p>
-            <p className='text-[32px] leading-10 font-semibold mt-1'>{data.total_amount}</p>
+            <p className='text-base leading-7 font-medium text-black'>Order Price</p>
+            <p className='text-3xl leading-10 font-semibold mt-1'>
+              {getSymbolFromCurrency(data.currency)} {data.price}
+            </p>
           </div>
           <div>
-            <p className='text-sm text-[#C1410C] my-[22px] bg-orange-100 px-2 py-[2px] w-fit rounded-md'>
-              Status: <span className='font-bold'>{data.status}</span>
-            </p>
+            <Badge
+              variant={data.status === 'active' ? 'default' : 'warning'}
+              className='capitalize my-6 space-x-2'>
+              <span>Status:</span>
+              <span className='font-bold'>{data.status}</span>
+            </Badge>
+
             <div className='grid grid-cols-2 gap-4'>
-              <div className='mb-3'>
+              {/* <div className='mb-3'>
                 <p>Next Instalment Date</p>
                 <p className='text-[#6B7280] mt-1 font-semibold'>
                   {format(new Date(data.next_instalment_date), 'MMM dd, yyyy')}
@@ -70,7 +83,8 @@ const OrderSummary = ({ setIsOpen, data }: OrderSummaryProps) => {
                 <p className='text-[#6B7280] mt-1 font-semibold'>
                   {format(new Date(data?.end_instalment_date), 'MMM dd, yyyy')}
                 </p>
-              </div>
+              </div> */}
+
               {dataToDisplay.map((item: OrderDetailsData, index) => (
                 <div key={index} className='w-full mb-3'>
                   <p>{item.label}</p>

@@ -11,6 +11,7 @@ import { createSubscription } from '@/app/actions/stripe.actions';
 import { errorToast } from '@/utils/utils';
 import { toast } from '../ui/use-toast';
 import { parse, format } from 'date-fns';
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 interface PaymentMethodDetailsProps {
   data: TypeOrder;
@@ -49,7 +50,7 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
         <div className='text-center p-6 space-y-3'>
           <p className='font-medium'>Amount to be paid</p>
           <h2 className='text-4xl font-semibold space-x-2'>
-            <span>{data.currency}</span>
+            <span>{getSymbolFromCurrency(data.currency)}</span>
             <span>{data.price}</span>
           </h2>
         </div>

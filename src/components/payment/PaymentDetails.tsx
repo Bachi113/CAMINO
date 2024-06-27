@@ -12,6 +12,7 @@ import { errorToast } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 interface PaymentDetailsProps {
   data: TypeOrder;
@@ -64,7 +65,7 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
         <div className='text-center p-6 space-y-3'>
           <p className='font-medium'>Amount to be paid</p>
           <h2 className='text-4xl font-semibold space-x-2'>
-            <span>{data.currency}</span>
+            <span>{getSymbolFromCurrency(data.currency)}</span>
             <span>{data.price}</span>
           </h2>
         </div>
@@ -93,7 +94,7 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
               <div className='flex justify-between font-medium'>
                 <span className='opacity-50'>Total Amount</span>
                 <div className='space-x-2'>
-                  <span>{data.currency}</span>
+                  <span>{getSymbolFromCurrency(data.currency)}</span>
                   <span>{totalAmount}</span>
                 </div>
               </div>

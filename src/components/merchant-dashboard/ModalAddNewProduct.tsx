@@ -23,6 +23,7 @@ import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreateProduct } from '@/types/types';
 import { queryClient } from '@/app/providers';
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 interface ModalAddNewProductProps {
   isOpen: boolean;
@@ -152,7 +153,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ isOpen, handleModalOp
                 <SelectContent>
                   {currencyOptions.map((option) => (
                     <SelectItem key={option} value={option}>
-                      {option}
+                      {option} ({getSymbolFromCurrency(option)})
                     </SelectItem>
                   ))}
                 </SelectContent>

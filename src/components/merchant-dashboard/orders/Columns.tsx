@@ -1,7 +1,9 @@
 import SortIcon from '@/assets/icons/SortIcon';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 // TODO: Add proper types
 export const columns: ColumnDef<any>[] = [
@@ -12,7 +14,7 @@ export const columns: ColumnDef<any>[] = [
     cell: (info) => info.getValue(),
   },
   {
-    accessorKey: 'order_id',
+    accessorKey: 'id',
     header: 'Order ID',
     cell: (info) => info.getValue(),
   },
@@ -30,13 +32,17 @@ export const columns: ColumnDef<any>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div>{format(new Date(row.original?.created_at), 'MMM dd, yyyy')}</div>;
+      return <div>{format(new Date(row.original?.created_at), 'Pp')}</div>;
     },
   },
   {
     accessorKey: 'product_name',
     header: 'Product',
-    cell: (info) => info.getValue(),
+    cell: ({
+      row: {
+        original: { products },
+      },
+    }) => <div className='w-24'>{products.product_name}</div>,
   },
   {
     accessorKey: 'quantity',
@@ -46,19 +52,27 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'customer_name',
     header: 'Customer Name',
-    cell: (info) => info.getValue(),
+    cell: ({
+      row: {
+        original: { customers },
+      },
+    }) => customers.customer_name,
   },
 
   {
-    accessorKey: 'total_amount',
+    accessorKey: 'price',
     header: 'Total Amount',
-    cell: (info) => info.getValue(),
+    cell: ({ row: { original } }) => (
+      <div>
+        {getSymbolFromCurrency(original.currency)} {Number(original.price) * original.quantity}
+      </div>
+    ),
   },
 
   {
-    accessorKey: 'instalments',
+    accessorKey: 'period',
     header: 'Installments',
-    cell: (info) => info.getValue(),
+    cell: (info) => info.getValue() ?? '-',
   },
   {
     accessorKey: 'status',
@@ -73,11 +87,15 @@ export const columns: ColumnDef<any>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => {
+    cell: ({
+      row: {
+        original: { status },
+      },
+    }) => {
       return (
-        <p className='text-sm text-orange-700 bg-orange-100 px-2 py-[2px] w-fit rounded-md'>
-          {row.original.status}
-        </p>
+        <Badge variant={status === 'active' ? 'default' : 'warning'} className='capitalize'>
+          {status}
+        </Badge>
       );
     },
   },

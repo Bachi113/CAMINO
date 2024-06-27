@@ -29,6 +29,9 @@ import ModalAddNewProduct, { currencyOptions } from './ModalAddNewProduct';
 import { Checkbox } from '../ui/checkbox';
 import { IoCopyOutline } from 'react-icons/io5';
 import { toast } from '../ui/use-toast';
+import { HiPlus } from 'react-icons/hi';
+import getSymbolFromCurrency from 'currency-symbol-map';
+import { queryClient } from '@/app/providers';
 
 interface ModalCreatePaymentLinkProps {}
 
@@ -109,7 +112,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
         throw error.message;
       }
 
-      // TODO: handle invalidate query for payment links
+      queryClient.invalidateQueries({ queryKey: ['getOrders'] });
       setPaymentLinkId(paymentLink.id);
     } catch (error: any) {
       errorToast(error);
@@ -164,7 +167,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button>Create Payment Link</Button>
+          <Button className='gap-2'>
+            <HiPlus size={18} />
+            Create payment link
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader className='mb-4'>
@@ -234,7 +240,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                       <SelectContent>
                         {currencyOptions.map((option) => (
                           <SelectItem key={option} value={option}>
-                            {option}
+                            {option} ({getSymbolFromCurrency(option)})
                           </SelectItem>
                         ))}
                       </SelectContent>

@@ -1,5 +1,6 @@
 'use client';
-import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import {
   SortingState,
   flexRender,
@@ -15,76 +16,33 @@ import { Input } from '@/components/ui/input';
 import { debounce } from '@/utils/utils';
 import OrderSummary from './OrderSummary';
 import DownloadButton from '../DowloadCsvButton';
-import Filter from './Filter';
 import SearchIcon from '@/assets/icons/SearchIcon';
-
-const data = [
-  {
-    order_id: 'ORD001',
-    created_at: '2024-06-25T10:30:00Z',
-    product_name: 'Product A',
-    quantity: 2,
-    customer_name: 'John Doe',
-    total_amount: '$200.00',
-    instalments: 3,
-    status: 'Due',
-    next_instalment_date: '2024-07-25T00:00:00Z',
-    end_instalment_date: '2024-09-25T00:00:00Z',
-    paid_amount: '$150.00',
-    product_id: 'PROD001',
-    product_date: '2024-06-20T00:00:00Z',
-  },
-  {
-    order_id: 'ORD002',
-    created_at: '2024-06-24T09:15:00Z',
-    product_name: 'Product B',
-    quantity: 1,
-    customer_name: 'Jane Smith',
-    total_amount: '$150.00',
-    instalments: 2,
-    status: 'Completed',
-    next_instalment_date: '2024-07-24T00:00:00Z',
-    end_instalment_date: '2024-08-24T00:00:00Z',
-    paid_amount: '$120.00',
-    product_id: 'PROD002',
-    product_date: '2024-06-19T00:00:00Z',
-  },
-  {
-    order_id: 'ORD003',
-    created_at: '2024-06-23T14:00:00Z',
-    product_name: 'Product C',
-    quantity: 3,
-    customer_name: 'Michael Johnson',
-    total_amount: '$300.00',
-    instalments: 4,
-    status: 'On Course',
-    next_instalment_date: '2024-07-23T00:00:00Z',
-    end_instalment_date: '2024-10-23T00:00:00Z',
-    paid_amount: '$250.00',
-    product_id: 'PROD003',
-    product_date: '2024-06-18T00:00:00Z',
-  },
-];
-
-const customerNames = data.map((order) => order.customer_name);
+import { useGetOrders } from '@/app/query-hooks';
+import { TypeOrder } from '@/types/types';
+import { queryClient } from '@/app/providers';
+import { supabaseBrowserClient } from '@/utils/supabase/client';
 
 const OrdersTable: React.FC = () => {
+  const supabase = supabaseBrowserClient();
+
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<TypeOrder>();
+  // const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState(1);
-  const pageSize = 10;
+  const [pageSize] = useState(7);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const isLoading = false;
 
-  const filteredData = useMemo(() => {
-    return data.filter((order) => (selectedCustomer ? order.customer_name === selectedCustomer : true));
-  }, [data, selectedCustomer]);
+  const { data } = useGetOrders(page, pageSize);
+
+  // const filteredData = useMemo(() => {
+  //   return data.filter((order) => (selectedCustomer ? order.customer_name === selectedCustomer : true));
+  // }, [data, selectedCustomer]);
 
   const table = useReactTable({
-    data: filteredData || [],
+    data: data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
@@ -96,7 +54,26 @@ const OrdersTable: React.FC = () => {
     if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
       searchInputRef.current.focus();
     }
-  }, [data]);
+  }, []);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('value-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+        },
+        () => queryClient.invalidateQueries({ queryKey: ['getOrders'] })
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase]);
 
   const handleGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -104,18 +81,20 @@ const OrdersTable: React.FC = () => {
   };
 
   const handlePreviousPage = () => {
-    setPage((prevPage) => Math.max(prevPage - 1, 1));
+    if (page > 1) {
+      setPage(page - 1);
+    }
   };
 
   const handleNextPage = () => {
     if (data?.length === pageSize) {
-      setPage((prevPage) => prevPage + 1);
+      setPage(page + 1);
     }
   };
 
-  const handleFilterChange = (customerName: string | null) => {
-    setSelectedCustomer(customerName);
-  };
+  // const handleFilterChange = (customerName: string | null) => {
+  //   setSelectedCustomer(customerName);
+  // };
 
   return (
     <>
@@ -135,8 +114,8 @@ const OrdersTable: React.FC = () => {
         </div>
         <div className='flex gap-2'>
           <SortBy setSorting={setSorting} />
-          <Filter customerNames={customerNames} onFilterChange={handleFilterChange} />
-          <DownloadButton fileName='orders' data={data} />
+          {/* <Filter customerNames={customerNames} onFilterChange={handleFilterChange} /> */}
+          <DownloadButton fileName='orders' data={data!} />
         </div>
       </div>
 
@@ -187,6 +166,7 @@ const OrdersTable: React.FC = () => {
           </Table>
         )}
       </div>
+
       <div className='flex justify-end gap-2 mt-4'>
         <Button variant='outline' size='sm' onClick={handlePreviousPage} disabled={page === 1}>
           Previous
@@ -199,7 +179,10 @@ const OrdersTable: React.FC = () => {
           Next
         </Button>
       </div>
-      {selectedProduct && <OrderSummary setIsOpen={setSelectedProduct} data={selectedProduct} />}
+
+      {selectedProduct && (
+        <OrderSummary data={selectedProduct} handleSheetOpen={() => setSelectedProduct(undefined)} />
+      )}
     </>
   );
 };

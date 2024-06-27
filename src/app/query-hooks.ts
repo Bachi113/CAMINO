@@ -1,5 +1,6 @@
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
+import { getOrdersByMerchant } from './actions/supabase.actions';
 
 const useGetPersonalInfo = () => {
   const supabase = supabaseBrowserClient();
@@ -101,6 +102,13 @@ const useGetOnboardingData = () => {
   });
 };
 
+const useGetOrders = (page: number, pageSize: number) => {
+  return useQuery({
+    queryKey: ['getOrders', page, pageSize],
+    queryFn: () => getOrdersByMerchant(page, pageSize),
+  });
+};
+
 const useGetMerchantCustomers = () => {
   const supabase = supabaseBrowserClient();
   return useQuery({
@@ -144,6 +152,7 @@ export {
   useGetBankDetails,
   useGetVerificationDocuments,
   useGetOnboardingData,
+  useGetOrders,
   useGetMerchantCustomers,
   useGetProducts,
 };

@@ -13,12 +13,12 @@ import TransactionsIcon from '@/assets/icons/TransactionsIcon';
 import SettingsIcon from '@/assets/icons/SettingsIcon';
 
 export const sidebarLinks = [
-  { label: 'Dashboard', path: 'dashboard', logo: DashboardIcon },
-  { label: 'Orders', path: 'orders', logo: OrdersIcon },
-  { label: 'Products', path: 'products', logo: ProductsIcon },
-  { label: 'Customers', path: 'customers', logo: UsersIcon },
-  { label: 'Transactions', path: 'transactions', logo: TransactionsIcon },
-  { label: 'Account Settings', path: 'account-settings', logo: SettingsIcon },
+  { label: 'Dashboard', path: '', logo: DashboardIcon },
+  { label: 'Orders', path: '/orders', logo: OrdersIcon },
+  { label: 'Products', path: '/products', logo: ProductsIcon },
+  { label: 'Customers', path: '/customers', logo: UsersIcon },
+  { label: 'Transactions', path: '/transactions', logo: TransactionsIcon },
+  { label: 'Account Settings', path: '/account-settings', logo: SettingsIcon },
 ];
 
 const getDashboardType = (pathname: string) => {
@@ -32,7 +32,7 @@ const Sidebar = () => {
   const dashboardType = getDashboardType(pathname);
 
   const getHref = (path: string) => {
-    return dashboardType ? `/dashboard/${dashboardType}/${path}` : `/dashboard/${path}`;
+    return dashboardType ? `/dashboard/${dashboardType}${path}` : `/dashboard${path}`;
   };
 
   return (
@@ -42,8 +42,7 @@ const Sidebar = () => {
       </div>
       <div>
         {sidebarLinks.map((link) => {
-          const isSelected = pathname.endsWith(link.path);
-          const IconComponent = link.logo;
+          const isSelected = pathname.split('dashboard/m')[1] === link.path;
 
           return (
             <Link
@@ -53,7 +52,7 @@ const Sidebar = () => {
                 'flex items-center gap-2.5 px-2 py-3 rounded-md text-slate-600 text-sm font-semibold',
                 isSelected && 'bg-indigo-50 text-purple-800'
               )}>
-              <IconComponent isSelected={isSelected} />
+              <link.logo isSelected={true} />
               {link.label}
             </Link>
           );
