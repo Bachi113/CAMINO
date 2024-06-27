@@ -51,12 +51,13 @@ const OrderSummary = ({ data, handleSheetOpen }: OrderSummaryProps) => {
     <Sheet open={data} onOpenChange={handleSheetOpen}>
       <SheetContent className='flex flex-col justify-between p-6'>
         <SheetHeader className='text-sm font-medium text-[#363A4E]'>
-          <div>
+          <div className='space-y-2 mb-6'>
             <SheetTitle className='text-[#363A4E]'>Order Details</SheetTitle>
-            <p className='font-normal text-base mt-2 mb-6'>
+            <p className='font-normal text-base'>
               Order ID: <span className='font-bold'>{data.id}</span>
             </p>
           </div>
+
           <div className='text-center bg-[#F9F9F9] py-8 rounded-md'>
             <p className='text-base leading-7 font-medium text-black'>Order Price</p>
             <p className='text-3xl leading-10 font-semibold mt-1'>

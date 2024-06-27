@@ -1,4 +1,5 @@
 'use client';
+
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import {
   SortingState,
@@ -19,6 +20,7 @@ import { debounce } from '@/utils/utils';
 import SearchIcon from '@/assets/icons/SearchIcon';
 
 const ProductsTable: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -80,9 +82,9 @@ const ProductsTable: React.FC = () => {
             className='w-[350px] h-10 pl-8'
           />
         </div>
-        <div className='flex gap-5'>
+        <div className='flex gap-2'>
           <SortBy setCategoryFilter={setCategoryFilter} setSorting={setSorting} />
-          <ModalAddNewProduct />
+          <ModalAddNewProduct isOpen={isModalOpen} handleModalOpen={setIsModalOpen} triggerButton={true} />
         </div>
       </div>
 
