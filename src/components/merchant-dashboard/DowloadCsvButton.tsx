@@ -18,10 +18,7 @@ const DownloadButton = ({ data, fileName }: DownloadButtonProps) => {
   };
 
   return (
-    <Button
-      className='flex gap-2 px-2.5 leading-[15px] font-medium rounded-md'
-      size={'lg'}
-      onClick={handleDownload}>
+    <Button className='flex gap-2 px-2.5 leading-[15px] rounded-md' size='lg' onClick={handleDownload}>
       <DownloadIcon /> Download as CSV
     </Button>
   );

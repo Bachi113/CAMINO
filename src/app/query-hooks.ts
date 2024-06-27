@@ -1,5 +1,6 @@
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
+import { getOrdersByMerchant } from './actions/supabase.actions';
 
 const useGetPersonalInfo = () => {
   const supabase = supabaseBrowserClient();
@@ -101,14 +102,21 @@ const useGetOnboardingData = () => {
   });
 };
 
-const useGetCustomers = () => {
+const useGetOrders = (page: number, pageSize: number) => {
+  return useQuery({
+    queryKey: ['getOrders', page, pageSize],
+    queryFn: () => getOrdersByMerchant(page, pageSize),
+  });
+};
+
+const useGetMerchantCustomers = () => {
   const supabase = supabaseBrowserClient();
   return useQuery({
     queryKey: ['getCustomers'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('merchants_customers')
-        .select()
+        .select('*, customers (stripe_id, customer_name)')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -191,6 +199,48 @@ const useGetMerchantCustomerIdAndNames = () => {
   });
 };
 
+interface UseGetMerchantProductsParams {
+  page: number;
+  pageSize: number;
+  categoryFilter?: string;
+  searchQuery?: string;
+}
+
+const useGetMerchantProducts = ({
+  page,
+  pageSize,
+  categoryFilter,
+  searchQuery,
+}: UseGetMerchantProductsParams) => {
+  const supabase = supabaseBrowserClient();
+
+  return useQuery({
+    queryKey: ['getMerchantProducts', page, pageSize, categoryFilter, searchQuery],
+    queryFn: async () => {
+      let query = supabase
+        .from('products')
+        .select('*')
+        .range((page - 1) * pageSize, page * pageSize - 1);
+
+      if (categoryFilter) {
+        query = query.eq('category', categoryFilter);
+      }
+      if (searchQuery) {
+        query = query.ilike('product_name', `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching products:', error);
+        throw new Error(`Error fetching products: ${error.message}`);
+      }
+
+      return data;
+    },
+  });
+};
+
 export {
   useGetPersonalInfo,
   useGetBuinessDetail,
@@ -198,8 +248,10 @@ export {
   useGetBankDetails,
   useGetVerificationDocuments,
   useGetOnboardingData,
-  useGetCustomers,
+  useGetOrders,
+  useGetMerchantCustomers,
   useGetProducts,
   useGetMerchantCustomers,
   useGetMerchantCustomerIdAndNames,
+  useGetMerchantProducts,
 };

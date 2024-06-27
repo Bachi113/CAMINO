@@ -9,6 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -23,13 +24,16 @@ import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreateProduct } from '@/types/types';
 import { queryClient } from '@/app/providers';
+import getSymbolFromCurrency from 'currency-symbol-map';
+import { HiPlus } from 'react-icons/hi';
 
 interface ModalAddNewProductProps {
   isOpen: boolean;
   handleModalOpen: (value: boolean) => void;
+  triggerButton?: boolean;
 }
 
-const categoryOptions = [
+export const categoryOptions = [
   { value: 'electronics', label: 'Electronics' },
   { value: 'fashion', label: 'Fashion' },
   { value: 'groceries', label: 'Groceries' },
@@ -57,7 +61,7 @@ const validations = yup.object().shape({
   remarks: yup.string(),
 });
 
-const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ isOpen, handleModalOpen }) => {
+const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ isOpen, handleModalOpen, triggerButton }) => {
   const [isPending, setIsPending] = useState(false);
   const {
     reset,
@@ -105,9 +109,15 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ isOpen, handleModalOp
 
   return (
     <Dialog open={isOpen} onOpenChange={handleModalOpen}>
-      {/* <DialogTrigger asChild>
-        <Button>Create Product</Button>
-      </DialogTrigger> */}
+      {triggerButton && (
+        <DialogTrigger asChild>
+          <Button size='lg' className='gap-2'>
+            <HiPlus size={18} />
+            Create Product
+          </Button>
+        </DialogTrigger>
+      )}
+
       <DialogContent>
         <DialogHeader className='mb-4'>
           <DialogTitle>Add New Product</DialogTitle>
@@ -152,7 +162,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ isOpen, handleModalOp
                 <SelectContent>
                   {currencyOptions.map((option) => (
                     <SelectItem key={option} value={option}>
-                      {option}
+                      {option} ({getSymbolFromCurrency(option)})
                     </SelectItem>
                   ))}
                 </SelectContent>

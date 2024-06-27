@@ -6,7 +6,7 @@ import { sidebarLinks } from './Sidebar';
 const NavTitle = () => {
   const pathname = usePathname();
 
-  const currentLink = sidebarLinks.find((link) => pathname.endsWith(link.path));
+  const currentLink = sidebarLinks.find((link) => pathname.split('dashboard/m')[1] === link.path);
 
   const title = currentLink ? currentLink.label : 'Dashboard';
 

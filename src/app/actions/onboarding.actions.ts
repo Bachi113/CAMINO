@@ -109,6 +109,7 @@ export async function updateData(data: string, tableName: TableName) {
     if (!user) {
       throw 'You need to be logged in.';
     }
+    console.log('testing');
 
     const { error } = await supabase
       .from(tableName)

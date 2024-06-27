@@ -158,22 +158,34 @@ export const summaryFileds = (data: any) => {
         {
           label: 'Document type 1',
           id: 'documentType1',
-          value: extractFileNameFromUrl(data.documents?.document_urls?.[0], data.user_id),
+          value: extractFileNameFromUrl(
+            data.documents?.document_urls?.[0],
+            data.personal_informations.user_id
+          ),
         },
         {
           label: 'Document type 2',
           id: 'documentType2',
-          value: extractFileNameFromUrl(data.documents?.document_urls?.[1], data.user_id),
+          value: extractFileNameFromUrl(
+            data.documents?.document_urls?.[1],
+            data.personal_informations.user_id
+          ),
         },
         {
           label: 'Document type 3',
           id: 'documentType3',
-          value: extractFileNameFromUrl(data.documents?.document_urls?.[2], data.user_id),
+          value: extractFileNameFromUrl(
+            data.documents?.document_urls?.[2],
+            data.personal_informations.user_id
+          ),
         },
         {
           label: 'Document type 4',
           id: 'documentType4',
-          value: extractFileNameFromUrl(data.documents?.document_urls?.[3], data.user_id),
+          value: extractFileNameFromUrl(
+            data.documents?.document_urls?.[3],
+            data.personal_informations.user_id
+          ),
         },
       ],
     },

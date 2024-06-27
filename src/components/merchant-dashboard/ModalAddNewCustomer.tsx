@@ -70,11 +70,6 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = () => {
       const { error: error } = await supabase.from('merchants_customers').insert({
         merchant_id: customer.merchant!,
         customer_id: customer.id!,
-        customer: {
-          name: formData.name,
-          email: formData.email,
-          stripe_id: customer.stripe_id,
-        },
       });
       if (error) {
         throw error.message;

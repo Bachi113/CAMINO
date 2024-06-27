@@ -1,6 +1,6 @@
 import { Database } from './supabase';
 
-export type TypePaymentLink = Database['public']['Tables']['payment_links']['Row'];
+export type TypeOrder = Database['public']['Tables']['orders']['Row'];
 
 // Create Product
 export type TypeCreateProduct = {
@@ -31,6 +31,7 @@ export type TypeCreatePaymentLink = {
 
 // Create Subscription
 export type TypeCreateSubscription = {
+  id: string;
   customer_id: string;
   payment_method_id?: string;
   product_id: string;
