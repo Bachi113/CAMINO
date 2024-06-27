@@ -19,7 +19,7 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
   const supabase = supabaseServerClient();
 
   const { data } = await supabase
-    .from('payment_links')
+    .from('orders')
     .select('*, products (stripe_id)')
     .eq('id', params.id)
     .single();
@@ -35,21 +35,23 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
 
   if (searchParams.session_id) {
     try {
-      await stripe.checkout.sessions.retrieve(searchParams.session_id);
+      const session = await stripe.checkout.sessions.retrieve(searchParams.session_id);
+      const setupIntent = await stripe.setupIntents.retrieve(session.setup_intent as string);
 
       const subscription = await createSubscription({
+        id: data.id,
         customer_id: data.stripe_cus_id,
-        product_id: (data as any).products.stripe_id,
+        product_id: data.products?.stripe_id as string,
         currency: data.currency,
         price: data.price,
         quantity: data.quantity,
         installments: data.period!,
+        payment_method_id: setupIntent.payment_method as string,
       });
       if (subscription.error) {
         return <div>{subscription.error}</div>;
       }
       if (subscription?.id) {
-        // TODO: Handle subscription created successfully
         return <p>Subscription Created Successfully.</p>;
       }
 

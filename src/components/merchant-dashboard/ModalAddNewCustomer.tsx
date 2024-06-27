@@ -9,6 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -23,10 +24,12 @@ import { TypeCreateCustomer } from '@/types/types';
 import { addNewCustomer } from '@/app/actions/customers.actions';
 import { toast } from '../ui/use-toast';
 import { queryClient } from '@/app/providers';
+import { HiPlus } from 'react-icons/hi';
 
 interface ModalAddNewCustomerProps {
   isOpen: boolean;
   handleModalOpen: (value: boolean) => void;
+  triggerButton?: boolean;
 }
 
 const validations = yup.object().shape({
@@ -36,7 +39,7 @@ const validations = yup.object().shape({
   address: yup.string().required('Address is required'),
 });
 
-const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ isOpen, handleModalOpen }) => {
+const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ isOpen, handleModalOpen, triggerButton }) => {
   const [isPending, setIsPending] = useState(false);
 
   const {
@@ -71,11 +74,6 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ isOpen, handleModal
       const { error: error } = await supabase.from('merchants_customers').insert({
         merchant_id: customer.merchant!,
         customer_id: customer.id!,
-        customer: {
-          name: formData.name,
-          email: formData.email,
-          stripe_id: customer.stripe_id,
-        },
       });
       if (error) {
         throw error.message;
@@ -94,9 +92,15 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ isOpen, handleModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleModalOpen}>
-      {/* <DialogTrigger asChild>
-        <Button>Add Customer</Button>
-      </DialogTrigger> */}
+      {triggerButton && (
+        <DialogTrigger asChild>
+          <Button size='lg' className='gap-2'>
+            <HiPlus size={18} />
+            Add Customer
+          </Button>
+        </DialogTrigger>
+      )}
+
       <DialogContent>
         <DialogHeader className='mb-4'>
           <DialogTitle>Add New Customer</DialogTitle>

@@ -38,6 +38,8 @@
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "cmdk": "^1.0.0",
+    "currency-symbol-map": "^5.1.0",
     "date-fns": "^3.6.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "next": "latest",

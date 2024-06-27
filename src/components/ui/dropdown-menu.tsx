@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { CheckIcon, ChevronRightIcon, DotFilledIcon } from '@radix-ui/react-icons';
+import { CheckIcon, DotFilledIcon } from '@radix-ui/react-icons';
 
 import { cn } from '@/utils/utils';
 
@@ -33,7 +33,6 @@ const DropdownMenuSubTrigger = React.forwardRef<
     )}
     {...props}>
     {children}
-    <ChevronRightIcon className='ml-auto size-4' />
   </DropdownMenuPrimitive.SubTrigger>
 ));
 DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName;

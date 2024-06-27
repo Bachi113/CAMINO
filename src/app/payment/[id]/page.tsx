@@ -8,7 +8,7 @@ export default async function PaymentPage({ params }: { params: { id: string } }
   const supabase = supabaseServerClient();
 
   const { data } = await supabase
-    .from('payment_links')
+    .from('orders')
     .select('*, products (stripe_id, product_name)')
     .eq('id', params.id)
     .single();

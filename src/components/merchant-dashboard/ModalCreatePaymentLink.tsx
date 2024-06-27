@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
-import { errorToast } from '@/utils/utils';
+import { errorToast, handleCopyPaymentLink } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreatePaymentLink } from '@/types/types';
@@ -26,8 +26,11 @@ import { useGetCustomers, useGetProducts } from '@/app/query-hooks';
 import ModalAddNewCustomer from './ModalAddNewCustomer';
 import { FiPlus } from 'react-icons/fi';
 import ModalAddNewProduct, { currencyOptions } from './ModalAddNewProduct';
-import { useRouter } from 'next/navigation';
 import { Checkbox } from '../ui/checkbox';
+import { IoCopyOutline } from 'react-icons/io5';
+import { HiPlus } from 'react-icons/hi';
+import getSymbolFromCurrency from 'currency-symbol-map';
+import { queryClient } from '@/app/providers';
 
 interface ModalCreatePaymentLinkProps {}
 
@@ -56,11 +59,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   const [openProductModal, setOpenProductModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [paymentLink, setPaymentLink] = useState('');
 
-  const { data: customers } = useGetCustomers();
+  const { data: merchantCustomers } = useGetCustomers();
   const { data: products } = useGetProducts();
-
-  const router = useRouter();
 
   const {
     register,
@@ -88,6 +90,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
     setIsPending(true);
     try {
+      if (Number(formData.price) < 0) {
+        throw 'Price must be a positive number';
+      }
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -97,7 +103,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
       const installmentOptions = formData.installments_options.sort((a, b) => a - b);
       const { data: paymentLink, error } = await supabase
-        .from('payment_links')
+        .from('orders')
         .insert({
           ...formData,
           installments_options: installmentOptions,
@@ -109,10 +115,11 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
         throw error.message;
       }
 
-      // TODO: handle invalidate query for payment links
-      router.push(`/payment/${paymentLink.id}`);
+      queryClient.invalidateQueries({ queryKey: ['getOrders'] });
+      setPaymentLink(`${process.env.NEXT_PUBLIC_APP_URL}/payment/${paymentLink.id}`);
     } catch (error: any) {
       errorToast(error);
+    } finally {
       setIsPending(false);
     }
   };
@@ -146,7 +153,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button>Create Payment Link</Button>
+          <Button className='gap-2'>
+            <HiPlus size={18} />
+            Create payment link
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader className='mb-4'>
@@ -170,9 +180,9 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                       <FiPlus /> Add new customer
                     </div>
                   </SelectItem>
-                  {customers?.map((option) => (
-                    <SelectItem key={option.id} value={(option.customer as any)?.stripe_id}>
-                      {(option.customer as any)?.name}
+                  {merchantCustomers?.map((data) => (
+                    <SelectItem key={data.id} value={data.customers?.stripe_id as string}>
+                      {data.customers?.customer_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -216,7 +226,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                       <SelectContent>
                         {currencyOptions.map((option) => (
                           <SelectItem key={option} value={option}>
-                            {option}
+                            {option} ({getSymbolFromCurrency(option)})
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -238,18 +248,35 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
               label='Installment Options'
               required
               error={errors.installments_options?.message}>
-              {installmentOptions.map((option) => (
-                <div key={option} className='flex items-center text-sm space-x-2 mb-2'>
-                  <Checkbox
-                    id={`intslmnt${option}`}
-                    onCheckedChange={(checked) => handleInstallmentChange(Number(option), checked as boolean)}
-                  />
-                  <label htmlFor={`intslmnt${option}`} className='cursor-pointer'>
-                    {option} months
-                  </label>
-                </div>
-              ))}
+              <div className='grid grid-cols-2'>
+                {installmentOptions.map((option) => (
+                  <div key={option} className='flex items-center text-sm space-x-2 mb-2'>
+                    <Checkbox
+                      id={`intslmnt${option}`}
+                      onCheckedChange={(checked) =>
+                        handleInstallmentChange(Number(option), checked as boolean)
+                      }
+                    />
+                    <label htmlFor={`intslmnt${option}`} className='cursor-pointer'>
+                      {option} months
+                    </label>
+                  </div>
+                ))}
+              </div>
             </InputWrapper>
+
+            {paymentLink && (
+              <InputWrapper label='Payment Link'>
+                <Button
+                  type='button'
+                  variant='secondary'
+                  size='sm'
+                  onClick={() => handleCopyPaymentLink(paymentLink)}
+                  className='w-full justify-between border'>
+                  {paymentLink} <IoCopyOutline />
+                </Button>
+              </InputWrapper>
+            )}
 
             <DialogFooter className='sm:space-x-4 !mt-8'>
               <DialogClose asChild>
@@ -257,9 +284,15 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type='submit' size='lg' disabled={isPending} className='w-full'>
-                {isPending ? <BarLoader height={1} /> : 'Send link'}
-              </Button>
+              {paymentLink ? (
+                <Button size='lg' onClick={() => handleCopyPaymentLink(paymentLink)} className='w-full'>
+                  Copy link
+                </Button>
+              ) : (
+                <Button size='lg' disabled={isPending} className='w-full'>
+                  {isPending ? <BarLoader height={1} /> : 'Create link'}
+                </Button>
+              )}
             </DialogFooter>
           </form>
         </DialogContent>
