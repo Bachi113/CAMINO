@@ -8,12 +8,6 @@ import { TypeOrder } from '@/types/types';
 
 export const columns: ColumnDef<TypeOrder>[] = [
   {
-    accessorFn: (row, index) => index + 1,
-    id: 'sr_no',
-    header: 'Sr No.',
-    cell: (info) => info.getValue(),
-  },
-  {
     accessorKey: 'id',
     header: 'Order ID',
     cell: (info) => info.getValue(),
@@ -87,7 +81,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
       const buttonVariant =
         status === 'active'
           ? 'default'
-          : status === 'not_started'
+          : status === 'processing'
             ? 'outline'
             : status === 'pending'
               ? 'warning'

@@ -1,13 +1,10 @@
 import { Card, CardHeader } from '@/components/ui/card';
-
 import PaymentDetails from '@/components/payment/PaymentDetails';
 import Image from 'next/image';
-import { supabaseServerClient } from '@/utils/supabase/server';
+import { supabaseAdmin } from '@/utils/supabase/admin';
 
 export default async function PaymentPage({ params }: { params: { id: string } }) {
-  const supabase = supabaseServerClient();
-
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('orders')
     .select('*, products (stripe_id, product_name)')
     .eq('id', params.id)

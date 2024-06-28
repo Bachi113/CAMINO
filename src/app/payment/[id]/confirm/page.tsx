@@ -2,7 +2,7 @@ import { createSubscription, getCustomerPaymentMethods } from '@/app/actions/str
 import PaymentMethodDetails from '@/components/payment/PaymentMethodDetails';
 import { Card, CardHeader } from '@/components/ui/card';
 import stripe from '@/utils/stripe';
-import { supabaseServerClient } from '@/utils/supabase/server';
+import { supabaseAdmin } from '@/utils/supabase/admin';
 import Image from 'next/image';
 import { LuLoader } from 'react-icons/lu';
 
@@ -16,9 +16,7 @@ type TypeProps = {
 };
 
 export default async function ConfirmPaymentPage({ params, searchParams }: TypeProps) {
-  const supabase = supabaseServerClient();
-
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('orders')
     .select('*, products (stripe_id)')
     .eq('id', params.id)

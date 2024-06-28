@@ -369,6 +369,13 @@ export type Database = {
             referencedColumns: ['id'];
           },
           {
+            foreignKeyName: 'orders_stripe_cus_id_fkey';
+            columns: ['stripe_cus_id'];
+            isOneToOne: false;
+            referencedRelation: 'customers';
+            referencedColumns: ['stripe_id'];
+          },
+          {
             foreignKeyName: 'orders_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
@@ -473,7 +480,7 @@ export type Database = {
       };
     };
     Enums: {
-      orderstatus: 'pending' | 'not_started' | 'failed' | 'active' | 'canceled' | 'completed';
+      orderstatus: 'pending' | 'processing' | 'failed' | 'active' | 'canceled' | 'completed';
     };
     CompositeTypes: {
       [_ in never]: never;
