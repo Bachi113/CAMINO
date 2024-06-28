@@ -21,15 +21,28 @@ import { cn } from '@/utils/utils';
 
 interface FilterProps {
   customerNames?: string[];
-  onFilterChange: (customerName: string | null) => void;
+  customerIds?: string[];
+  onNameFilterChange: (customerName: string | null) => void;
+  onIdFilterChange: (customerId: string | null) => void;
 }
 
-const Filter: React.FC<FilterProps> = ({ customerNames, onFilterChange }) => {
+const Filter: React.FC<FilterProps> = ({
+  customerNames,
+  customerIds,
+  onNameFilterChange,
+  onIdFilterChange,
+}) => {
   const [selectedCustomerName, setSelectedCustomerName] = useState<string | null>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
 
   const handleNameFilterChange = (name: string | null) => {
     setSelectedCustomerName(name);
-    onFilterChange(name);
+    onNameFilterChange(name);
+  };
+
+  const handleIdFilterChange = (id: string | null) => {
+    setSelectedCustomerId(id);
+    onIdFilterChange(id);
   };
 
   return (
@@ -48,7 +61,10 @@ const Filter: React.FC<FilterProps> = ({ customerNames, onFilterChange }) => {
                   <CommandEmpty>No results found.</CommandEmpty>
                   <CommandItem
                     key='all'
-                    className='hover:cursor-pointer'
+                    className={cn(
+                      'hover:cursor-pointer',
+                      selectedCustomerName === null && 'bg-purple-700 text-white'
+                    )}
                     onSelect={() => handleNameFilterChange(null)}>
                     All Customers
                   </CommandItem>
@@ -61,6 +77,40 @@ const Filter: React.FC<FilterProps> = ({ customerNames, onFilterChange }) => {
                       )}
                       onSelect={() => handleNameFilterChange(name)}>
                       {name}
+                    </CommandItem>
+                  ))}
+                  <CommandSeparator />
+                </CommandList>
+              </Command>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Customer ID</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <Command className='w-[194px] text-sm font-medium text-secondary'>
+                <CommandInput placeholder='Search customer ID' />
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandItem
+                    key='all'
+                    className={cn(
+                      'hover:cursor-pointer',
+                      selectedCustomerId === null && 'bg-purple-700 text-white'
+                    )}
+                    onSelect={() => handleIdFilterChange(null)}>
+                    All Customers
+                  </CommandItem>
+                  {customerIds?.map((id) => (
+                    <CommandItem
+                      key={id}
+                      className={cn(
+                        'hover:cursor-pointer',
+                        selectedCustomerId === id && 'bg-purple-700 text-white'
+                      )}
+                      onSelect={() => handleIdFilterChange(id)}>
+                      {id}
                     </CommandItem>
                   ))}
                   <CommandSeparator />

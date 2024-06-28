@@ -102,10 +102,10 @@ const useGetOnboardingData = () => {
   });
 };
 
-const useGetOrders = (page: number, pageSize: number) => {
+const useGetOrders = (page: number, pageSize: number, searchQuery?: string) => {
   return useQuery({
-    queryKey: ['getOrders', page, pageSize],
-    queryFn: () => getOrdersByMerchant(page, pageSize),
+    queryKey: ['getOrders', page, pageSize, searchQuery],
+    queryFn: () => getOrdersByMerchant(page, pageSize, searchQuery),
   });
 };
 
@@ -157,15 +157,14 @@ const useGetMerchantCustomers = ({ page, pageSize, searchQuery }: UseGetMerchant
   return useQuery({
     queryKey: ['getMerchantCustomers', page, pageSize, searchQuery],
     queryFn: async () => {
+      // Build the base query
       let query = supabase
         .from('merchants_customers')
-        .select('*, customers (*)')
+        .select('*, customers!inner (customer_name, id, email, phone, address)')
         .range((page - 1) * pageSize, page * pageSize - 1);
 
       if (searchQuery) {
-        query = query.or(
-          `customer_id->>customer_name.ilike.%${searchQuery}%, customers->>email.ilike.%${searchQuery}%`
-        );
+        query = query.ilike('customers.customer_name', `%${searchQuery}%`);
       }
 
       const { data, error } = await query;
@@ -202,29 +201,20 @@ const useGetMerchantCustomerIdAndNames = () => {
 interface UseGetMerchantProductsParams {
   page: number;
   pageSize: number;
-  categoryFilter?: string;
   searchQuery?: string;
 }
 
-const useGetMerchantProducts = ({
-  page,
-  pageSize,
-  categoryFilter,
-  searchQuery,
-}: UseGetMerchantProductsParams) => {
+const useGetMerchantProducts = ({ page, pageSize, searchQuery }: UseGetMerchantProductsParams) => {
   const supabase = supabaseBrowserClient();
 
   return useQuery({
-    queryKey: ['getMerchantProducts', page, pageSize, categoryFilter, searchQuery],
+    queryKey: ['getMerchantProducts', page, pageSize, searchQuery],
     queryFn: async () => {
       let query = supabase
         .from('products')
         .select('*')
         .range((page - 1) * pageSize, page * pageSize - 1);
 
-      if (categoryFilter) {
-        query = query.eq('category', categoryFilter);
-      }
       if (searchQuery) {
         query = query.ilike('product_name', `%${searchQuery}%`);
       }

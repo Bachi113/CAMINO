@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import {
   SortingState,
   flexRender,
@@ -11,20 +11,22 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { columns } from './Columns';
 import ModalAddNewProduct from '@/components/merchant-dashboard/ModalAddNewProduct';
-import SortBy from '@/components/merchant-dashboard/Sortby';
+import SortBy from '@/components/merchant-dashboard/product/Sortby';
 import { useGetMerchantProducts } from '@/app/query-hooks';
 import ProductDescription from './ProductDescription';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { debounce } from '@/utils/utils';
 import SearchIcon from '@/assets/icons/SearchIcon';
+import Filter from './Filter';
+import DownloadButton from '../DowloadCsvButton';
 
 const ProductsTable: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -32,12 +34,15 @@ const ProductsTable: React.FC = () => {
   const { data, isLoading } = useGetMerchantProducts({
     page,
     pageSize,
-    categoryFilter,
     searchQuery,
   });
 
+  const filteredData = useMemo(() => {
+    return data?.filter((product) => (selectedFilter ? product.category === selectedFilter : true));
+  }, [data, selectedFilter]);
+
   const table = useReactTable({
-    data: data || [],
+    data: filteredData || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
@@ -66,6 +71,10 @@ const ProductsTable: React.FC = () => {
     }
   };
 
+  const handleFilterChange = (customerName: string | null) => {
+    setSelectedFilter(customerName);
+  };
+
   return (
     <>
       <div className='mt-10 flex justify-between items-center w-full'>
@@ -83,7 +92,9 @@ const ProductsTable: React.FC = () => {
           />
         </div>
         <div className='flex gap-2'>
-          <SortBy setCategoryFilter={setCategoryFilter} setSorting={setSorting} />
+          <SortBy setSorting={setSorting} />
+          <Filter onFilterChange={handleFilterChange} />
+          <DownloadButton fileName='products' data={data!} />
           <ModalAddNewProduct isOpen={isModalOpen} handleModalOpen={setIsModalOpen} triggerButton={true} />
         </div>
       </div>
@@ -116,7 +127,7 @@ const ProductsTable: React.FC = () => {
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={() => setSelectedProduct(row.original)}
-                    className='cursor-pointer text-[#363A4E] font-medium h-16'>
+                    className='cursor-pointer text-secondary font-medium h-16'>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className='pl-6'>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

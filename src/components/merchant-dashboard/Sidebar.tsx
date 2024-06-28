@@ -10,6 +10,7 @@ import OrdersIcon from '@/assets/icons/OrdersIcon';
 import ProductsIcon from '@/assets/icons/ProductsIcon';
 import UsersIcon from '@/assets/icons/UsersIcon';
 import SettingsIcon from '@/assets/icons/SettingsIcon';
+import SignOutButton from '@/components/merchant-dashboard/SignOutButton';
 
 export const sidebarLinks = [
   { label: 'Dashboard', path: '', logo: DashboardIcon },
@@ -35,28 +36,32 @@ const Sidebar = () => {
   };
 
   return (
-    <div className='min-h-screen h-full p-7 min-w-[250px] bg-white border-r'>
-      <div className='mb-8'>
-        <Image src='/logo.png' width={85} height={40} alt='logo' />
-      </div>
+    <div className='min-h-screen flex flex-col justify-between h-full p-7 min-w-[250px] bg-white border-r'>
       <div>
-        {sidebarLinks.map((link) => {
-          const isSelected = pathname.split('dashboard/m')[1] === link.path;
+        <div className='mb-8'>
+          <Image src='/logo.png' width={85} height={40} alt='logo' />
+        </div>
+        <div>
+          {sidebarLinks.map((link) => {
+            const isSelected = pathname.split('dashboard/m')[1] === link.path;
 
-          return (
-            <Link
-              href={getHref(link.path)}
-              key={link.label}
-              className={cn(
-                'flex items-center gap-2.5 px-2 py-3 rounded-md text-slate-600 text-sm font-semibold',
-                isSelected && 'bg-indigo-50 text-purple-800'
-              )}>
-              <link.logo isSelected={isSelected} />
-              {link.label}
-            </Link>
-          );
-        })}
+            return (
+              <Link
+                href={getHref(link.path)}
+                key={link.label}
+                className={cn(
+                  'flex items-center gap-2.5 px-2 py-3 rounded-md text-slate-600 text-sm font-semibold',
+                  isSelected && 'bg-indigo-50 text-purple-800'
+                )}>
+                <link.logo isSelected={isSelected} />
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
       </div>
+
+      <SignOutButton className='w-full' />
     </div>
   );
 };

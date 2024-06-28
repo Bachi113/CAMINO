@@ -25,7 +25,7 @@ export default function GoogleAuth() {
           extend: false,
           className: {
             button:
-              'w-full py-3 rounded-md bg-gray-100 flex items-center justify-center gap-2 font-medium text-[#363A4E]',
+              'w-full py-3 rounded-md bg-gray-100 flex items-center justify-center gap-2 font-medium text-secondary',
           },
         }}
         localization={{

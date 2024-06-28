@@ -16,19 +16,19 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
+import { categoryOptions } from '../ModalAddNewProduct';
 import FilterIcon from '@/assets/icons/FilterIcon';
 import { cn } from '@/utils/utils';
 
 interface FilterProps {
-  customerNames?: string[];
-  onFilterChange: (customerName: string | null) => void;
+  onFilterChange: (ProductName: string | null) => void;
 }
 
-const Filter: React.FC<FilterProps> = ({ customerNames, onFilterChange }) => {
-  const [selectedCustomerName, setSelectedCustomerName] = useState<string | null>(null);
+const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
+  const [selectedProductCategory, setSelectedProductCategory] = useState<string | null>(null);
 
-  const handleNameFilterChange = (name: string | null) => {
-    setSelectedCustomerName(name);
+  const handleFilterChange = (name: string | null) => {
+    setSelectedProductCategory(name);
     onFilterChange(name);
   };
 
@@ -39,28 +39,28 @@ const Filter: React.FC<FilterProps> = ({ customerNames, onFilterChange }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-[194px] text-sm font-medium text-secondary'>
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Customer Name</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger>Category</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
               <Command className='w-[194px] text-sm font-medium text-secondary'>
-                <CommandInput placeholder='Search customer' />
+                <CommandInput placeholder='Search Product' />
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
                   <CommandItem
                     key='all'
                     className='hover:cursor-pointer'
-                    onSelect={() => handleNameFilterChange(null)}>
-                    All Customers
+                    onSelect={() => handleFilterChange(null)}>
+                    All Categories
                   </CommandItem>
-                  {customerNames?.map((name) => (
+                  {categoryOptions?.map((category) => (
                     <CommandItem
-                      key={name}
+                      key={category.value}
                       className={cn(
                         'hover:cursor-pointer',
-                        selectedCustomerName === name && 'bg-purple-700 text-white'
+                        selectedProductCategory === category.value && 'bg-purple-700 text-white'
                       )}
-                      onSelect={() => handleNameFilterChange(name)}>
-                      {name}
+                      onSelect={() => handleFilterChange(category.value)}>
+                      {category.label}
                     </CommandItem>
                   ))}
                   <CommandSeparator />

@@ -35,15 +35,21 @@ const headerMapping: { [key: string]: string } = {
   created_at: 'Created At',
   customer_id: 'Customer ID',
   order_id: 'Order ID',
-  phone: 'Phone',
   total_amount: 'Total Amount',
-  'customer.email': 'Email',
-  'customer.name': 'Name',
-  address: 'Address',
+  'customers.phone': 'Number',
+  'customers.email': 'Email',
+  'customers.customer_name': 'Customer Name',
+  'customers.address': 'Address',
   tsx_id: 'Txn ID',
   customer_name: 'Customer Name',
   product_id: 'Product ID',
   product_name: 'Product Name',
+  quantity: 'Quantity',
+  remarks: 'Description',
+  price: 'Price',
+  category: 'Category',
+  period: 'Installments',
+  status: 'Status',
 };
 
 const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, any> => {
@@ -59,7 +65,7 @@ const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, an
   }, {});
 };
 
-const convertToCSV = (data: Record<string, any>[]) => {
+const convertToCSV = (data: Record<string, any>[], fileName: string) => {
   // Flatten all objects in the data array
   const flattenedData = data.map((item) => flattenObject(item));
 
@@ -70,14 +76,20 @@ const convertToCSV = (data: Record<string, any>[]) => {
       'user_id',
       'stripe_id',
       'merchant_id',
-      'customer.id',
-      'customer.user_id',
-      'customer.stripe_id',
-      'customers',
+      'customers.id',
+      'customers.user_id',
+      'customers.stripe_id',
       'next_instalment_date',
       'end_instalment_date',
       'paid_amount',
+      'currency',
+      'price',
+      'installments_options',
+      'stripe_cus_id',
     ];
+    if (fileName === 'products') {
+      excludedFields.push('status');
+    }
     return !excludedFields.some((field) => header === field || header.endsWith(`.${field}`));
   };
 
@@ -113,7 +125,7 @@ const replacer = (_key: string, value: any) => {
 
 export const downloadCSV = (data: Record<string, any>[], fileName: string) => {
   try {
-    const csvData = convertToCSV(data);
+    const csvData = convertToCSV(data, fileName);
     const blob = new Blob([csvData], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');

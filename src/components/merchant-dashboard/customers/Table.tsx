@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import {
   SortingState,
   flexRender,
@@ -8,21 +8,26 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { columns } from './Columns';
+import { columns } from '@/components/merchant-dashboard/customers/Columns';
 import SortBy from '@/components/merchant-dashboard/customers/Sortby';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { debounce } from '@/utils/utils';
-import ModalAddNewCustomer from '../ModalAddNewCustomer';
+import ModalAddNewCustomer from '@/components/merchant-dashboard/ModalAddNewCustomer';
 import { useGetMerchantCustomers } from '@/app/query-hooks';
-import CustomerDetails from './CustomerDetails';
-import DownloadButton from '../DowloadCsvButton';
+import CustomerDetails from '@/components/merchant-dashboard/customers/CustomerDetails';
+import DownloadButton from '@/components/merchant-dashboard/DowloadCsvButton';
 import SearchIcon from '@/assets/icons/SearchIcon';
+import Filter from '@/components/merchant-dashboard/customers/Filter';
 
 const CustomersTable: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [selectedCustomerName, setSelectedCustomerName] = useState<string | null>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const [customerNames, setCustomerNames] = useState<string[]>();
+  const [customerIds, setCustomerIds] = useState<string[]>();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -34,8 +39,22 @@ const CustomersTable: React.FC = () => {
     searchQuery,
   });
 
+  const filteredData = useMemo(() => {
+    return (
+      data &&
+      data.filter((order) => {
+        const matchesCustomerName = selectedCustomerName
+          ? order.customers?.customer_name === selectedCustomerName
+          : true;
+
+        const matchesCustomerId = selectedCustomerId ? order.customer_id === selectedCustomerId : true;
+        return matchesCustomerName && matchesCustomerId;
+      })
+    );
+  }, [data, selectedCustomerName, selectedCustomerId]);
+
   const table = useReactTable({
-    data: data || [],
+    data: filteredData || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
@@ -46,6 +65,12 @@ const CustomersTable: React.FC = () => {
   useEffect(() => {
     if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
       searchInputRef.current.focus();
+    }
+    if (data) {
+      const customerNames: string[] = data.map((customer) => customer.customers?.customer_name ?? '');
+      const customerIds: string[] = data.map((customer) => customer.customer_id);
+      setCustomerNames(customerNames);
+      setCustomerIds(customerIds);
     }
   }, [data]);
 
@@ -62,6 +87,14 @@ const CustomersTable: React.FC = () => {
     if (data?.length === pageSize) {
       setPage((prevPage) => prevPage + 1);
     }
+  };
+
+  const handleNameFilterChange = (customerName: string | null) => {
+    setSelectedCustomerName(customerName);
+  };
+
+  const handleIdFilterChange = (customerId: string | null) => {
+    setSelectedCustomerId(customerId);
   };
 
   return (
@@ -81,7 +114,13 @@ const CustomersTable: React.FC = () => {
           />
         </div>
         <div className='flex gap-2'>
-          <SortBy />
+          <SortBy setSorting={setSorting} />
+          <Filter
+            customerNames={customerNames}
+            customerIds={customerIds}
+            onNameFilterChange={handleNameFilterChange}
+            onIdFilterChange={handleIdFilterChange}
+          />
           <DownloadButton data={data} fileName='customers' />
           <ModalAddNewCustomer isOpen={isModalOpen} handleModalOpen={setIsModalOpen} triggerButton={true} />
         </div>
@@ -115,7 +154,7 @@ const CustomersTable: React.FC = () => {
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={() => setSelectedCustomer(row.original)}
-                    className='cursor-pointer text-[#363A4E] font-medium h-16'>
+                    className='cursor-pointer text-secondary font-medium h-16'>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className='pl-6'>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -1,10 +1,10 @@
 import SortIcon from '@/assets/icons/SortIcon';
 import { Button } from '@/components/ui/button';
+import { TypeProduct } from '@/types/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
-// TODO: Add proper types
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<TypeProduct>[] = [
   {
     accessorFn: (row, index) => index + 1,
     id: 'sr_no',
@@ -50,7 +50,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'remarks',
     header: 'Description',
     cell: ({ row }) => {
-      return <div className='text-[#A6A6A6] font-medium'>{row.original.remarks}</div>;
+      return <div className='text-neutral-400 font-medium'>{row.original.remarks}</div>;
     },
   },
 ];

@@ -1,19 +1,20 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { TypeProductDetails } from '@/types/types';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 
 interface ProductDescriptionProps {
   setIsOpen: (isOpen: boolean) => void;
-  data: any;
+  data: TypeProductDetails;
 }
 
 const ProductDescription = ({ setIsOpen, data }: ProductDescriptionProps) => {
   return (
     <Sheet open={true} onOpenChange={setIsOpen}>
       <SheetContent>
-        <SheetHeader className='text-sm font-medium text-[#363A4E]'>
-          <div className='space-y-2 mb-6'>
-            <SheetTitle className='text-[#363A4E]'>Product Details</SheetTitle>
+        <SheetHeader className='text-sm font-medium text-secondary'>
+          <div className='space-y-1 mb-6'>
+            <SheetTitle className='text-secondary'>Product Details</SheetTitle>
             <p className='font-normal text-base'>
               Product ID: <span className='font-bold'>{data.id}</span>
             </p>
@@ -23,13 +24,13 @@ const ProductDescription = ({ setIsOpen, data }: ProductDescriptionProps) => {
             <div className='flex items-center gap-4'>
               <div className='w-full'>
                 <p>Product name</p>
-                <p className='bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-lg border'>
+                <p className='bg-zinc-100 text-gray-500 px-4 py-2.5 mt-1 rounded-lg border'>
                   {data.product_name}
                 </p>
               </div>
               <div className='w-full'>
                 <p>Product Added on</p>
-                <p className='bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-lg border'>
+                <p className='bg-zinc-100 text-gray-500 px-4 py-2.5 mt-1 rounded-lg border'>
                   {format(new Date(data.created_at), 'MMM dd, yyyy')}
                 </p>
               </div>
@@ -37,7 +38,7 @@ const ProductDescription = ({ setIsOpen, data }: ProductDescriptionProps) => {
 
             <div>
               <p>Category</p>
-              <div className='flex mt-1 justify-between items-center  text-[#363A4E] px-4 py-2.5 rounded-lg border'>
+              <div className='flex mt-1 justify-between items-center  text-secondary px-4 py-2.5 rounded-lg border'>
                 <p className=''>{data.category}</p>
                 <ChevronDownIcon />
               </div>

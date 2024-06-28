@@ -17,22 +17,28 @@ export const getMerchant = async () => {
   return merchant;
 };
 
-export async function getOrdersByMerchant(page: number, pageSize: number) {
+export async function getOrdersByMerchant(page: number, pageSize: number, searchQuery?: string) {
   const merchant = await getMerchant();
 
   if (merchant == null) {
     throw 'Merchant not found';
   }
 
-  const { data, error } = await supabaseAdmin
+  let query = supabaseAdmin
     .from('orders')
-    .select('*, products (product_name), customers (customer_name)')
+    .select('*, products!inner (product_name), customers (customer_name)')
     .eq('user_id', merchant.user_id)
     .order('created_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
 
+  if (searchQuery) {
+    query = query.ilike('products.product_name', `%${searchQuery}%`);
+  }
+
+  const { data, error } = await query;
   if (error) {
     console.log(error);
+    throw error;
   }
 
   return data;

@@ -3,10 +3,13 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
-import { errorToast } from '@/utils/utils';
+import { cn, errorToast } from '@/utils/utils';
 import LogoutIcon from '@/assets/icons/LogoutIcon';
 
-const SignOutButton = () => {
+interface SignOutButtonProps {
+  className?: string;
+}
+const SignOutButton = ({ className }: SignOutButtonProps) => {
   const handleSignOut = async () => {
     const supabase = supabaseBrowserClient();
     const { error } = await supabase.auth.signOut();
@@ -18,7 +21,10 @@ const SignOutButton = () => {
     <Button
       variant={'ghost'}
       size={'lg'}
-      className='gap-2 px-2.5 mr-10 font-medium shadow-none border text-[#363A4E]'
+      className={cn(
+        'gap-2 px-2.5 mr-10 font-medium shadow-none border text-secondary',
+        className && className
+      )}
       onClick={handleSignOut}>
       <LogoutIcon /> Sign out
     </Button>

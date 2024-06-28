@@ -1,10 +1,10 @@
 import SortIcon from '@/assets/icons/SortIcon';
 import { Button } from '@/components/ui/button';
+import { TypeCustomerDetails } from '@/types/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
-// TODO: Add proper types
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<TypeCustomerDetails>[] = [
   {
     accessorFn: (row, index) => index + 1,
     id: 'sr_no',
@@ -41,7 +41,7 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorFn: (row) => row.customers?.email,
-    id: 'customer_email',
+    id: 'email',
     header: 'Email',
     cell: (info) => info.getValue(),
   },

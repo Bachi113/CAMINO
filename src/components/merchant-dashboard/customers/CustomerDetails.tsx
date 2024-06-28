@@ -1,10 +1,11 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { TypeCustomerDetails } from '@/types/types';
 import { cn } from '@/utils/utils';
 import { format } from 'date-fns';
 
 interface CustomerDetailsProps {
   setIsOpen: (isOpen: boolean) => void;
-  data: any;
+  data: TypeCustomerDetails;
 }
 
 interface CustomerDetailsData {
@@ -35,18 +36,21 @@ const CustomerDetails = ({ setIsOpen, data }: CustomerDetailsProps) => {
   return (
     <Sheet open={true} onOpenChange={setIsOpen}>
       <SheetContent>
-        <SheetHeader className='space-y-5 text-sm font-medium text-[#363A4E]'>
-          <SheetTitle className='text-lg font-semibold -mb-5 text-[#363A4E]'>Customer Details</SheetTitle>
-          <p className='font-normal text-base'>
-            Customer ID: <span className='font-bold mt-1'>{data.customer_id}</span>
-          </p>
+        <SheetHeader className='text-sm font-medium text-secondary'>
+          <div className='space-y-1 mb-6'>
+            <SheetTitle className='text-secondary'>Customer Details</SheetTitle>
+            <p className='font-normal text-base'>
+              Customer ID: <span className='font-bold'>{data.customer_id}</span>
+            </p>
+          </div>
+
           <div className='my-5'>
             {dataToDisplay.map((item: CustomerDetailsData, index) => (
               <div key={index} className='w-full mb-5'>
                 <p>{item.label}</p>
                 <p
                   className={cn(
-                    'bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-md border',
+                    'bg-zinc-100 text-gray-500 px-4 py-2.5 mt-1 rounded-md border',
                     (item.label.includes('ID') || item.label.includes('Date')) && 'font-semibold'
                   )}>
                   {item.value}
@@ -55,7 +59,7 @@ const CustomerDetails = ({ setIsOpen, data }: CustomerDetailsProps) => {
             ))}
             <div className='w-full'>
               <p>Address</p>
-              <p className='bg-[#F4F4F4] h-36 text-[#6B7280] px-4 py-2.5 mt-1 rounded-md border'>
+              <p className='bg-zinc-100 h-36 text-gray-500 px-4 py-2.5 mt-1 rounded-md border'>
                 {data?.customers?.address}
               </p>
             </div>
