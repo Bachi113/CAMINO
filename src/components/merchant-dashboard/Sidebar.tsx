@@ -5,20 +5,19 @@ import Link from 'next/link';
 import { cn } from '@/utils/utils';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import DashboardIcon from '@/assets/icons/DashboardIcon';
-import OrdersIcon from '@/assets/icons/OrdersIcon';
-import ProductsIcon from '@/assets/icons/ProductsIcon';
-import UsersIcon from '@/assets/icons/UsersIcon';
-import SettingsIcon from '@/assets/icons/SettingsIcon';
+import { HiOutlineArchiveBox } from 'react-icons/hi2';
+import { HiOutlineCube } from 'react-icons/hi';
 import SignOutButton from '@/components/merchant-dashboard/SignOutButton';
+import { IoSettingsOutline } from 'react-icons/io5';
+import { PiSquaresFourLight, PiUsersThin } from 'react-icons/pi';
 
 export const sidebarLinks = [
-  { label: 'Dashboard', path: '', logo: DashboardIcon },
-  { label: 'Orders', path: '/orders', logo: OrdersIcon },
-  { label: 'Products', path: '/products', logo: ProductsIcon },
-  { label: 'Customers', path: '/customers', logo: UsersIcon },
+  { label: 'Dashboard', path: '', logo: <PiSquaresFourLight size={22} /> },
+  { label: 'Orders', path: '/orders', logo: <HiOutlineArchiveBox size={20} /> },
+  { label: 'Products', path: '/products', logo: <HiOutlineCube size={20} /> },
+  { label: 'Customers', path: '/customers', logo: <PiUsersThin size={24} className='font-light' /> },
   // { label: 'Transactions', path: '/transactions', logo: TransactionsIcon },
-  { label: 'Account Settings', path: '/account-settings', logo: SettingsIcon },
+  { label: 'Account Settings', path: '/account-settings', logo: <IoSettingsOutline size={20} /> },
 ];
 
 const getDashboardType = (pathname: string) => {
@@ -53,7 +52,7 @@ const Sidebar = () => {
                   'flex items-center gap-2.5 px-2 py-3 rounded-md text-slate-600 text-sm font-semibold',
                   isSelected && 'bg-indigo-50 text-purple-800'
                 )}>
-                <link.logo isSelected={isSelected} />
+                {link.logo}
                 {link.label}
               </Link>
             );

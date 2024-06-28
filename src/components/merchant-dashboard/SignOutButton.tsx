@@ -4,7 +4,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { cn, errorToast } from '@/utils/utils';
-import LogoutIcon from '@/assets/icons/LogoutIcon';
+import { TbLogout2 } from 'react-icons/tb';
 
 interface SignOutButtonProps {
   className?: string;
@@ -26,7 +26,7 @@ const SignOutButton = ({ className }: SignOutButtonProps) => {
         className && className
       )}
       onClick={handleSignOut}>
-      <LogoutIcon /> Sign out
+      <TbLogout2 size={16} /> Sign out
     </Button>
   );
 };

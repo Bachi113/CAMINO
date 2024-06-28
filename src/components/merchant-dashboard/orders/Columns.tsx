@@ -1,10 +1,10 @@
-import SortIcon from '@/assets/icons/SortIcon';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { TypeOrder } from '@/types/types';
+import { FaSort } from 'react-icons/fa';
 
 export const columns: ColumnDef<TypeOrder>[] = [
   {
@@ -27,7 +27,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
           className='gap-2 p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Order Date
-          <SortIcon />
+          <FaSort />
         </Button>
       );
     },
@@ -75,7 +75,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
           className='gap-2 p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Status
-          <SortIcon />
+          <FaSort />
         </Button>
       );
     },

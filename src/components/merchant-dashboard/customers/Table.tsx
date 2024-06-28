@@ -17,8 +17,8 @@ import ModalAddNewCustomer from '@/components/merchant-dashboard/ModalAddNewCust
 import { useGetMerchantCustomers } from '@/app/query-hooks';
 import CustomerDetails from '@/components/merchant-dashboard/customers/CustomerDetails';
 import DownloadButton from '@/components/merchant-dashboard/DowloadCsvButton';
-import SearchIcon from '@/assets/icons/SearchIcon';
 import Filter from '@/components/merchant-dashboard/customers/Filter';
+import { HiOutlineSearch } from 'react-icons/hi';
 
 const CustomersTable: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -102,7 +102,7 @@ const CustomersTable: React.FC = () => {
       <div className='mt-10 flex justify-between items-center w-full'>
         <div className='relative'>
           <span className='absolute left-2 top-2.5'>
-            <SearchIcon />
+            <HiOutlineSearch />
           </span>
           <Input
             ref={searchInputRef}

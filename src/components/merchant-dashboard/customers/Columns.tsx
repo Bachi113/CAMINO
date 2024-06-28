@@ -1,8 +1,8 @@
-import SortIcon from '@/assets/icons/SortIcon';
 import { Button } from '@/components/ui/button';
 import { TypeCustomerDetails } from '@/types/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
+import { FaSort } from 'react-icons/fa';
 
 export const columns: ColumnDef<TypeCustomerDetails>[] = [
   {
@@ -25,7 +25,7 @@ export const columns: ColumnDef<TypeCustomerDetails>[] = [
           className='gap-2 p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Date Added
-          <SortIcon />
+          <FaSort />
         </Button>
       );
     },

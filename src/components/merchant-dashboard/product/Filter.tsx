@@ -17,8 +17,8 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { categoryOptions } from '../ModalAddNewProduct';
-import FilterIcon from '@/assets/icons/FilterIcon';
 import { cn } from '@/utils/utils';
+import { LuListFilter } from 'react-icons/lu';
 
 interface FilterProps {
   onFilterChange: (ProductName: string | null) => void;
@@ -35,7 +35,7 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className='border h-10 px-2.5 text-slate-500 bg-white text-sm font-medium border-slate-400/20 flex rounded-md items-center gap-2'>
-        <FilterIcon /> Filter By
+        <LuListFilter size={16} /> Filter By
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-[194px] text-sm font-medium text-secondary'>
         <DropdownMenuSub>
