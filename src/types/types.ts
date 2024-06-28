@@ -4,6 +4,8 @@ export type TypeOnboarding = Database['public']['Tables']['onboarding']['Row'];
 
 export type TypeOrder = Database['public']['Tables']['orders']['Row'];
 
+export type EnumOrderStatus = Database['public']['Enums']['orderstatus'];
+
 // Create Product
 export type TypeCreateProduct = {
   category: string;
