@@ -174,7 +174,6 @@ export type Database = {
           experience: string;
           id: string;
           user_id: string;
-          vat_number: string;
         };
         Insert: {
           created_at?: string;
@@ -182,7 +181,6 @@ export type Database = {
           experience: string;
           id?: string;
           user_id: string;
-          vat_number: string;
         };
         Update: {
           created_at?: string;
@@ -190,7 +188,6 @@ export type Database = {
           experience?: string;
           id?: string;
           user_id?: string;
-          vat_number?: string;
         };
         Relationships: [
           {

@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { cn, errorToast, extractFileNameFromUrl } from '@/utils/utils';
-import { saveData, updateData, uploadDocument } from '@/app/actions/onboarding.actions';
+import { saveData, updateData, uploadDocuments } from '@/app/actions/onboarding.actions';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { LuUploadCloud } from 'react-icons/lu';
 import ModalOnboardingSummary from './ModalOnboardingSummary';
@@ -21,7 +21,6 @@ import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
 
 interface IDocumentVerification {
-  vatNumber: string;
   experience: string;
   document1: any;
   document2: any;
@@ -30,7 +29,6 @@ interface IDocumentVerification {
 }
 
 const documentVerificationSchema = yup.object().shape({
-  vatNumber: yup.string().required('VAT Number is required'),
   experience: yup.string().required('Please specify how long you have been involved in business'),
   document1: yup.mixed().required('Document 1 is required'),
   document2: yup.mixed().required('Document 2 is required'),
@@ -76,16 +74,11 @@ const DocumentVerification = () => {
 
   useEffect(() => {
     if (data) {
-      setValue('vatNumber', data.vat_number);
       setValue('experience', data.experience);
       const documentsArray = data.document_urls as string[];
-      const documentsLength = documentsArray?.length || 0;
-
       documentsArray?.forEach((fileUrl, index) => {
-        if (index < documentsLength) {
-          const fileName = extractFileNameFromUrl(fileUrl, data.user_id);
-          setValue(`document${index + 1}` as keyof IDocumentVerification, { url: fileUrl, name: fileName });
-        }
+        const fileName = extractFileNameFromUrl(fileUrl, data.user_id);
+        setValue(`document${index + 1}` as keyof IDocumentVerification, { url: fileUrl, name: fileName });
       });
     }
   }, [setValue, data]);
@@ -100,30 +93,29 @@ const DocumentVerification = () => {
 
   const handleFormSubmit = async (formData: IDocumentVerification) => {
     setLoading(true);
-
     try {
-      const fileUrls = await Promise.all(
-        documentsToUpload.map(async ({ field, value }) => {
-          if (value?.url) {
-            return value.url;
-          } else if (value?.[0]) {
-            const files = new FormData();
-            files.append(field, value[0]);
-            const response = await uploadDocument(files);
-            if (typeof response === 'string') {
-              throw new Error(`Error uploading ${field}`);
-            }
-            return response.path;
-          } else {
-            throw new Error(`${field} is required`);
-          }
-        })
-      );
+      const fileUploadPromises = documentsToUpload.map(({ field, value }) => {
+        if (value?.url) {
+          return value.url;
+        } else if (value?.[0]) {
+          const files = new FormData();
+          files.append(field, value[0]);
+          return files;
+        } else {
+          throw new Error(`${field} is required`);
+        }
+      });
+
+      const fileData = await Promise.all(fileUploadPromises);
+      const fileUrls = await uploadDocuments(fileData);
+
+      if (fileUrls.error) {
+        throw fileUrls.error;
+      }
 
       const dataToUpdate = {
-        vat_number: formData.vatNumber,
         experience: formData.experience,
-        document_urls: fileUrls,
+        document_urls: fileUrls.urls,
       };
 
       const res = data
@@ -137,7 +129,7 @@ const DocumentVerification = () => {
       queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
       openSummaryModal();
     } catch (error: any) {
-      errorToast(error.message || 'An unknown error occurred.');
+      errorToast(`${error}`);
     } finally {
       setLoading(false);
     }
@@ -155,32 +147,26 @@ const DocumentVerification = () => {
           />
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='space-y-6'>
-              <InputWrapper label='VAT Number' required error={errors.vatNumber?.message}>
-                <Input
-                  type='text'
-                  placeholder='VAT Number'
-                  id='vatNumber'
-                  {...register('vatNumber')}
-                  disabled={loading}
-                />
-              </InputWrapper>
-              <InputWrapper
-                label='How long have you been involved in business'
-                required
-                error={errors.experience?.message}>
-                <Select onValueChange={(val) => setValue('experience', val)} value={watch('experience')}>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select Duration' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {yearsInvolved.map((option) => (
-                      <SelectItem key={option.id} value={option.value}>
-                        {option.value}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </InputWrapper>
+              {((data && watch('experience')) || !data) && (
+                <InputWrapper
+                  label='How long have you been involved in business'
+                  required
+                  error={errors.experience?.message}>
+                  <Select onValueChange={(val) => setValue('experience', val)} value={watch('experience')}>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select Duration' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {yearsInvolved.map((option) => (
+                        <SelectItem key={option.id} value={option.value}>
+                          {option.value}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </InputWrapper>
+              )}
+
               <div className='space-y-2'>
                 <label className='text-sm leading-none mb-2'>Upload the business documents</label>
                 {documentsToUpload.map((doc, index) => {
@@ -233,7 +219,9 @@ const DocumentVerification = () => {
           </form>
         </div>
 
-        <ModalOnboardingSummary isOpen={showModal} handleModalOpen={() => setShowModal(!showModal)} />
+        {showModal && (
+          <ModalOnboardingSummary isOpen={showModal} handleModalOpen={() => setShowModal(!showModal)} />
+        )}
       </div>
     </>
   );

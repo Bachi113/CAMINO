@@ -1,4 +1,4 @@
-import { getUser } from '@/utils/get-user';
+import { supabaseServerClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
@@ -8,11 +8,14 @@ type Props = {
 
 // Custom layout for login page
 const OnboardingLayout = async ({ children }: Props) => {
-  const user = await getUser();
+  const supabase = supabaseServerClient();
 
-  // Redirects to login page if user is not authenticated
-  if (!user) {
+  const { data: onboarding } = await supabase.from('onboarding').select('*').single();
+
+  if (!onboarding) {
     redirect('/login/merchant');
+  } else if (onboarding.onboarded_at) {
+    redirect('/dashboard/m');
   }
 
   return children;
