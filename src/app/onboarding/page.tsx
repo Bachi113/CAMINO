@@ -7,12 +7,7 @@ export default async function Onboarding() {
 
   const { data: onboarding } = await supabase.from('onboarding').select('*').single();
 
-  // Redirects based on onboarding status
-  if (!onboarding) {
-    redirect('/login/merchant');
-  } else if (onboarding.onboarded_at) {
-    redirect('/dashboard/m');
-  } else {
+  if (onboarding) {
     const steps = [
       { field: 'personal_informations', path: '/onboarding/personal-information' },
       { field: 'business_details', path: '/onboarding/business-details' },

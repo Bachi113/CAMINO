@@ -149,7 +149,6 @@ export const summaryFileds = (data: any) => {
       id: 'document-verification',
       title: 'Document Verification',
       inputs: [
-        { label: 'VAT Number', id: 'vatNumber', value: data.documents?.vat_number },
         {
           label: 'How long have you been involved in business',
           id: 'experience',
