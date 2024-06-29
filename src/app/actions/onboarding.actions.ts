@@ -5,39 +5,39 @@ import { supabaseServerClient } from '@/utils/supabase/server';
 
 const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_NAME!;
 
-export async function uploadDocument(files: FormData) {
+export async function uploadDocuments(files: FormData[]) {
   try {
     const supabase = await supabaseServerClient();
-
-    // Iterate through all files in FormData
-    const fileEntries = files.entries();
-    const fileEntry = fileEntries.next();
-    const file = fileEntry.value[1] as File;
-
-    if (!file) {
-      throw 'Document does not exist.';
-    }
 
     const user = await getUser();
     if (!user) {
       throw 'Please login to get started.';
     }
 
-    const key = `${user.id}-${file.name}`;
+    const uploadPromises = files.map((fileData, index) => {
+      if (typeof fileData === 'string') {
+        return fileData;
+      }
 
-    // Upload the document file to the Supabase storage bucket.
-    const { data, error } = await supabase.storage.from(bucketName).upload(key, file, {
-      upsert: true,
+      const file = fileData.get(`document${index + 1}`) as File;
+      if (!file) {
+        throw new Error(`Document ${index + 1} does not exist.`);
+      }
+      const key = `${user.id}-${file.name}`;
+      return supabase.storage.from(bucketName).upload(key, file, { upsert: true });
     });
 
-    if (error) {
-      throw error.message;
+    const results = await Promise.all(uploadPromises);
+    const errors = results.filter((result) => result.error);
+
+    if (errors.length > 0) {
+      throw new Error(errors.map((error) => error.error?.message).join(', '));
     }
 
-    return { path: data.path };
+    return { urls: results.map((result) => result.data?.path ?? result) };
   } catch (error: any) {
     console.error('Error uploading file:', error);
-    return `Error: ${error.message}`;
+    return { error: `Error: ${error.message}` };
   }
 }
 

@@ -120,21 +120,23 @@ const BankDetails = () => {
           />
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className='space-y-4'>
-              <InputWrapper id='bankName' label='Bank Name' required error={errors.bankName?.message}>
-                <Select required onValueChange={(val) => setValue('bankName', val)} value={watch('bankName')}>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select the bank' />
-                  </SelectTrigger>
+              {((data && watch('bankName')) || !data) && (
+                <InputWrapper id='bankName' label='Bank Name' required error={errors.bankName?.message}>
+                  <Select onValueChange={(val) => setValue('bankName', val)} value={watch('bankName')}>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select the bank' />
+                    </SelectTrigger>
 
-                  <SelectContent>
-                    {bankOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </InputWrapper>
+                    <SelectContent>
+                      {bankOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </InputWrapper>
+              )}
               {bankFields.map((field) => (
                 <InputWrapper
                   key={field.id}
@@ -150,27 +152,30 @@ const BankDetails = () => {
                   />
                 </InputWrapper>
               ))}
-              <InputWrapper
-                id='purchasingCurrency'
-                label='Purchasing Currency'
-                required
-                error={errors.purchasingCurrency?.message}>
-                <Select
+
+              {((data && watch('purchasingCurrency')) || !data) && (
+                <InputWrapper
+                  id='purchasingCurrency'
+                  label='Purchasing Currency'
                   required
-                  onValueChange={(val) => setValue('purchasingCurrency', val)}
-                  value={watch('purchasingCurrency')}>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select currency' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencyOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </InputWrapper>
+                  error={errors.purchasingCurrency?.message}>
+                  <Select
+                    onValueChange={(val) => setValue('purchasingCurrency', val)}
+                    value={watch('purchasingCurrency')}>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select currency' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencyOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </InputWrapper>
+              )}
+
               <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
             </div>
           </form>

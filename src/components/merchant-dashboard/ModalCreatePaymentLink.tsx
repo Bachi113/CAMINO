@@ -281,11 +281,15 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
             <DialogFooter className='sm:space-x-4 !mt-8'>
               <DialogClose asChild>
                 <Button variant='outline' size='lg' className='w-full'>
-                  Cancel
+                  {paymentLink ? 'Close' : 'Cancel'}
                 </Button>
               </DialogClose>
               {paymentLink ? (
-                <Button size='lg' onClick={() => handleCopyPaymentLink(paymentLink)} className='w-full'>
+                <Button
+                  type='button'
+                  size='lg'
+                  onClick={() => handleCopyPaymentLink(paymentLink)}
+                  className='w-full'>
                   Copy link
                 </Button>
               ) : (

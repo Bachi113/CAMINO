@@ -8,12 +8,6 @@ import { FaSort } from 'react-icons/fa';
 
 export const columns: ColumnDef<TypeOrder>[] = [
   {
-    accessorFn: (row, index) => index + 1,
-    id: 'sr_no',
-    header: 'Sr No.',
-    cell: (info) => info.getValue(),
-  },
-  {
     accessorKey: 'id',
     header: 'Order ID',
     cell: (info) => info.getValue(),

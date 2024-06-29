@@ -7,6 +7,7 @@ export type TypeOrder = Database['public']['Tables']['orders']['Row'];
 export type TypeProduct = Database['public']['Tables']['products']['Row'];
 
 export type TypeCustomer = Database['public']['Tables']['customers']['Row'];
+export type EnumOrderStatus = Database['public']['Enums']['orderstatus'];
 
 // Create Product
 export type TypeCreateProduct = {
