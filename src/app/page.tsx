@@ -17,8 +17,8 @@ export default async function Home() {
       ) : (
         <p>
           Welcome! Please{' '}
-          <Link href='/login/merchant' className='text-blue-500'>
-            sign in to continue.
+          <Link href='/merchant/login' className='text-blue-500'>
+            Merchant Sign In
           </Link>
         </p>
       )}

@@ -7,8 +7,9 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getUser();
 
   // Redirects to login page if user is not authenticated
+  // TODO: handle for different user types
   if (!user) {
-    redirect('/login/merchant');
+    redirect('/merchant/login');
   }
 
   return (
