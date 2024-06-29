@@ -59,9 +59,7 @@ const OrdersTable: React.FC = () => {
     }
     if (data) {
       const customerNames: string[] = Array.from(
-        new Set(
-          data.map((order) => order.customers?.customer_name || '').filter((name): name is string => !!name)
-        )
+        new Set(data.map((order) => order.customers?.customer_name).filter((name): name is string => !!name))
       );
 
       setCustomerNames(customerNames);
