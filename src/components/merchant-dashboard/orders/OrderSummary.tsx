@@ -60,7 +60,7 @@ const OrderSummary = ({ data, handleSheetOpen }: OrderSummaryProps) => {
             </p>
           </div>
 
-          <div className='text-center bg-stone-50 py-8 rounded-md'>
+          <div className='text-center bg-stone-100 py-8 rounded-md'>
             <p className='text-base leading-7 font-medium text-black'>Order Price</p>
             <p className='text-3xl leading-10 font-semibold mt-1'>
               {getSymbolFromCurrency(data.currency)} {data.price}
@@ -69,7 +69,7 @@ const OrderSummary = ({ data, handleSheetOpen }: OrderSummaryProps) => {
 
           <Badge
             variant={data.status === 'active' ? 'default' : 'warning'}
-            className='capitalize my-6 space-x-2'>
+            className='capitalize my-6 space-x-2 w-fit'>
             <span>Status:</span>
             <span className='font-bold'>{data.status}</span>
           </Badge>

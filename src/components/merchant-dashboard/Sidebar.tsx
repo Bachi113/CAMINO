@@ -6,16 +6,17 @@ import { cn } from '@/utils/utils';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { HiOutlineArchiveBox } from 'react-icons/hi2';
-import { HiOutlineCube } from 'react-icons/hi';
+import { BsBox } from 'react-icons/bs';
 import SignOutButton from '@/components/merchant-dashboard/SignOutButton';
 import { IoSettingsOutline } from 'react-icons/io5';
-import { PiSquaresFourLight, PiUsersThin } from 'react-icons/pi';
+import { PiUsers } from 'react-icons/pi';
+import { RxDashboard } from 'react-icons/rx';
 
 export const sidebarLinks = [
-  { label: 'Dashboard', path: '', logo: <PiSquaresFourLight size={22} /> },
+  { label: 'Dashboard', path: '', logo: <RxDashboard size={18} strokeWidth={0.3} /> },
   { label: 'Orders', path: '/orders', logo: <HiOutlineArchiveBox size={20} /> },
-  { label: 'Products', path: '/products', logo: <HiOutlineCube size={20} /> },
-  { label: 'Customers', path: '/customers', logo: <PiUsersThin size={24} className='font-light' /> },
+  { label: 'Products', path: '/products', logo: <BsBox size={15} strokeWidth={0.4} /> },
+  { label: 'Customers', path: '/customers', logo: <PiUsers size={20} /> },
   // { label: 'Transactions', path: '/transactions', logo: TransactionsIcon },
   { label: 'Account Settings', path: '/account-settings', logo: <IoSettingsOutline size={20} /> },
 ];
@@ -52,7 +53,7 @@ const Sidebar = () => {
                   'flex items-center gap-2.5 px-2 py-3 rounded-md text-slate-600 text-sm font-semibold',
                   isSelected && 'bg-indigo-50 text-purple-800'
                 )}>
-                {link.logo}
+                <div className='w-5 flex justify-center'>{link.logo}</div>
                 {link.label}
               </Link>
             );

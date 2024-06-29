@@ -82,7 +82,6 @@ export type TypeProductDetails = {
   product_name: string;
   remarks?: string;
 };
-
 // Customer Details
 export type TypeCustomerDetails = {
   created_at: string;
@@ -91,9 +90,8 @@ export type TypeCustomerDetails = {
   merchant_id: string;
   customers: {
     customer_name: string | null;
-    id: string;
     email: string;
     phone: string | null;
     address: string | null;
-  };
+  } | null;
 };

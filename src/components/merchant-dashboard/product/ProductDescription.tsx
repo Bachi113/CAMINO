@@ -4,13 +4,13 @@ import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 
 interface ProductDescriptionProps {
-  setIsOpen: (isOpen: boolean) => void;
+  handleSheetOpen: () => void;
   data: TypeProductDetails;
 }
 
-const ProductDescription = ({ setIsOpen, data }: ProductDescriptionProps) => {
+const ProductDescription = ({ handleSheetOpen, data }: ProductDescriptionProps) => {
   return (
-    <Sheet open={true} onOpenChange={setIsOpen}>
+    <Sheet open={true} onOpenChange={handleSheetOpen}>
       <SheetContent>
         <SheetHeader className='text-sm font-medium text-secondary'>
           <div className='space-y-1 mb-6'>

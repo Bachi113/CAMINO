@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { FaSort } from 'react-icons/fa';
 
+// Define columns array with the correct type
 export const columns: ColumnDef<TypeCustomerDetails>[] = [
   {
     accessorFn: (row, index) => index + 1,
@@ -47,13 +48,13 @@ export const columns: ColumnDef<TypeCustomerDetails>[] = [
   },
   {
     accessorFn: (row) => row.customers?.phone,
-    accessorKey: 'number',
+    id: 'phone',
     header: 'Number',
     cell: (info) => info.getValue(),
   },
   {
     accessorFn: (row) => row.customers?.address,
-    accessorKey: 'address',
+    id: 'address',
     header: 'Address',
     cell: (info) => info.getValue(),
   },
