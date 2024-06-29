@@ -87,7 +87,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
       const buttonVariant =
         status === 'active'
           ? 'default'
-          : status === 'not_started'
+          : status === 'processing'
             ? 'outline'
             : status === 'pending'
               ? 'warning'
