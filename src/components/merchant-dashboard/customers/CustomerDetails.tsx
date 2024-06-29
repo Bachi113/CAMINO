@@ -4,7 +4,7 @@ import { cn } from '@/utils/utils';
 import { format } from 'date-fns';
 
 interface CustomerDetailsProps {
-  setIsOpen: (isOpen: boolean) => void;
+  handleSheetOpen: () => void;
   data: TypeCustomerDetails;
 }
 
@@ -13,7 +13,7 @@ interface CustomerDetailsData {
   value: string;
 }
 
-const CustomerDetails = ({ setIsOpen, data }: CustomerDetailsProps) => {
+const CustomerDetails = ({ handleSheetOpen, data }: CustomerDetailsProps) => {
   const dataToDisplay: CustomerDetailsData[] = data && [
     {
       label: 'Date Added',
@@ -34,7 +34,7 @@ const CustomerDetails = ({ setIsOpen, data }: CustomerDetailsProps) => {
   ];
 
   return (
-    <Sheet open={true} onOpenChange={setIsOpen}>
+    <Sheet open={true} onOpenChange={handleSheetOpen}>
       <SheetContent>
         <SheetHeader className='text-sm font-medium text-secondary'>
           <div className='space-y-1 mb-6'>

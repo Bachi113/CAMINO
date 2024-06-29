@@ -8,17 +8,18 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { columns } from '@/components/merchant-dashboard/customers/Columns';
-import SortBy from '@/components/merchant-dashboard/customers/Sortby';
+import { columns } from './Columns';
+import SortBy from './Sortby';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { debounce } from '@/utils/utils';
-import ModalAddNewCustomer from '@/components/merchant-dashboard/ModalAddNewCustomer';
+import ModalAddNewCustomer from '../ModalAddNewCustomer';
 import { useGetMerchantCustomers } from '@/app/query-hooks';
-import CustomerDetails from '@/components/merchant-dashboard/customers/CustomerDetails';
-import DownloadButton from '@/components/merchant-dashboard/DowloadCsvButton';
-import Filter from '@/components/merchant-dashboard/customers/Filter';
+import CustomerDetails from './CustomerDetails';
+import DownloadButton from '../DowloadCsvButton';
+import Filter from './Filter';
 import { HiOutlineSearch } from 'react-icons/hi';
+import { LuLoader } from 'react-icons/lu';
 
 const CustomersTable: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -30,7 +31,7 @@ const CustomersTable: React.FC = () => {
   const [customerIds, setCustomerIds] = useState<string[]>();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState(1);
-  const pageSize = 10;
+  const [pageSize] = useState(7);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading } = useGetMerchantCustomers({
@@ -76,7 +77,7 @@ const CustomersTable: React.FC = () => {
 
   const handleGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    debounce(() => setSearchQuery(value), 300)();
+    debounce(() => setSearchQuery(value), 500)();
   };
 
   const handlePreviousPage = () => {
@@ -102,7 +103,7 @@ const CustomersTable: React.FC = () => {
       <div className='mt-10 flex justify-between items-center w-full'>
         <div className='relative'>
           <span className='absolute left-2 top-2.5'>
-            <HiOutlineSearch />
+            <HiOutlineSearch className='text-gray-500' />
           </span>
           <Input
             ref={searchInputRef}
@@ -126,11 +127,11 @@ const CustomersTable: React.FC = () => {
         </div>
       </div>
 
-      <div className='mt-10'>
+      <div className='mt-8'>
         {isLoading ? (
-          <div className='flex gap-3 justify-center items-center h-full'>
-            <div className='spinner-border animate-spin inline-block size-8 border-4 rounded-full' />
-            <span className='text-slate-500 font-medium'>Loading...</span>
+          <div className='flex gap-3 justify-center items-center h-full text-slate-500'>
+            <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
+            <span className='font-medium'>Loading...</span>
           </div>
         ) : (
           <Table className='bg-white overflow-auto rounded-md'>
@@ -185,7 +186,9 @@ const CustomersTable: React.FC = () => {
           Next
         </Button>
       </div>
-      {selectedCustomer && <CustomerDetails setIsOpen={setSelectedCustomer} data={selectedCustomer} />}
+      {selectedCustomer && (
+        <CustomerDetails handleSheetOpen={() => setSelectedCustomer(undefined)} data={selectedCustomer} />
+      )}
     </>
   );
 };

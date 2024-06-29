@@ -26,7 +26,7 @@ export async function getOrdersByMerchant(page: number, pageSize: number, search
 
   let query = supabaseAdmin
     .from('orders')
-    .select('*, products!inner (product_name), customers (customer_name)')
+    .select('*, products (product_name), customers (customer_name)')
     .eq('user_id', merchant.user_id)
     .order('created_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);

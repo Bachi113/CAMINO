@@ -9,19 +9,20 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { columns } from '@/components/merchant-dashboard/orders/Columns';
-import SortBy from '@/components/merchant-dashboard/orders/Sortby';
+import { columns } from './Columns';
+import SortBy from './Sortby';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { debounce } from '@/utils/utils';
-import OrderSummary from '@/components/merchant-dashboard/orders/OrderSummary';
-import DownloadButton from '@/components/merchant-dashboard/DowloadCsvButton';
+import OrderSummary from './OrderSummary';
+import DownloadButton from '../DowloadCsvButton';
 import { useGetOrders } from '@/app/query-hooks';
 import { TypeOrder } from '@/types/types';
 import { queryClient } from '@/app/providers';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
-import Filter from '@/components/merchant-dashboard/orders/Filter';
+import Filter from './Filter';
 import { HiOutlineSearch } from 'react-icons/hi';
+import { LuLoader } from 'react-icons/lu';
 
 const OrdersTable: React.FC = () => {
   const supabase = supabaseBrowserClient();
@@ -31,7 +32,7 @@ const OrdersTable: React.FC = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState(1);
-  const pageSize = 10;
+  const [pageSize] = useState(7);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading } = useGetOrders(page, pageSize, searchQuery);
@@ -39,9 +40,7 @@ const OrdersTable: React.FC = () => {
   const filteredData = useMemo(() => {
     return (
       data &&
-      data.filter((order) =>
-        selectedCustomer ? order.customers[0]?.customer_name === selectedCustomer : true
-      )
+      data.filter((order) => (selectedCustomer ? order.customers?.customer_name === selectedCustomer : true))
     );
   }, [data, selectedCustomer]);
 
@@ -61,7 +60,7 @@ const OrdersTable: React.FC = () => {
     if (data) {
       const customerNames: string[] = Array.from(
         new Set(
-          data.map((order) => order.customers[0]?.customer_name).filter((name): name is string => !!name)
+          data.map((order) => order.customers?.customer_name || '').filter((name): name is string => !!name)
         )
       );
 
@@ -90,7 +89,7 @@ const OrdersTable: React.FC = () => {
 
   const handleGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    debounce(() => setSearchQuery(value), 300)();
+    debounce(() => setSearchQuery(value), 500)();
   };
 
   const handlePreviousPage = () => {
@@ -114,7 +113,7 @@ const OrdersTable: React.FC = () => {
       <div className='mt-10 flex justify-between items-center w-full'>
         <div className='relative'>
           <span className='absolute left-2 top-2.5'>
-            <HiOutlineSearch />
+            <HiOutlineSearch className='text-gray-500' />
           </span>
           <Input
             ref={searchInputRef}
@@ -132,10 +131,10 @@ const OrdersTable: React.FC = () => {
         </div>
       </div>
 
-      <div className='mt-10'>
+      <div className='mt-8'>
         {isLoading ? (
           <div className='flex gap-3 justify-center items-center h-full'>
-            <div className='spinner-border animate-spin inline-block size-8 border-4 rounded-full' />
+            <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
             <span className='text-slate-500 font-medium'>Loading...</span>
           </div>
         ) : (

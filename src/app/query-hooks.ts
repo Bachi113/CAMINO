@@ -160,7 +160,7 @@ const useGetMerchantCustomers = ({ page, pageSize, searchQuery }: UseGetMerchant
       // Build the base query
       let query = supabase
         .from('merchants_customers')
-        .select('*, customers!inner (customer_name, id, email, phone, address)')
+        .select('*, customers (customer_name, email, phone, address)')
         .range((page - 1) * pageSize, page * pageSize - 1);
 
       if (searchQuery) {
