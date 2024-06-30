@@ -95,95 +95,87 @@ const AccountSettings = () => {
 
   const handleSave = async () => {
     setLoading(true);
-    const dataToUpdate = {
-      first_name: editableValues.field1,
-      last_name: editableValues.field2,
-    };
-    const res = await await updateData(JSON.stringify(dataToUpdate), 'personal_informations');
-    if (res?.error) return errorToast(res.error);
+
+    const piId = data?.personal_informations?.id;
+    const res = await await updateData(
+      {
+        id: piId!,
+        first_name: editableValues.field1,
+        last_name: editableValues.field2,
+      },
+      'personal_informations'
+    );
+
+    if (res?.error) {
+      errorToast(res.error);
+    } else {
+      toast({ description: 'Data saved successfully', variant: 'default' });
+    }
     setLoading(false);
-    toast({ description: 'Data saved successfully', variant: 'default' });
   };
 
   return (
-    <div className='flex gap-64 mt-6'>
-      <div className='w-3/12'>
-        {sidebarItems.map((item) => (
-          <div
-            key={item.id}
-            className={cn(
-              'flex justify-between items-center text-[#363A4E] text-sm px-4 py-2.5 font-medium rounded-lg',
-              { 'bg-slate-800/90 text-white font-semibold': selectedItem === item.id }
-            )}>
-            <p>{item.label}</p>
-          </div>
-        ))}
+    <div className='flex justify-start gap-8 mt-6'>
+      <div className='w-1/4 space-y-24'>
+        <div className='space-y-1'>
+          {sidebarItems.map((item) => (
+            <div
+              key={item.id}
+              className={cn('text-secondary text-sm px-4 py-2.5 font-medium rounded-lg', {
+                'bg-secondary text-white font-semibold': selectedItem === item.id,
+              })}>
+              <p>{item.label}</p>
+            </div>
+          ))}
+        </div>
         <ModalDeleteAccount userId={data?.personal_informations?.user_id} />
       </div>
 
-      <div className='p-4 max-h-[65vh]  overflow-y-auto rounded-md'>
+      <div className='p-4 max-h-[calc(100vh-172px)] border overflow-y-auto rounded-md bg-secondary/5 w-full'>
         {isLoading ? (
           <div className='flex flex-col items-center justify-center gap-3 h-60'>
             <AiOutlineLoading3Quarters className='size-6 animate-spin' />
           </div>
         ) : (
           <div className='space-y-6'>
-            {sections &&
-              sections.map(({ id, inputs }, index) => (
-                <div
-                  id={id}
-                  ref={(el) => {
-                    sectionRefs.current[id] = el;
-                  }}
-                  className='space-y-4'
-                  key={id}>
-                  {renderFields(inputs, editableValues, handleInputChange, index === 0)}
-                  {index === 0 && (
-                    <Button onClick={handleSave} disabled={loading} className='bg-slate-800'>
-                      Update
-                    </Button>
-                  )}
-                  <Separator />
-                </div>
-              ))}
+            {sections?.map(({ id, inputs }, index) => (
+              <div
+                id={id}
+                ref={(el) => {
+                  sectionRefs.current[id] = el;
+                }}
+                className='space-y-4'
+                key={id}>
+                {inputs.map(({ label, id, value }, idx) => {
+                  const isDisabled = !(index === 0 && idx < 2);
+
+                  return (
+                    <InputWrapper key={id} label={label} required>
+                      <Input
+                        type='text'
+                        name={`field${idx + 1}`}
+                        value={isDisabled ? value : editableValues[`field${idx + 1}` as keyof EditableValues]}
+                        disabled={isDisabled}
+                        onChange={isDisabled ? undefined : handleInputChange}
+                        className='h-11 disabled:bg-white/50'
+                      />
+                    </InputWrapper>
+                  );
+                })}
+
+                {index === 0 && (
+                  <Button onClick={handleSave} disabled={loading} className='bg-slate-800'>
+                    Update
+                  </Button>
+                )}
+                <Separator />
+              </div>
+            ))}
           </div>
         )}
       </div>
     </div>
   );
-};
-
-const renderFields = (
-  inputs: Input[],
-  editableValues: EditableValues,
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  isFirstSection: boolean
-) => {
-  return inputs.map(({ label, id, value }, index) => {
-    if (isFirstSection && index < 2) {
-      return (
-        <div key={id} className='text-sm space-y-1 w-full'>
-          <InputWrapper label={label} required>
-            <Input
-              type='text'
-              name={`field${index + 1}`}
-              value={editableValues[`field${index + 1}` as keyof EditableValues]}
-              onChange={handleInputChange}
-              className='border px-4 h-11 rounded-md font-medium  w-full'
-            />
-          </InputWrapper>
-        </div>
-      );
-    }
-    return (
-      <div key={id} className='text-sm space-y-1 w-full'>
-        <p className='font-medium text-slate-800'>
-          {label} <span className='text-red-500'>*</span>
-        </p>
-        <p className='border px-4 py-2.5 rounded-md opacity-50 w-full'>{value !== '' ? value : '-'}</p>
-      </div>
-    );
-  });
 };
 
 export default AccountSettings;

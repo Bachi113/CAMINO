@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 200, 20%, 97%, 1;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -14,7 +14,7 @@
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 262 58% 46%; /* #6332BA */
     --primary-foreground: 210 40% 98%;
-    --secondary: 0 0% 98%; /* #F9F9F9 */
+    --secondary: 230 18% 26%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
@@ -28,6 +28,7 @@
     --radius: 0.5rem;
 
     --default: 230 18% 26%; /* #363A4E */
+
     --subtle: 230 16% 42%; /* #5A607D */
   }
 }
@@ -38,9 +39,6 @@
   }
   body {
     @apply bg-background text-foreground;
-  }
-  .merchant-bg {
-    @apply bg-[#F6F8F9];
   }
 }
 

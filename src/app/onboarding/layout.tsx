@@ -13,7 +13,7 @@ const OnboardingLayout = async ({ children }: Props) => {
   const { data: onboarding } = await supabase.from('onboarding').select('*').single();
 
   if (!onboarding) {
-    redirect('/login/merchant');
+    redirect('/merchant/login');
   } else if (onboarding.onboarded_at) {
     redirect('/dashboard/m');
   }

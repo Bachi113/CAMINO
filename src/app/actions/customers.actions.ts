@@ -14,10 +14,10 @@ export async function addNewCustomer(formData: TypeCreateCustomer) {
 
     const { data } = await supabaseAdmin
       .from('customers')
-      .select('id, phone')
+      .select('id, stripe_id')
       .eq('email', formData.email)
       .single();
-    if (data && data.phone) {
+    if (data && data.stripe_id) {
       return { merchant: user.id, id: data.id };
     }
 
@@ -35,7 +35,7 @@ export async function addNewCustomer(formData: TypeCreateCustomer) {
     };
 
     let result;
-    if (data && !data.phone) {
+    if (data && !data.stripe_id) {
       const response = await supabaseAdmin
         .from('customers')
         .update(customerData)

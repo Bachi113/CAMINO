@@ -12,7 +12,8 @@ export default function GoogleAuth() {
 
   // Ensure the redirect URL is configured correctly in the Supabase project settings.
   // Incorrect configuration can lead to failed authentication attempts or security vulnerabilities.
-  const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`;
+  // TODO: handle for camino (admin) login if required
+  const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/merchant`;
 
   return (
     <div className='w-full'>
@@ -25,7 +26,7 @@ export default function GoogleAuth() {
           extend: false,
           className: {
             button:
-              'w-full py-3 rounded-md bg-gray-100 flex items-center justify-center gap-2 font-medium text-[#363A4E]',
+              'w-full py-3 rounded-md bg-gray-100 flex items-center justify-center gap-2 font-medium text-secondary border',
           },
         }}
         localization={{

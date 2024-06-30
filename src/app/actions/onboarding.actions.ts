@@ -37,7 +37,7 @@ export async function uploadDocuments(files: FormData[]) {
     return { urls: results.map((result) => result.data?.path ?? result) };
   } catch (error: any) {
     console.error('Error uploading file:', error);
-    return { error: `Error: ${error.message}` };
+    return { error };
   }
 }
 
@@ -48,10 +48,14 @@ export async function getDocumentUrl(key: string) {
     // Get the public URL of the uploaded document file.
     const { data } = await supabase.storage.from(bucketName).getPublicUrl(key);
 
+    if (!data) {
+      throw 'Url not found';
+    }
+
     return data.publicUrl;
   } catch (error: any) {
     console.error('Error getting document URL:', error);
-    return `Error: ${error.message}`;
+    return error;
   }
 }
 
@@ -83,7 +87,7 @@ export async function saveData(data: string, tableName: TableName) {
       .single();
 
     if (error) {
-      throw error;
+      throw error.message;
     }
 
     const { error: onboardingError } = await supabase
@@ -92,37 +96,31 @@ export async function saveData(data: string, tableName: TableName) {
       .eq('user_id', user.id);
 
     if (onboardingError) {
-      throw onboardingError;
+      throw onboardingError.message;
     }
   } catch (error: any) {
     console.error('Error saving data:', error);
-    return { error: error.message || 'An error occurred while saving data.' };
+    return { error };
   }
 }
 
-export async function updateData(data: string, tableName: TableName) {
+export async function updateData(data: any, tableName: TableName) {
   try {
     const supabase = await supabaseServerClient();
-    const dataToUpdate = JSON.parse(data);
-
-    const user = await getUser();
-    if (!user) {
-      throw 'You need to be logged in.';
-    }
-    console.log('testing');
 
     const { error } = await supabase
       .from(tableName)
       .update({
-        ...dataToUpdate,
+        first_name: data.first_name,
+        last_name: data.last_name,
       })
-      .eq('user_id', user.id);
+      .eq('id', data.id);
 
-    if (error) throw error.message;
-
-    return null; // Indicate success
+    if (error) {
+      throw error.message;
+    }
   } catch (error: any) {
     console.error('Error saving data:', error);
-    return { error: error.message || 'An error occurred while saving data.' };
+    return { error };
   }
 }

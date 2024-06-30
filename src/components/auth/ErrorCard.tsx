@@ -26,9 +26,8 @@ const ErrorCard = () => {
         {errorMessage || 'An error occurred. Please try again.'}
       </p>
 
-      {/* TODO: Handle for multiple login system. Currently it is specific to merchant login */}
-      <Link href={`/login/merchant`} className='text-primary text-sm font-semibold'>
-        Go back to login
+      <Link href='/' className='text-primary text-sm font-semibold'>
+        Go to Home
       </Link>
     </div>
   );

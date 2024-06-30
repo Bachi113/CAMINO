@@ -1,10 +1,11 @@
-import SortIcon from '@/assets/icons/SortIcon';
 import { Button } from '@/components/ui/button';
+import { TypeProduct } from '@/types/types';
 import { ColumnDef } from '@tanstack/react-table';
+import getSymbolFromCurrency from 'currency-symbol-map';
 import { format } from 'date-fns';
+import { FaSort } from 'react-icons/fa';
 
-// TODO: Add proper types
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<TypeProduct>[] = [
   {
     accessorFn: (row, index) => index + 1,
     id: 'sr_no',
@@ -25,7 +26,7 @@ export const columns: ColumnDef<any>[] = [
           className='gap-2 p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Date Added
-          <SortIcon />
+          <FaSort />
         </Button>
       );
     },
@@ -35,11 +36,19 @@ export const columns: ColumnDef<any>[] = [
     sortDescFirst: true,
     sortingFn: 'datetime',
   },
-
   {
     accessorKey: 'product_name',
     header: 'Product Name',
     cell: (info) => info.getValue(),
+  },
+  {
+    accessorKey: 'price',
+    header: 'Price',
+    cell: ({ row: { original } }) => (
+      <div>
+        {getSymbolFromCurrency(original.currency)} {original.price}
+      </div>
+    ),
   },
   {
     accessorKey: 'category',
@@ -50,7 +59,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'remarks',
     header: 'Description',
     cell: ({ row }) => {
-      return <div className='text-[#A6A6A6] font-medium'>{row.original.remarks}</div>;
+      return <div className='text-neutral-400 font-medium'>{row.original.remarks}</div>;
     },
   },
 ];

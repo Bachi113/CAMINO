@@ -11,29 +11,23 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { errorToast } from '@/utils/utils';
-import { deleteUser } from '@/app/dashboard/m/account-settings/actions';
+import { deleteUser } from '@/app/actions/supabase.actions';
 
 interface ModalDeleteAccountProps {
   userId?: string;
 }
 const ModalDeleteAccount = ({ userId }: ModalDeleteAccountProps) => {
   const handleSubmit = async () => {
-    try {
-      const response = await deleteUser(userId);
-      if (typeof response === 'string') {
-        throw response;
-      }
-    } catch (error: any) {
-      console.log(error);
-
-      errorToast(error.message);
+    const response = await deleteUser(userId);
+    if (response?.error) {
+      errorToast(response.error);
     }
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={'ghost'} className='text-red-500 mt-20 hover:text-red-600'>
+        <Button variant='ghost' className='text-red-500 hover:text-red-600'>
           Delete Account
         </Button>
       </DialogTrigger>

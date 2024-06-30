@@ -113,7 +113,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ isOpen, handleModalOp
         <DialogTrigger asChild>
           <Button size='lg' className='gap-2'>
             <HiPlus size={18} />
-            Create Product
+            Add Product
           </Button>
         </DialogTrigger>
       )}
