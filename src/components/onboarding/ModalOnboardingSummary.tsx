@@ -13,7 +13,7 @@ import { cn } from '@/utils/utils';
 import ModalSubmitConfirmation from './ModalSubmitConfirmation';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { Separator } from '@/components/ui/separator';
-import { useGetOnboardingData } from '@/app/query-hooks';
+import { useGetOnboardingData } from '@/hooks/query';
 import { summaryFileds } from '@/utils/form-fields';
 import { BiEdit } from 'react-icons/bi';
 import { useRouter } from 'next/navigation';

@@ -1,7 +1,7 @@
 'use server';
 
-import { getUser } from '@/utils/get-user';
 import { supabaseServerClient } from '@/utils/supabase/server';
+import { getUser } from './supabase.actions';
 
 const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_NAME!;
 

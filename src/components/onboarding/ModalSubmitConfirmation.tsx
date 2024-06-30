@@ -80,7 +80,7 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
           </DialogClose>
           {submitConfirmation ? (
             <div className='w-full'>
-              <Link href='/dashboard/m'>
+              <Link href='/dashboard'>
                 <Button className='w-full'>Go to Dashboard</Button>
               </Link>
             </div>

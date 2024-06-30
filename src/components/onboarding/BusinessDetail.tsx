@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
 import NavigationButton from '@/components/onboarding/NavigationButton';
-import { useGetBuinessDetail } from '@/app/query-hooks';
+import { useGetBuinessDetail } from '@/hooks/query';
 import { IBusinessDetail, businessDetailSchema } from '@/types/validations';
 import { businessDetailsFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/actions/onboarding.actions';

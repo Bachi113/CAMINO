@@ -1,9 +1,9 @@
 'use server';
 
 import { TypeCreateCustomer } from '@/types/types';
-import { getUser } from '@/utils/get-user';
 import { createCustomer } from './stripe.actions';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import { getUser } from './supabase.actions';
 
 export async function addNewCustomer(formData: TypeCreateCustomer) {
   try {

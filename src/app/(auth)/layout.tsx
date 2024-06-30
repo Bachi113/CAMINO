@@ -1,7 +1,7 @@
 import Logo from '@/components/Logo';
-import { getUser } from '@/utils/get-user';
 import { redirect } from 'next/navigation';
 import React from 'react';
+import { getUser } from '../actions/supabase.actions';
 
 type Props = {
   children: React.ReactNode;

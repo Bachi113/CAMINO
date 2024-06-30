@@ -5,9 +5,9 @@ import { supabaseServerClient } from '@/utils/supabase/server';
 
 export const getUser = async () => {
   const supabase = supabaseServerClient();
-  const { data: user } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getUser();
 
-  return user;
+  return data.user;
 };
 
 export const getMerchant = async () => {

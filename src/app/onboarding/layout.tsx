@@ -15,7 +15,7 @@ const OnboardingLayout = async ({ children }: Props) => {
   if (!onboarding) {
     redirect('/merchant/login');
   } else if (onboarding.onboarded_at) {
-    redirect('/dashboard/m');
+    redirect('/dashboard');
   }
 
   return children;
