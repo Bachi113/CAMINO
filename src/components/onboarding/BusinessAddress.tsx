@@ -54,7 +54,7 @@ const BusinessAddress = () => {
     };
     try {
       if (data) {
-        const res = await updateData(JSON.stringify(dataToUpdate), 'business_addresses');
+        const res = await updateData({ ...dataToUpdate, id: data.id }, 'business_addresses');
         if (res?.error) throw res.error;
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'business_addresses');

@@ -104,10 +104,7 @@ export async function saveData(data: string, tableName: TableName) {
   }
 }
 
-export async function updateData(
-  data: { id: string; first_name: string; last_name: string },
-  tableName: TableName
-) {
+export async function updateData(data: any, tableName: TableName) {
   try {
     const supabase = await supabaseServerClient();
 

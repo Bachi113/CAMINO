@@ -93,7 +93,7 @@ const BankDetails = () => {
 
     try {
       if (data) {
-        const res = await updateData(JSON.stringify(dataToUpdate), 'bank_details');
+        const res = await updateData({ ...dataToUpdate, id: data.id }, 'bank_details');
         if (res?.error) throw res.error;
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'bank_details');
