@@ -3,17 +3,17 @@
 import { supabaseServerClient } from '@/utils/supabase/server';
 import { headers } from 'next/headers';
 
-export async function signInWithEmail(email: string) {
+export async function signInWithMagicLink(email: string, user: 'customer' | 'merchant') {
   const supabase = supabaseServerClient();
 
   try {
     const origin = headers().get('origin');
+    const redirectUrl = `${origin}/api/auth/callback/${user}`;
 
-    // Magic Link
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${origin}/api/auth/callback`,
+        emailRedirectTo: redirectUrl,
       },
     });
 

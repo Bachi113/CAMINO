@@ -11,16 +11,18 @@ type Props = {
 const LoginLayout = async ({ children }: Props) => {
   const user = await getUser();
 
-  // Redirects to login page if user is not authenticated
+  // TODO: handle separately for customer and merchant
   if (user) {
     redirect('/');
   }
 
   return (
-    <div className='h-screen bg-light-gray pt-28'>
-      <div className='w-1/4 flex flex-col items-center justify-center gap-5 mx-auto'>
-        <Logo />
-        <p className='text-2xl font-semibold text-center'>Welcome to Camino</p>
+    <div className='h-screen bg-light-purple-gradient pt-28'>
+      <div className='w-[28%] space-y-2 border rounded-lg p-8 mx-auto'>
+        <div className='w-full flex flex-col items-center justify-center gap-5'>
+          <Logo />
+          <p className='text-2xl text-default font-semibold text-center'>Welcome Back</p>
+        </div>
 
         {children}
       </div>

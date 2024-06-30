@@ -1,24 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import InputWrapper from '@/components/InputWrapper';
 import GoogleAuth from '@/components/auth/GoogleAuth';
-import { SubmitButton } from '../SubmitButton';
 import { errorToast } from '@/utils/utils';
-import { signInWithEmail } from '@/app/actions/login.actions';
-import { Button } from '../ui/button';
+import { signInWithMagicLink } from '@/app/actions/login.actions';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
+import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/SubmitButton';
 
-const MagicLinkLogin = () => {
+export default function MerchantLoginPage() {
   const [emailAddress, setEmailAddress] = useState('');
   const [isMagicLinkSent, setIsMagicLinkSent] = useState(false);
 
-  const router = useRouter();
-
-  // Handle form submission
   const handleFormAction = async (formData: FormData) => {
     const email = formData.get('email') as string;
     if (!email) {
@@ -27,7 +23,7 @@ const MagicLinkLogin = () => {
     }
 
     setEmailAddress(email);
-    const response = await signInWithEmail(email);
+    const response = await signInWithMagicLink(email, 'merchant');
 
     if (typeof response === 'string') {
       errorToast(response);
@@ -52,7 +48,7 @@ const MagicLinkLogin = () => {
           <Link href='https://mail.google.com' target='_blank' className='block'>
             <Button size='xl'>Go To mail</Button>
           </Link>
-          <Button variant='link' onClick={() => router.back()} className='font-normal'>
+          <Button variant='link' onClick={() => setIsMagicLinkSent(false)} className='font-normal'>
             <MdOutlineKeyboardBackspace className='mr-2' />
             Go back
           </Button>
@@ -84,6 +80,4 @@ const MagicLinkLogin = () => {
       )}
     </div>
   );
-};
-
-export default MagicLinkLogin;
+}
