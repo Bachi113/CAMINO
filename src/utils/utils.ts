@@ -46,10 +46,13 @@ const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, an
 const getDefaultHeaderMapping = (): { [key: string]: string } => ({
   created_at: 'Created At',
   customer_id: 'Customer ID',
-  'customers.phone': 'Number',
+  'customers.phone': 'Phone',
   'customers.email': 'Email',
   'customers.customer_name': 'Customer Name',
   'customers.address': 'Address',
+  price: 'Price',
+  quantity: 'Quantity',
+  currency: 'Currency',
   tsx_id: 'Txn ID',
   customer_name: 'Customer Name',
   category: 'Category',
@@ -68,7 +71,7 @@ const getFileSpecificHeaderMapping = (fileName: string): { [key: string]: string
       return {
         id: 'Order ID',
         status: 'Status',
-        'product.product_name': 'Product',
+        'products.product_name': 'Product',
       };
     case 'customers':
       return {};
@@ -86,10 +89,10 @@ const filterHeaders = (header: string, fileName: string): boolean => {
 
   switch (fileName) {
     case 'products':
-      excludedFields = ['status', 'product_id', 'price'];
+      excludedFields = ['status', 'product_id'];
       break;
     case 'orders':
-      excludedFields = ['id'];
+      excludedFields = ['product_id'];
       break;
     case 'customers':
       excludedFields = ['id'];
@@ -111,7 +114,6 @@ const filterHeaders = (header: string, fileName: string): boolean => {
     'next_instalment_date',
     'end_instalment_date',
     'paid_amount',
-    'currency',
     'installments_options',
     'stripe_cus_id',
   ];
@@ -131,7 +133,7 @@ const convertToCSV = (data: Record<string, any>[], fileName: string) => {
 
   // Determine headers based on headerMapping
   const headers = [
-    'SR No.',
+    'Sr No.',
     ...Array.from(
       new Set(
         flattenedData.flatMap((item) => Object.keys(item).filter((header) => filterHeaders(header, fileName)))

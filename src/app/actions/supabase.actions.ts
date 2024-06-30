@@ -43,3 +43,17 @@ export async function getOrdersByMerchant(page: number, pageSize: number, search
 
   return data;
 }
+
+export const deleteUser = async (userId?: string) => {
+  try {
+    if (!userId) {
+      throw 'User ID is required to delete the account';
+    }
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+    if (error) {
+      throw error.message;
+    }
+  } catch (error: any) {
+    return { error };
+  }
+};

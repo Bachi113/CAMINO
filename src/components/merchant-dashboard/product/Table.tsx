@@ -80,7 +80,7 @@ const ProductsTable: React.FC = () => {
     <>
       <div className='mt-10 flex justify-between items-center w-full'>
         <div className='relative'>
-          <span className='absolute left-2 top-2.5'>
+          <span className='absolute left-2 top-3'>
             <HiOutlineSearch className='text-gray-500' />
           </span>
           <Input

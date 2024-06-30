@@ -7,13 +7,13 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { HiOutlineArchiveBox } from 'react-icons/hi2';
 import { BsBox } from 'react-icons/bs';
-import SignOutButton from '@/components/merchant-dashboard/SignOutButton';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { PiUsers } from 'react-icons/pi';
 import { RxDashboard } from 'react-icons/rx';
+import ButtonSignout from '../auth/ButtonSignout';
 
 export const sidebarLinks = [
-  { label: 'Dashboard', path: '', logo: <RxDashboard size={18} strokeWidth={0.3} /> },
+  { label: 'Dashboard', path: '', logo: <RxDashboard size={18} strokeWidth={0.1} /> },
   { label: 'Orders', path: '/orders', logo: <HiOutlineArchiveBox size={20} /> },
   { label: 'Products', path: '/products', logo: <BsBox size={15} strokeWidth={0.4} /> },
   { label: 'Customers', path: '/customers', logo: <PiUsers size={20} /> },
@@ -61,7 +61,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <SignOutButton className='w-full' />
+      <ButtonSignout />
     </div>
   );
 };

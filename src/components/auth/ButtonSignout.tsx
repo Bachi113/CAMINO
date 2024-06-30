@@ -5,7 +5,7 @@
 import { FC } from 'react';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
-import { FiLogOut } from 'react-icons/fi';
+import { TbLogout2 } from 'react-icons/tb';
 import { Button } from '@/components/ui/button';
 
 interface ButtonSignoutProps {
@@ -17,13 +17,13 @@ const ButtonSignout: FC<ButtonSignoutProps> = () => {
 
   return (
     <Button
-      className='cursor-pointer'
+      variant='outline'
       onClick={async () => {
         await supabase.auth.signOut();
         router.refresh();
-      }}>
-      <FiLogOut className='size-5 mr-2' />
-      Log Out
+      }}
+      className='gap-4'>
+      <TbLogout2 size={16} /> Sign out
     </Button>
   );
 };

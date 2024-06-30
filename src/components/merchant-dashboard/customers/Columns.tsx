@@ -49,7 +49,7 @@ export const columns: ColumnDef<TypeCustomerDetails>[] = [
   {
     accessorFn: (row) => row.customers?.phone,
     id: 'phone',
-    header: 'Number',
+    header: 'Phone',
     cell: (info) => info.getValue(),
   },
   {

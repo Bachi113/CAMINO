@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { TypeProduct } from '@/types/types';
 import { ColumnDef } from '@tanstack/react-table';
+import getSymbolFromCurrency from 'currency-symbol-map';
 import { format } from 'date-fns';
 import { FaSort } from 'react-icons/fa';
 
@@ -35,11 +36,19 @@ export const columns: ColumnDef<TypeProduct>[] = [
     sortDescFirst: true,
     sortingFn: 'datetime',
   },
-
   {
     accessorKey: 'product_name',
     header: 'Product Name',
     cell: (info) => info.getValue(),
+  },
+  {
+    accessorKey: 'price',
+    header: 'Price',
+    cell: ({ row: { original } }) => (
+      <div>
+        {getSymbolFromCurrency(original.currency)} {original.price}
+      </div>
+    ),
   },
   {
     accessorKey: 'category',
