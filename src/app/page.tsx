@@ -1,10 +1,10 @@
 // This is the entry component for the landing page of the application.
 // It sequentially renders the primary sections of the landing page including Hero, Features, Product, Pricing, Faq, and Footer components.
 
-import ButtonSignout from '@/components/auth/ButtonSignout';
+import ButtonSignout from '@/components/ButtonSignout';
 import { Button } from '@/components/ui/button';
-import { getUser } from '@/utils/get-user';
 import Link from 'next/link';
+import { getUser } from './actions/supabase.actions';
 
 export default async function Home() {
   const user = await getUser();

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
-import { useGetBankDetails } from '@/app/query-hooks';
+import { useGetBankDetails } from '@/hooks/query';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { bankFields } from '@/utils/form-fields';
 import { BankDetailsSchema, IBankDetails } from '@/types/validations';

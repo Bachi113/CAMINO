@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
 import { errorToast } from '@/utils/utils';
 import { IPersonalInformation, personalInformationSchema } from '@/types/validations';
-import { useGetPersonalInfo } from '@/app/query-hooks';
+import { useGetPersonalInfo } from '@/hooks/query';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { personalInfoFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/actions/onboarding.actions';

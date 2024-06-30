@@ -1,9 +1,9 @@
 'use server';
 
 import { TypeCreateCustomer, TypeCreatePaymentMethodCS, TypeCreateSubscription } from '@/types/types';
-import { getUser } from '@/utils/get-user';
 import stripe from '@/utils/stripe';
 import { supabaseServerClient } from '@/utils/supabase/server';
+import { getUser } from './supabase.actions';
 
 export async function createProduct() {
   const supabase = supabaseServerClient();

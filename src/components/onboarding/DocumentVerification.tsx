@@ -13,7 +13,7 @@ import { saveData, updateData, uploadDocuments } from '@/app/actions/onboarding.
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { LuUploadCloud } from 'react-icons/lu';
 import ModalOnboardingSummary from './ModalOnboardingSummary';
-import { useGetVerificationDocuments } from '@/app/query-hooks';
+import { useGetVerificationDocuments } from '@/hooks/query';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { queryClient } from '@/app/providers';
