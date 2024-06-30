@@ -70,7 +70,7 @@ export default function MerchantLoginPage() {
                 id='email'
                 name='email'
                 placeholder='john@gmail.com'
-                className='h-11 bg-secondary mt-2'
+                className='h-11 mt-2'
               />
             </InputWrapper>
 

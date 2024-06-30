@@ -59,7 +59,7 @@ const PersonalInformation = () => {
 
     try {
       if (data) {
-        const res = await updateData(JSON.stringify(dataToUpdate), 'personal_informations');
+        const res = await updateData({ ...dataToUpdate, id: data.id }, 'personal_informations');
         if (res?.error) throw res.error;
       } else {
         const res = await saveData(JSON.stringify(dataToUpdate), 'personal_informations');

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { downloadCSV, errorToast } from '@/utils/utils';
-import DownloadIcon from '@/assets/icons/DownloadIcon';
+import { FiDownload } from 'react-icons/fi';
 
 interface DownloadButtonProps {
   data?: Record<string, any>[];
@@ -19,7 +19,7 @@ const DownloadButton = ({ data, fileName }: DownloadButtonProps) => {
 
   return (
     <Button className='flex gap-2 px-2.5 leading-[15px] rounded-md' size='lg' onClick={handleDownload}>
-      <DownloadIcon /> Download as CSV
+      <FiDownload size={16} /> Download as CSV
     </Button>
   );
 };

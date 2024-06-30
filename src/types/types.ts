@@ -4,6 +4,9 @@ export type TypeOnboarding = Database['public']['Tables']['onboarding']['Row'];
 
 export type TypeOrder = Database['public']['Tables']['orders']['Row'];
 
+export type TypeProduct = Database['public']['Tables']['products']['Row'];
+
+export type TypeCustomer = Database['public']['Tables']['customers']['Row'];
 export type EnumOrderStatus = Database['public']['Enums']['orderstatus'];
 
 // Create Product
@@ -50,4 +53,46 @@ export type TypeCreatePaymentMethodCS = {
   currency: string;
   customer_id: string;
   paymentId: string;
+};
+
+// Order Details
+export type TypeOrderDetails = {
+  id: string;
+  status: string;
+  currency: string;
+  price: string;
+  quantity: number;
+  paid_amount?: number | string;
+  created_at: string;
+  products?: {
+    product_name: string;
+  };
+  customers?: {
+    customer_name: string;
+  };
+  period?: number | null;
+};
+
+// Product Details
+export type TypeProductDetails = {
+  id: string;
+  created_at: string;
+  category: string;
+  currency: string;
+  price: string;
+  product_name: string;
+  remarks?: string;
+};
+// Customer Details
+export type TypeCustomerDetails = {
+  created_at: string;
+  customer_id: string;
+  id: string;
+  merchant_id: string;
+  customers: {
+    customer_name: string | null;
+    email: string;
+    phone: string | null;
+    address: string | null;
+  } | null;
 };

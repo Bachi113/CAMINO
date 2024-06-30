@@ -1,66 +1,58 @@
+import InputWrapper from '@/components/InputWrapper';
+import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { cn } from '@/utils/utils';
+import { Textarea } from '@/components/ui/textarea';
+import { TypeCustomerDetails } from '@/types/types';
 import { format } from 'date-fns';
 
 interface CustomerDetailsProps {
-  setIsOpen: (isOpen: boolean) => void;
-  data: any;
+  handleSheetOpen: () => void;
+  data: TypeCustomerDetails;
 }
 
-interface CustomerDetailsData {
-  label: string;
-  value: string;
-}
-
-const CustomerDetails = ({ setIsOpen, data }: CustomerDetailsProps) => {
-  const dataToDisplay: CustomerDetailsData[] = data && [
+const CustomerDetails = ({ handleSheetOpen, data }: CustomerDetailsProps) => {
+  const dataToDisplay = data && [
     {
       label: 'Date Added',
-      value: format(new Date(data?.created_at), 'MMM dd, yyyy'),
+      value: format(new Date(data.created_at), 'MMM dd, yyyy'),
     },
     {
       label: 'Customer Name',
-      value: data?.customers?.customer_name || '-',
+      value: data.customers?.customer_name ?? '-',
     },
     {
       label: 'Email',
-      value: data?.customers?.email || '-',
+      value: data.customers?.email ?? '-',
     },
     {
       label: 'Number',
-      value: data?.customers?.phone || '-',
+      value: data.customers?.phone ?? '-',
     },
   ];
 
   return (
-    <Sheet open={true} onOpenChange={setIsOpen}>
+    <Sheet open={true} onOpenChange={handleSheetOpen}>
       <SheetContent>
-        <SheetHeader className='space-y-5 text-sm font-medium text-[#363A4E]'>
-          <SheetTitle className='text-lg font-semibold -mb-5 text-[#363A4E]'>Customer Details</SheetTitle>
-          <p className='font-normal text-base'>
-            Customer ID: <span className='font-bold mt-1'>{data.customer_id}</span>
-          </p>
-          <div className='my-5'>
-            {dataToDisplay.map((item: CustomerDetailsData, index) => (
-              <div key={index} className='w-full mb-5'>
-                <p>{item.label}</p>
-                <p
-                  className={cn(
-                    'bg-[#F4F4F4] text-[#6B7280] px-4 py-2.5 mt-1 rounded-md border',
-                    (item.label.includes('ID') || item.label.includes('Date')) && 'font-semibold'
-                  )}>
-                  {item.value}
-                </p>
-              </div>
-            ))}
-            <div className='w-full'>
-              <p>Address</p>
-              <p className='bg-[#F4F4F4] h-36 text-[#6B7280] px-4 py-2.5 mt-1 rounded-md border'>
-                {data?.customers?.address}
-              </p>
-            </div>
+        <SheetHeader className='text-sm font-medium mb-10'>
+          <div className='space-y-1'>
+            <SheetTitle className='text-secondary'>Customer Details</SheetTitle>
+            <p className='font-normal text-base'>
+              Customer ID: <span className='font-bold'>{data.customer_id}</span>
+            </p>
           </div>
         </SheetHeader>
+
+        <div className='space-y-4'>
+          {dataToDisplay.map((item, index) => (
+            <InputWrapper key={index} label={item.label}>
+              <Input disabled={true} value={item.value} className='h-11' />
+            </InputWrapper>
+          ))}
+
+          <InputWrapper label='Address'>
+            <Textarea disabled={true} value={data?.customers?.address ?? '-'} rows={6} />
+          </InputWrapper>
+        </div>
       </SheetContent>
     </Sheet>
   );

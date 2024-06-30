@@ -119,7 +119,7 @@ const DocumentVerification = () => {
       };
 
       const res = data
-        ? await updateData(JSON.stringify(dataToUpdate), 'documents')
+        ? await updateData({ ...dataToUpdate, id: data.id }, 'documents')
         : await saveData(JSON.stringify(dataToUpdate), 'documents');
 
       if (res?.error) {

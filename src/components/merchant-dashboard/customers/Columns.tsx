@@ -1,10 +1,11 @@
-import SortIcon from '@/assets/icons/SortIcon';
 import { Button } from '@/components/ui/button';
+import { TypeCustomerDetails } from '@/types/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
+import { FaSort } from 'react-icons/fa';
 
-// TODO: Add proper types
-export const columns: ColumnDef<any>[] = [
+// Define columns array with the correct type
+export const columns: ColumnDef<TypeCustomerDetails>[] = [
   {
     accessorFn: (row, index) => index + 1,
     id: 'sr_no',
@@ -25,7 +26,7 @@ export const columns: ColumnDef<any>[] = [
           className='gap-2 p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Date Added
-          <SortIcon />
+          <FaSort />
         </Button>
       );
     },
@@ -41,19 +42,19 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorFn: (row) => row.customers?.email,
-    id: 'customer_email',
+    id: 'email',
     header: 'Email',
     cell: (info) => info.getValue(),
   },
   {
     accessorFn: (row) => row.customers?.phone,
-    accessorKey: 'number',
-    header: 'Number',
+    id: 'phone',
+    header: 'Phone',
     cell: (info) => info.getValue(),
   },
   {
     accessorFn: (row) => row.customers?.address,
-    accessorKey: 'address',
+    id: 'address',
     header: 'Address',
     cell: (info) => info.getValue(),
   },
