@@ -11,9 +11,8 @@ type Props = {
 const LoginLayout = async ({ children }: Props) => {
   const user = await getUser();
 
-  // TODO: handle separately for customer and merchant
   if (user) {
-    redirect('/');
+    redirect('/dashboard');
   }
 
   return (

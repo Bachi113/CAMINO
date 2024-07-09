@@ -35,7 +35,7 @@ const OrdersTable: React.FC = () => {
   const [pageSize] = useState(7);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading } = useGetOrders(page, pageSize, searchQuery);
+  const { data, isLoading, isError } = useGetOrders(page, pageSize, searchQuery);
 
   const filteredData = useMemo(() => {
     return (
@@ -130,10 +130,13 @@ const OrdersTable: React.FC = () => {
       </div>
 
       <div className='mt-8'>
-        {isLoading ? (
+        {isLoading || isError ? (
           <div className='flex gap-3 justify-center items-center h-full'>
-            <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
-            <span className='text-slate-500 font-medium'>Loading...</span>
+            {!isError ? (
+              <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
+            ) : (
+              <span className='text-sm opacity-60'>Error fetching orders.</span>
+            )}
           </div>
         ) : (
           <Table className='bg-white overflow-auto rounded-md w-full'>

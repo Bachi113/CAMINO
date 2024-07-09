@@ -16,7 +16,10 @@ export default function CustomerLoginPage() {
           </Button>
         </Link> */}
         <Link href='/customer/login/magic-link'>
-          <Button variant='outline' size='xl' className='w-full shadow-none bg-secondary gap-2'>
+          <Button
+            variant='outline'
+            size='xl'
+            className='w-full shadow-none bg-accent hover:bg-accent/70 gap-2'>
             <FiMail size={18} />
             Login with Magic link
           </Button>

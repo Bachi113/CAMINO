@@ -28,10 +28,11 @@ type EditableValues = {
 
 const { sections: sidebarItems } = onboardingData;
 
-const AccountSettings = () => {
+const MerchantAccountSettings = () => {
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
   const [loading, setLoading] = useState(false);
+
   const { data, isLoading } = useGetOnboardingData();
 
   const [editableValues, setEditableValues] = useState<EditableValues>({
@@ -178,4 +179,4 @@ const AccountSettings = () => {
   );
 };
 
-export default AccountSettings;
+export default MerchantAccountSettings;

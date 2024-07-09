@@ -8,7 +8,7 @@ export default async function MerchantDashboard() {
     <div className='p-8 w-full'>
       <NavTitle />
 
-      <div className='flex justify-end gap-4 mt-10'>
+      <div className='flex justify-end gap-2 mt-10'>
         <ModalAddNewProduct triggerButton={true} buttonVariant='outline' />
         <ModalCreatePaymentLink />
       </div>

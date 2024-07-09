@@ -26,6 +26,7 @@ import { TypeCreateProduct } from '@/types/types';
 import { queryClient } from '@/app/providers';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { HiPlus } from 'react-icons/hi';
+import { getUser } from '@/app/actions/supabase.actions';
 
 interface ModalAddNewProductProps {
   openModal?: boolean;
@@ -83,9 +84,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ openModal, triggerBut
     setIsOpen(true);
     setIsPending(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getUser();
       if (!user) {
         throw 'User not found';
       }

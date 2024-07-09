@@ -9,6 +9,9 @@ export type TypeProduct = Database['public']['Tables']['products']['Row'];
 export type TypeCustomer = Database['public']['Tables']['customers']['Row'];
 export type EnumOrderStatus = Database['public']['Enums']['orderstatus'];
 
+// User Type
+export type TypeUserType = 'merchant' | 'customer';
+
 // Create Product
 export type TypeCreateProduct = {
   category: string;
