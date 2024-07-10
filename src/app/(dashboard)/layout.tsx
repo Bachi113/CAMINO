@@ -1,20 +1,27 @@
-import Sidebar from '@/components/dashboard/Sidebar';
+import Sidebar from '@/components/dashboard/sidebar/Sidebar';
 import { redirect } from 'next/navigation';
 import React from 'react';
-import { getUser } from '../actions/supabase.actions';
+import { getUserType } from '../actions/supabase.actions';
+import { supabaseServerClient } from '@/utils/supabase/server';
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
-  const user = await getUser();
+  const userType = await getUserType();
 
-  // Redirects to login page if user is not authenticated
-  // TODO: handle for different user types
-  if (!user) {
-    redirect('/merchant/login');
+  if (userType == null) {
+    redirect('/');
+  }
+
+  if (userType === 'merchant') {
+    const { data } = await supabaseServerClient().from('onboarding').select().single();
+
+    if (!data?.onboarded_at) {
+      redirect('/onboarding');
+    }
   }
 
   return (
     <div className='flex'>
-      <Sidebar />
+      <Sidebar userType={userType} />
       {children}
     </div>
   );

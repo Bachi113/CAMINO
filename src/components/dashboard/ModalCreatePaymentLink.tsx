@@ -31,6 +31,7 @@ import { IoCopyOutline } from 'react-icons/io5';
 import { HiPlus } from 'react-icons/hi';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { queryClient } from '@/app/providers';
+import { getUser } from '@/app/actions/supabase.actions';
 
 interface ModalCreatePaymentLinkProps {}
 
@@ -94,9 +95,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
         throw 'Price must be a positive number';
       }
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getUser();
       if (!user) {
         throw 'User not found';
       }

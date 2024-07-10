@@ -1,8 +1,11 @@
 import React from 'react';
 import NavTitle from '@/components/dashboard/NavTitle';
-import AccountSettings from '@/components/dashboard/account-settings/AccountSettings';
+import { CustomerAccountSettings, MerchantAccountSettings } from '@/components/dashboard/account-settings';
+import { getUserType } from '@/app/actions/supabase.actions';
 
-const Page = () => {
+export default async function AccountSettings() {
+  const userType = await getUserType();
+
   return (
     <div className='p-8 w-full space-y-12'>
       <div>
@@ -10,9 +13,7 @@ const Page = () => {
         <p className='text-slate-500 font-medium mt-2 text-sm'>Access and Manage Details of your account</p>
       </div>
 
-      <AccountSettings />
+      {userType === 'merchant' ? <MerchantAccountSettings /> : <CustomerAccountSettings />}
     </div>
   );
-};
-
-export default Page;
+}

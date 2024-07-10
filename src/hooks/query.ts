@@ -102,10 +102,31 @@ const useGetOnboardingData = () => {
   });
 };
 
+const useGetCustomerData = () => {
+  const supabase = supabaseBrowserClient();
+  return useQuery({
+    queryKey: ['getCustomer'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('customers').select('*').single();
+
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+  });
+};
+
 const useGetOrders = (page: number, pageSize: number, searchQuery?: string) => {
   return useQuery({
     queryKey: ['getOrders', page, pageSize, searchQuery],
-    queryFn: () => getOrdersByMerchant(page, pageSize, searchQuery),
+    queryFn: async () => {
+      const response = await getOrdersByMerchant(page, pageSize, searchQuery);
+      if (response.error) {
+        throw response.error;
+      }
+      return response.data;
+    },
   });
 };
 
@@ -238,6 +259,7 @@ export {
   useGetBankDetails,
   useGetVerificationDocuments,
   useGetOnboardingData,
+  useGetCustomerData,
   useGetOrders,
   useGetMerchantCustomers,
   useGetProducts,

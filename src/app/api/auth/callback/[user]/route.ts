@@ -17,7 +17,7 @@ export async function GET(request: Request, { params }: { params: { user: string
       // TODO: Handle for camino (admin)
     }
 
-    return NextResponse.redirect(`${origin}/dsahboard`);
+    return NextResponse.redirect(`${origin}/dashboard`);
   } catch (error: any) {
     console.error(error);
 
