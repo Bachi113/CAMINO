@@ -1,4 +1,6 @@
-export const section1 = [
+// Merchant Data
+
+export const merchantData1 = [
   {
     label: 'Account Balance',
     value: '£150,736',
@@ -13,7 +15,7 @@ export const section1 = [
   },
 ];
 
-export const section2 = [
+export const merchantData2 = [
   {
     label: 'Average Order Value (AOV)',
     value: '£2736',
@@ -36,7 +38,7 @@ export const section2 = [
   },
 ];
 
-export const section3 = [
+export const merchantData3 = [
   {
     label: 'Payment Processing Time',
     value: '5 days',
@@ -48,5 +50,41 @@ export const section3 = [
   {
     label: 'Net Promoter Score (NPS)',
     value: '8',
+  },
+];
+
+// Customer Data
+
+export const customerData1 = [
+  {
+    label: 'Account Balance',
+    value: '£150,736',
+  },
+  {
+    label: 'Average Order Value (AOV)',
+    value: '£2736',
+  },
+];
+
+export const customerData2 = [
+  {
+    label: 'Repayment Rate',
+    value: '24%',
+  },
+  {
+    label: 'Repeat Purchase Rate',
+    value: '20%',
+  },
+  {
+    label: 'Camino Utilization',
+    value: '70%',
+  },
+  {
+    label: 'Referral Bonus',
+    value: '£150',
+  },
+  {
+    label: 'Referral Rate',
+    value: '10%',
   },
 ];
