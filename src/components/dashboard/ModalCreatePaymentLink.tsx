@@ -268,10 +268,8 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
               <InputWrapper label='Payment Link'>
                 <Button
                   type='button'
-                  variant='secondary'
-                  size='sm'
                   onClick={() => handleCopyPaymentLink(paymentLink)}
-                  className='w-full justify-between border'>
+                  className='w-full h-10 justify-between bg-secondary/5 text-secondary border'>
                   {paymentLink} <IoCopyOutline />
                 </Button>
               </InputWrapper>
@@ -283,19 +281,9 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                   {paymentLink ? 'Close' : 'Cancel'}
                 </Button>
               </DialogClose>
-              {paymentLink ? (
-                <Button
-                  type='button'
-                  size='lg'
-                  onClick={() => handleCopyPaymentLink(paymentLink)}
-                  className='w-full'>
-                  Copy link
-                </Button>
-              ) : (
-                <Button size='lg' disabled={isPending} className='w-full'>
-                  {isPending ? <BarLoader height={1} /> : 'Create link'}
-                </Button>
-              )}
+              <Button size='lg' disabled={isPending} className='w-full'>
+                {isPending ? <BarLoader height={1} /> : `Create ${paymentLink && 'new'} link`}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

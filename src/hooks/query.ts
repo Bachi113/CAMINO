@@ -252,6 +252,21 @@ const useGetMerchantProducts = ({ page, pageSize, searchQuery }: UseGetMerchantP
   });
 };
 
+const useGetProductCategories = () => {
+  const supabase = supabaseBrowserClient();
+  return useQuery({
+    queryKey: ['getProductCategories'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('product_categories').select();
+
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+  });
+};
+
 export {
   useGetPersonalInfo,
   useGetBuinessDetail,
@@ -266,4 +281,5 @@ export {
   useGetCustomers,
   useGetMerchantCustomerIdAndNames,
   useGetMerchantProducts,
+  useGetProductCategories,
 };

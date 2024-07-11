@@ -23,17 +23,17 @@ import { SubmitButton } from '@/components/SubmitButton';
 interface IDocumentVerification {
   experience: string;
   document1: any;
-  document2: any;
-  document3: any;
-  document4: any;
+  document2?: any;
+  document3?: any;
+  document4?: any;
 }
 
 const documentVerificationSchema = yup.object().shape({
   experience: yup.string().required('Please specify how long you have been involved in business'),
   document1: yup.mixed().required('Document 1 is required'),
-  document2: yup.mixed().required('Document 2 is required'),
-  document3: yup.mixed().required('Document 3 is required'),
-  document4: yup.mixed().required('Document 4 is required'),
+  // document2: yup.mixed().required('Document 2 is required'),
+  // document3: yup.mixed().required('Document 3 is required'),
+  // document4: yup.mixed().required('Document 4 is required'),
 });
 
 const yearsInvolved = [
@@ -180,7 +180,7 @@ const DocumentVerification = () => {
                       key={doc.field}
                       label={`Document Verification ${index + 1}`}
                       className='flex justify-between items-center w-full'
-                      required>
+                      required={index === 0}>
                       <Input type='file' id={doc.field} {...register(docField)} className='hidden' />
                       <div className='flex items-center'>
                         {!uploadedFileName && !rawFileName && (

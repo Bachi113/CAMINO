@@ -108,13 +108,8 @@ export async function updateData(data: any, tableName: TableName) {
   try {
     const supabase = await supabaseServerClient();
 
-    const { error } = await supabase
-      .from(tableName)
-      .update({
-        first_name: data.first_name,
-        last_name: data.last_name,
-      })
-      .eq('id', data.id);
+    const { id, ...restData } = data;
+    const { error } = await supabase.from(tableName).update(restData).eq('id', id);
 
     if (error) {
       throw error.message;

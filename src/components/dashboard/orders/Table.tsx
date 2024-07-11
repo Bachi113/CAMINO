@@ -13,7 +13,7 @@ import { columns } from './Columns';
 import SortBy from './Sortby';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { debounce } from '@/utils/utils';
+import { cn, debounce } from '@/utils/utils';
 import OrderSummary from './OrderDetails';
 import DownloadButton from '../DowloadCsvButton';
 import { useGetOrders } from '@/hooks/query';
@@ -23,10 +23,12 @@ import { supabaseBrowserClient } from '@/utils/supabase/client';
 import Filter from './Filter';
 import { HiOutlineSearch } from 'react-icons/hi';
 import { LuLoader } from 'react-icons/lu';
+import { TbReload } from 'react-icons/tb';
 
 const OrdersTable: React.FC = () => {
   const supabase = supabaseBrowserClient();
   const [customerNames, setCustomerNames] = useState<string[]>();
+  const [isRotating, setIsRotating] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedProduct, setSelectedProduct] = useState<TypeOrder>();
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
@@ -106,6 +108,12 @@ const OrdersTable: React.FC = () => {
     setSelectedCustomer(customerName);
   };
 
+  const handleRefreshFn = () => {
+    setIsRotating(true);
+    queryClient.invalidateQueries({ queryKey: ['getOrders'] });
+    setTimeout(() => setIsRotating(false), 1000);
+  };
+
   return (
     <>
       <div className='mt-10 flex justify-between items-center w-full'>
@@ -122,7 +130,10 @@ const OrdersTable: React.FC = () => {
             className='w-[350px] h-10 pl-8'
           />
         </div>
-        <div className='flex gap-2'>
+        <div className='flex items-center gap-2'>
+          <Button size='icon' variant='outline' onClick={handleRefreshFn}>
+            <TbReload size={20} className={cn(isRotating && 'animate-[spin_1s_linear]')} />
+          </Button>
           <SortBy setSorting={setSorting} />
           <Filter customerNames={customerNames} onFilterChange={handleFilterChange} />
           <DownloadButton fileName='orders' data={data!} />
@@ -188,7 +199,7 @@ const OrdersTable: React.FC = () => {
           variant='outline'
           size='sm'
           onClick={handleNextPage}
-          disabled={!data || data.length < pageSize}>
+          disabled={!data || data.length <= pageSize}>
           Next
         </Button>
       </div>

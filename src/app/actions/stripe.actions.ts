@@ -69,6 +69,8 @@ export async function getCustomerPaymentMethods(customerId: string) {
 
 export async function createSubscription(data: TypeCreateSubscription) {
   try {
+    const amount = (Number(data.price) / data.installments) * 100;
+
     const subscription = await stripe.subscriptionSchedules.create({
       customer: data.customer_id,
       default_settings: {
@@ -84,7 +86,7 @@ export async function createSubscription(data: TypeCreateSubscription) {
                 recurring: {
                   interval: 'month',
                 },
-                unit_amount_decimal: data.price,
+                unit_amount_decimal: amount.toString(),
               },
               quantity: data.quantity,
             },
