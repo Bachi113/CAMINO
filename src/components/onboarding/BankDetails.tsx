@@ -72,8 +72,8 @@ const BankDetails = () => {
     if (data) {
       setValue('bankName', data.bank_name);
       setValue('bankAccountNumber', parseInt(data.account_number, 10));
-      setValue('sortCode', data.sort_code);
-      setValue('ibanNumber', data.iban_code ?? undefined);
+      setValue('sortCode', data.sort_code ?? undefined);
+      setValue('ibanNumber', data.iban_code);
       setValue('swiftCode', data.swift_code ?? undefined);
       setValue('purchasingCurrency', data.purchasing_currency);
     }

@@ -27,6 +27,7 @@ import { queryClient } from '@/app/providers';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { HiPlus } from 'react-icons/hi';
 import { getUser } from '@/app/actions/supabase.actions';
+import { useGetProductCategories } from '@/hooks/query';
 
 interface ModalAddNewProductProps {
   openModal?: boolean;
@@ -34,22 +35,11 @@ interface ModalAddNewProductProps {
   buttonVariant?: 'outline' | 'default' | 'secondary' | 'destructive' | 'ghost' | 'link';
 }
 
-export const categoryOptions = [
-  { value: 'electronics', label: 'Electronics' },
-  { value: 'fashion', label: 'Fashion' },
-  { value: 'groceries', label: 'Groceries' },
-  { value: 'home', label: 'Home' },
-  { value: 'beauty', label: 'Beauty' },
-  { value: 'sports', label: 'Sports' },
-  { value: 'toys', label: 'Toys' },
-  { value: 'other', label: 'Other' },
-];
-
 export const currencyOptions = ['GBP', 'USD', 'CAD', 'EUR'];
 
 const initialData = {
   product_name: '',
-  category: categoryOptions[0].value,
+  category: '',
   currency: currencyOptions[0],
   price: '',
 };
@@ -65,6 +55,8 @@ const validations = yup.object().shape({
 const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ openModal, triggerButton, buttonVariant }) => {
   const [isOpen, setIsOpen] = useState<boolean>(openModal ?? false);
   const [isPending, setIsPending] = useState(false);
+
+  const { data: categoryOptions } = useGetProductCategories();
 
   const {
     reset,
@@ -98,7 +90,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ openModal, triggerBut
         throw error.message;
       }
 
-      queryClient.invalidateQueries({ queryKey: ['getProducts'] });
+      queryClient.invalidateQueries({ queryKey: ['getMerchantProducts'] });
       setIsOpen(false);
       reset();
     } catch (error: any) {
@@ -137,17 +129,14 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ openModal, triggerBut
           </InputWrapper>
 
           <InputWrapper id='category' label='Category' required error={errors.category?.message}>
-            <Select
-              {...register('category')}
-              defaultValue={categoryOptions[0].value}
-              onValueChange={(val) => setValue('category', val)}>
-              <SelectTrigger>
-                <SelectValue />
+            <Select {...register('category')} onValueChange={(val) => setValue('category', val)}>
+              <SelectTrigger className='font-normal'>
+                <SelectValue placeholder='Select category' />
               </SelectTrigger>
               <SelectContent>
-                {categoryOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
+                {categoryOptions?.map(({ category }) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
                   </SelectItem>
                 ))}
               </SelectContent>

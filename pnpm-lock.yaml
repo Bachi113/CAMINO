@@ -48,10 +48,10 @@ dependencies:
     specifier: ^1.1.5
     version: 1.1.5(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
   '@supabase/auth-ui-react':
-    specifier: latest
+    specifier: ^0.4.7
     version: 0.4.7(@supabase/supabase-js@2.43.4)
   '@supabase/auth-ui-shared':
-    specifier: latest
+    specifier: ^0.1.8
     version: 0.1.8(@supabase/supabase-js@2.43.4)
   '@supabase/ssr':
     specifier: latest
@@ -98,6 +98,9 @@ dependencies:
   react:
     specifier: ^18
     version: 18.3.1
+  react-country-flag:
+    specifier: ^3.1.0
+    version: 3.1.0(react@18.3.1)
   react-day-picker:
     specifier: ^8.10.1
     version: 8.10.1(date-fns@3.6.0)(react@18.3.1)
@@ -4358,6 +4361,15 @@ packages:
 
   /ramda@0.29.1:
     resolution: {integrity: sha512-OfxIeWzd4xdUNxlWhgFazxsA/nl3mS4/jGZI5n00uWOoSSFRhC1b6gl6xvmzUamgmqELraWp0J/qqVlXYPDPyA==}
+    dev: false
+
+  /react-country-flag@3.1.0(react@18.3.1):
+    resolution: {integrity: sha512-JWQFw1efdv9sTC+TGQvTKXQg1NKbDU2mBiAiRWcKM9F1sK+/zjhP2yGmm8YDddWyZdXVkR8Md47rPMJmo4YO5g==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      react: 18.3.1
     dev: false
 
   /react-day-picker@8.10.1(date-fns@3.6.0)(react@18.3.1):

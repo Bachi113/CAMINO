@@ -12,7 +12,7 @@ import { columns } from './Columns';
 import SortBy from './Sortby';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { debounce } from '@/utils/utils';
+import { cn, debounce } from '@/utils/utils';
 import ModalAddNewCustomer from '../ModalAddNewCustomer';
 import { useGetMerchantCustomers } from '@/hooks/query';
 import CustomerDetails from './CustomerDetails';
@@ -20,8 +20,11 @@ import DownloadButton from '../DowloadCsvButton';
 import Filter from './Filter';
 import { HiOutlineSearch } from 'react-icons/hi';
 import { LuLoader } from 'react-icons/lu';
+import { TbReload } from 'react-icons/tb';
+import { queryClient } from '@/app/providers';
 
 const CustomersTable: React.FC = () => {
+  const [isRotating, setIsRotating] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [selectedCustomerName, setSelectedCustomerName] = useState<string | null>(null);
@@ -97,6 +100,12 @@ const CustomersTable: React.FC = () => {
     setSelectedCustomerId(customerId);
   };
 
+  const handleRefreshFn = () => {
+    setIsRotating(true);
+    queryClient.invalidateQueries({ queryKey: ['getMerchantCustomers'] });
+    setTimeout(() => setIsRotating(false), 1000);
+  };
+
   return (
     <>
       <div className='mt-10 flex justify-between items-center w-full'>
@@ -113,7 +122,10 @@ const CustomersTable: React.FC = () => {
             className='w-[350px] h-10 pl-8'
           />
         </div>
-        <div className='flex gap-2'>
+        <div className='flex items-center gap-2'>
+          <Button size='icon' variant='outline' onClick={handleRefreshFn}>
+            <TbReload size={20} className={cn(isRotating && 'animate-[spin_1s_linear]')} />
+          </Button>
           <SortBy setSorting={setSorting} />
           <Filter
             customerNames={customerNames}

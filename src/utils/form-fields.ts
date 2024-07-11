@@ -67,8 +67,8 @@ export const bankFields: IBankDetailField[] = [
     type: 'text',
     required: true,
   },
-  { label: 'Sort Code', id: 'sortCode', placeholder: 'Sort Code', type: 'text', required: true },
-  { label: 'IBAN Code', id: 'ibanNumber', placeholder: 'IBAN Code', type: 'text', required: false },
+  { label: 'Sort Code', id: 'sortCode', placeholder: 'Sort Code', type: 'text', required: false },
+  { label: 'IBAN Code', id: 'ibanNumber', placeholder: 'IBAN Code', type: 'text', required: true },
   { label: 'Swift Code', id: 'swiftCode', placeholder: 'Swift Code', type: 'text', required: false },
 ];
 

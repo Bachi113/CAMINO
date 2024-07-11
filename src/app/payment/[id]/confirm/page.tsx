@@ -4,6 +4,7 @@ import { Card, CardHeader } from '@/components/ui/card';
 import stripe from '@/utils/stripe';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 import { LuLoader } from 'react-icons/lu';
 
 type TypeProps = {
@@ -50,7 +51,7 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
         return <div>{subscription.error}</div>;
       }
       if (subscription?.id) {
-        return <p>Subscription Created Successfully.</p>;
+        redirect(`/payment/${data.id}/created`);
       }
 
       return (

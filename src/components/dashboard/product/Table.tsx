@@ -16,13 +16,16 @@ import { useGetMerchantProducts } from '@/hooks/query';
 import ProductDescription from './ProductDetails';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { debounce } from '@/utils/utils';
+import { cn, debounce } from '@/utils/utils';
 import Filter from './Filter';
 import DownloadButton from '../DowloadCsvButton';
 import { HiOutlineSearch } from 'react-icons/hi';
 import { LuLoader } from 'react-icons/lu';
+import { TbReload } from 'react-icons/tb';
+import { queryClient } from '@/app/providers';
 
 const ProductsTable: React.FC = () => {
+  const [isRotating, setIsRotating] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -75,6 +78,12 @@ const ProductsTable: React.FC = () => {
     setSelectedFilter(customerName);
   };
 
+  const handleRefreshFn = () => {
+    setIsRotating(true);
+    queryClient.invalidateQueries({ queryKey: ['getMerchantProducts'] });
+    setTimeout(() => setIsRotating(false), 1000);
+  };
+
   return (
     <>
       <div className='mt-10 flex justify-between items-center w-full'>
@@ -91,7 +100,10 @@ const ProductsTable: React.FC = () => {
             className='w-[350px] h-10 pl-8'
           />
         </div>
-        <div className='flex gap-2'>
+        <div className='flex items-center gap-2'>
+          <Button size='icon' variant='outline' onClick={handleRefreshFn}>
+            <TbReload size={20} className={cn(isRotating && 'animate-[spin_1s_linear]')} />
+          </Button>
           <SortBy setSorting={setSorting} />
           <Filter onFilterChange={handleFilterChange} />
           <DownloadButton fileName='products' data={data!} />

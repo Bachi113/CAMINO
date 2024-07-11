@@ -32,8 +32,14 @@ export interface IPersonalInfoField {
 export const businessDetailSchema = yup.object().shape({
   businessName: yup.string().required('Business Name is required'),
   businessType: yup.string().required('Business Type is required'),
-  registrationType: yup.string().required('Registration Type is required'),
-  vatRegistrationNumber: yup.string().required('VAT Registration Number is required'),
+  registrationType: yup
+    .string()
+    .required('Registration Type is required')
+    .max(9, 'VAT Registration Type must be at most 9 characters'),
+  vatRegistrationNumber: yup
+    .string()
+    .required('VAT Registration Number is required')
+    .max(10, 'VAT Registration Number must be at most 10 characters'),
 });
 
 export type IBusinessDetail = {
@@ -54,7 +60,7 @@ export interface IBusinessDetailField {
 export type IBusinessAddress = {
   streetAddress: string;
   city: string;
-  postalCode: number;
+  postalCode: string;
   country: string;
   phoneNumber: number;
 };
@@ -62,7 +68,7 @@ export type IBusinessAddress = {
 export const businessAddressSchema = yup.object().shape({
   streetAddress: yup.string().required('Street Address is required'),
   city: yup.string().required('City is required'),
-  postalCode: yup.number().required('Postal Code is required'),
+  postalCode: yup.string().required('Postal Code is required'),
   country: yup.string().required('Country is required'),
   phoneNumber: yup.number().required('Phone Number is required'),
 });
@@ -74,37 +80,6 @@ export interface IBusinessAddressField {
   required: boolean;
 }
 
-// Business Information Validations
-export type IBusinessInformation = {
-  insideUk?: boolean;
-  outsideUk?: boolean;
-  courierCompany?: boolean;
-  selfDelivery?: boolean;
-  onlineService?: boolean;
-  other?: string;
-};
-
-export const businessInformationSchema = yup
-  .object()
-  .shape({
-    insideUk: yup.boolean(),
-    outsideUk: yup.boolean(),
-    courierCompany: yup.boolean(),
-    selfDelivery: yup.boolean(),
-    onlineService: yup.boolean(),
-    other: yup.string().optional(),
-  })
-  .test(
-    'atLeastOneTargetCustomer',
-    'At least one target customer location must be selected',
-    function (values) {
-      return values.insideUk || values.outsideUk;
-    }
-  )
-  .test('atLeastOneDeliveryMethod', 'At least one delivery method must be selected', function (values) {
-    return values.courierCompany || values.selfDelivery || values.onlineService || !!values.other;
-  });
-
 export interface CheckboxField {
   id: string;
   label: string;
@@ -115,18 +90,24 @@ export interface CheckboxField {
 export type IBankDetails = {
   bankName: string;
   bankAccountNumber: number;
-  sortCode: string;
-  ibanNumber?: string;
+  sortCode?: string;
+  ibanNumber: string;
   swiftCode?: string;
   purchasingCurrency: string;
 };
 
 export const BankDetailsSchema = yup.object().shape({
   bankName: yup.string().required('Bank Name is required'),
-  bankAccountNumber: yup.number().required('Account Number is required'),
-  sortCode: yup.string().required('Sort Code is required'),
-  ibanNumber: yup.string().optional(),
-  swiftCode: yup.string().optional(),
+  bankAccountNumber: yup
+    .number()
+    .required('Account Number is required')
+    .max(8, 'Account Number must be at most 8 characters'),
+  sortCode: yup.string().optional().max(6, 'Sort Code must be at most 6 characters'),
+  ibanNumber: yup
+    .string()
+    .required('IBAN Number is required')
+    .max(15, 'IBAN Number must be at most 15 characters'),
+  swiftCode: yup.string().optional().max(15, 'Swift Code must be at most 15 characters'),
   purchasingCurrency: yup.string().required('Purchasing Currency is required'),
 });
 

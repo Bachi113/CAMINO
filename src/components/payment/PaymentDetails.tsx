@@ -64,7 +64,7 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
       <CardContent className='space-y-6 pb-8'>
         <div className='text-center p-6 space-y-3'>
           <p className='font-medium'>Amount to be paid</p>
-          <h2 className='text-4xl font-semibold space-x-2'>
+          <h2 className='text-4xl font-semibold space-x-1'>
             <span>{getSymbolFromCurrency(data.currency)}</span>
             <span>{data.price}</span>
           </h2>
@@ -93,7 +93,7 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
               </div>
               <div className='flex justify-between font-medium'>
                 <span className='opacity-50'>Total Amount</span>
-                <div className='space-x-2'>
+                <div className='space-x-1'>
                   <span>{getSymbolFromCurrency(data.currency)}</span>
                   <span>{totalAmount}</span>
                 </div>
@@ -108,9 +108,9 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {data.installments_options.map((number) => (
-                <SelectItem key={number} value={number.toString()}>
-                  {number}
+              {data.installments_options.map((installment) => (
+                <SelectItem key={installment} value={installment.toString()}>
+                  {installment}
                 </SelectItem>
               ))}
             </SelectContent>

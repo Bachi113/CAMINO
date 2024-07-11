@@ -9,9 +9,9 @@ import Stripe from 'stripe';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { createSubscription } from '@/app/actions/stripe.actions';
 import { errorToast } from '@/utils/utils';
-import { toast } from '../ui/use-toast';
 import { parse, format } from 'date-fns';
 import getSymbolFromCurrency from 'currency-symbol-map';
+import { useRouter } from 'next/navigation';
 
 interface PaymentMethodDetailsProps {
   data: TypeOrder;
@@ -21,6 +21,8 @@ interface PaymentMethodDetailsProps {
 const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMethods }) => {
   const [isPending, setIsPending] = useState(false);
   const [paymentMethodId, setPaymentMethodId] = useState(paymentMethods[0].id);
+
+  const router = useRouter();
 
   const handleSubscription = async () => {
     setIsPending(true);
@@ -38,7 +40,7 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
     if (subscription.error) {
       errorToast(subscription.error);
     } else {
-      toast({ description: 'Subscription Created Successfully.' });
+      router.push(`/payment/${data.id}/created`);
     }
 
     setIsPending(false);
