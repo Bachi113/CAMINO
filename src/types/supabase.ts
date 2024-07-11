@@ -8,10 +8,10 @@ export type Database = {
           account_number: string;
           bank_name: string;
           created_at: string;
-          iban_code: string | null;
+          iban_code: string;
           id: string;
           purchasing_currency: string;
-          sort_code: string;
+          sort_code: string | null;
           swift_code: string | null;
           user_id: string;
         };
@@ -19,10 +19,10 @@ export type Database = {
           account_number: string;
           bank_name: string;
           created_at?: string;
-          iban_code?: string | null;
+          iban_code: string;
           id?: string;
           purchasing_currency: string;
-          sort_code: string;
+          sort_code?: string | null;
           swift_code?: string | null;
           user_id: string;
         };
@@ -30,10 +30,10 @@ export type Database = {
           account_number?: string;
           bank_name?: string;
           created_at?: string;
-          iban_code?: string | null;
+          iban_code?: string;
           id?: string;
           purchasing_currency?: string;
-          sort_code?: string;
+          sort_code?: string | null;
           swift_code?: string | null;
           user_id?: string;
         };
@@ -418,6 +418,24 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      product_categories: {
+        Row: {
+          category: string;
+          created_at: string;
+          id: number;
+        };
+        Insert: {
+          category: string;
+          created_at?: string;
+          id?: number;
+        };
+        Update: {
+          category?: string;
+          created_at?: string;
+          id?: number;
+        };
+        Relationships: [];
       };
       products: {
         Row: {

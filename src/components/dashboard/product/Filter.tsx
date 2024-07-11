@@ -16,9 +16,9 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
-import { categoryOptions } from '../ModalAddNewProduct';
 import { cn } from '@/utils/utils';
 import { LuListFilter } from 'react-icons/lu';
+import { useGetProductCategories } from '@/hooks/query';
 
 interface FilterProps {
   onFilterChange: (ProductName: string | null) => void;
@@ -26,6 +26,8 @@ interface FilterProps {
 
 const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
   const [selectedProductCategory, setSelectedProductCategory] = useState<string | null>(null);
+
+  const { data: categoryOptions } = useGetProductCategories();
 
   const handleFilterChange = (name: string | null) => {
     setSelectedProductCategory(name);
@@ -52,15 +54,15 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
                     onSelect={() => handleFilterChange(null)}>
                     All Categories
                   </CommandItem>
-                  {categoryOptions?.map((category) => (
+                  {categoryOptions?.map(({ category }) => (
                     <CommandItem
-                      key={category.value}
+                      key={category}
                       className={cn(
                         'hover:cursor-pointer',
-                        selectedProductCategory === category.value && 'bg-purple-700 text-white'
+                        selectedProductCategory === category && 'bg-purple-700 text-white'
                       )}
-                      onSelect={() => handleFilterChange(category.value)}>
-                      {category.label}
+                      onSelect={() => handleFilterChange(category)}>
+                      {category}
                     </CommandItem>
                   ))}
                   <CommandSeparator />
