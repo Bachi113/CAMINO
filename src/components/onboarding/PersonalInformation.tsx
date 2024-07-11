@@ -5,7 +5,7 @@ import UserIcon from '@/assets/icons/UserIcon';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -18,21 +18,25 @@ import { saveData, updateData } from '@/app/actions/onboarding.actions';
 import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import ReactCountryFlag from 'react-country-flag';
+import { countryOptions } from '@/utils/country-codes';
 
 const PersonalInformation = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [selectedPhoneCode, setSelectedPhoneCode] = useState('');
 
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
+    control,
     formState: { errors },
   } = useForm<IPersonalInformation>({
     resolver: yupResolver(personalInformationSchema),
-    defaultValues: {
-      terms: false,
-    },
+    defaultValues: { terms: false },
   });
 
   const { data } = useGetPersonalInfo();
@@ -42,8 +46,17 @@ const PersonalInformation = () => {
       setValue('firstName', data.first_name);
       setValue('lastName', data.last_name);
       setValue('email', data.email);
-      setValue('phone', data.phone);
       setValue('terms', true);
+
+      // Extract country code and phone number
+      const phoneMatch = data.phone.match(/^\+(\d+)\s(.*)$/);
+      if (phoneMatch) {
+        const [, countryCode, phoneNumber] = phoneMatch;
+        setSelectedPhoneCode(`+${countryCode}`);
+        setValue('phone', parseInt(phoneNumber, 10).toString());
+      } else {
+        setValue('phone', parseInt(data.phone, 10).toString());
+      }
     }
   }, [data, setValue]);
 
@@ -54,7 +67,7 @@ const PersonalInformation = () => {
       first_name: formData.firstName,
       last_name: formData.lastName,
       email: formData.email,
-      phone: formData.phone,
+      phone: `${selectedPhoneCode} ${formData.phone}`,
     };
 
     try {
@@ -89,13 +102,58 @@ const PersonalInformation = () => {
               <div className='space-y-5'>
                 {personalInfoFields.map((field) => (
                   <InputWrapper key={field.id} label={field.label} required error={errors[field.id]?.message}>
-                    <Input
-                      type={field.type}
-                      placeholder={field.placeholder}
-                      id={field.id}
-                      {...register(field.id)}
-                      disabled={loading}
-                    />
+                    {field.id === 'phone' ? (
+                      <div className='flex'>
+                        {((data && selectedPhoneCode) || !data) && (
+                          <Select
+                            onValueChange={(val) => setSelectedPhoneCode(val)}
+                            value={selectedPhoneCode}>
+                            <SelectTrigger className='w-28 mr-2'>
+                              <SelectValue placeholder='Code' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {countryOptions.map((option) => (
+                                <SelectItem key={option.code} value={option.phoneCode}>
+                                  <div className='flex items-center gap-2'>
+                                    <ReactCountryFlag
+                                      svg
+                                      countryCode={option.code}
+                                      style={{
+                                        width: '1.2em',
+                                        height: '1.2em',
+                                      }}
+                                    />
+                                    <span>{option.phoneCode}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+
+                        <Controller
+                          name='phone'
+                          control={control}
+                          render={({ field: fieldData }) => (
+                            <Input
+                              type='tel'
+                              placeholder={field.placeholder}
+                              {...fieldData}
+                              disabled={loading}
+                              className='flex-1'
+                            />
+                          )}
+                        />
+                      </div>
+                    ) : (
+                      <Input
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        id={field.id}
+                        {...register(field.id)}
+                        disabled={loading}
+                      />
+                    )}
                   </InputWrapper>
                 ))}
 
@@ -106,7 +164,7 @@ const PersonalInformation = () => {
                       onCheckedChange={(checked) => setValue('terms', checked as boolean)}
                       {...register('terms')}
                       disabled={loading}
-                      checked={!!data}
+                      checked={watch('terms')}
                     />
                     <label htmlFor='terms' className='text-sm font-medium space-x-1'>
                       <span>I agree to</span>
