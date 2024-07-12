@@ -98,10 +98,7 @@ export type IBankDetails = {
 
 export const BankDetailsSchema = yup.object().shape({
   bankName: yup.string().required('Bank Name is required'),
-  bankAccountNumber: yup
-    .number()
-    .required('Account Number is required')
-    .max(8, 'Account Number must be at most 8 characters'),
+  bankAccountNumber: yup.number().required('Account Number is required'),
   sortCode: yup.string().optional().max(6, 'Sort Code must be at most 6 characters'),
   ibanNumber: yup
     .string()
