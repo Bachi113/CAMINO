@@ -6,6 +6,8 @@ import { getUser } from './supabase.actions';
 const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_NAME!;
 
 export async function uploadDocuments(files: FormData[]) {
+  const supabase = await supabaseServerClient();
+
   try {
     const supabase = await supabaseServerClient();
 
@@ -27,17 +29,17 @@ export async function uploadDocuments(files: FormData[]) {
       return supabase.storage.from(bucketName).upload(key, file, { upsert: true });
     });
 
-    const results = await Promise.all(uploadPromises);
+    const results = await Promise.all(uploadPromises.filter((f) => f != null));
     const errors = results.filter((result) => result.error);
 
     if (errors.length > 0) {
       throw new Error(errors.map((error) => error.error?.message).join(', '));
     }
 
-    return { urls: results.map((result) => result.data?.path ?? result) };
+    return { urls };
   } catch (error: any) {
     console.error('Error uploading file:', error);
-    return { error };
+    return { error: error.message ?? `${error}` };
   }
 }
 

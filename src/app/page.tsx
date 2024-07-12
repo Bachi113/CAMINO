@@ -15,7 +15,7 @@ const Home: FC = async () => {
   const user = await getUser();
 
   if (user) {
-    redirect('/dashboard');
+    redirect('/onboarding');
   }
 
   return (

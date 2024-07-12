@@ -29,13 +29,7 @@ export const getUserType = async () => {
 
 export const getCustomer = async () => {
   const supabase = supabaseServerClient();
-  const { data: customer, error } = await supabase.from('customers').select().single();
-
-  if (error) {
-    console.error('Error finding customer:', error.message);
-    return null;
-  }
-
+  const { data: customer } = await supabase.from('customers').select().single();
   return customer;
 };
 export const getMerchant = async () => {
