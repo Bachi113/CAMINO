@@ -147,8 +147,8 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
   return (
     <>
-      <ModalAddNewCustomer openModal={openCustomerModal} />
-      <ModalAddNewProduct openModal={openProductModal} />
+      <ModalAddNewCustomer openModal={openCustomerModal} handleCustomerModal={setOpenCustomerModal} />
+      <ModalAddNewProduct openModal={openProductModal} handleProductModal={setOpenProductModal} />
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>

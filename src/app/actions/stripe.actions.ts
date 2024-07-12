@@ -86,7 +86,7 @@ export async function createSubscription(data: TypeCreateSubscription) {
                 recurring: {
                   interval: 'month',
                 },
-                unit_amount_decimal: amount.toString(),
+                unit_amount_decimal: amount.toFixed(0),
               },
               quantity: data.quantity,
             },

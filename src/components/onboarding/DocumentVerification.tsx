@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { cn, errorToast, extractFileNameFromUrl } from '@/utils/utils';
-import { saveData, updateData, uploadDocuments } from '@/app/actions/onboarding.actions';
+import { saveData, updateData } from '@/app/actions/onboarding.actions';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { LuUploadCloud } from 'react-icons/lu';
 import ModalOnboardingSummary from './ModalOnboardingSummary';
@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
+import { supabaseBrowserClient } from '@/utils/supabase/client';
 
 interface IDocumentVerification {
   experience: string;
@@ -41,6 +42,47 @@ const yearsInvolved = [
   { value: '2-5 Years', id: '2' },
   { value: '5+ Years', id: '3' },
 ];
+
+async function uploadDocuments(files: FormData[]) {
+  const supabase = await supabaseBrowserClient();
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw 'Please login to get started.';
+    }
+
+    const uploadPromises = files.map((fileData, index) => {
+      if (typeof fileData === 'string') {
+        return fileData;
+      }
+
+      const file = fileData.get(`document${index + 1}`) as File;
+      if (!file) {
+        throw new Error(`Document ${index + 1} does not exist.`);
+      }
+      const key = `${user.id}-${file.name}`;
+
+      const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_NAME!;
+      return supabase.storage.from(bucketName).upload(key, file, { upsert: true });
+    });
+
+    const results = await Promise.all(uploadPromises);
+    const errors = results.filter((result) => result.error);
+    const urls = results.filter((result) => result.data?.path).map((result) => result.data!.path!);
+
+    if (errors.length > 0) {
+      throw new Error(errors.map((error) => error.error?.message).join(', '));
+    }
+
+    return { urls };
+  } catch (error: any) {
+    console.error('Error uploading file:', error);
+    return { error: error.message ?? `${error}` };
+  }
+}
 
 const DocumentVerification = () => {
   const [loading, setLoading] = useState(false);
@@ -94,21 +136,25 @@ const DocumentVerification = () => {
   const handleFormSubmit = async (formData: IDocumentVerification) => {
     setLoading(true);
     try {
-      const fileUploadPromises = documentsToUpload.map(({ field, value }) => {
-        if (value?.url) {
-          return value.url;
-        } else if (value?.[0]) {
-          const files = new FormData();
-          files.append(field, value[0]);
-          return files;
-        } else if (field === 'document1') {
-          // Only document 1 is required
-          throw new Error(`${field} is required`);
-        }
-      });
-
+      const fileUploadPromises = documentsToUpload
+        .map(({ field, value }) => {
+          if (value?.url) {
+            return value.url;
+          } else if (value?.[0]) {
+            const files = new FormData();
+            files.append(field, value[0]);
+            return files;
+          } else if (field === 'document1') {
+            // Only document 1 is required
+            throw new Error(`${field} is required`);
+          }
+          return null;
+        })
+        .filter(Boolean);
       const fileData = await Promise.all(fileUploadPromises);
       const fileUrls = await uploadDocuments(fileData);
+
+      console.log(fileUrls, '---fileUrls');
 
       if (fileUrls.error) {
         throw fileUrls.error;

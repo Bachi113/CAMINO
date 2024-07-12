@@ -76,6 +76,29 @@ export const bankFields: IBankDetailField[] = [
 export const summaryFileds = (data: any) => {
   if (!data) return [];
 
+  const documentInputs = [
+    {
+      label: 'How long have you been involved in business',
+      id: 'experience',
+      value: data.documents?.experience,
+    },
+    {
+      label: 'Document type 1',
+      id: 'documentType1',
+      value: extractFileNameFromUrl(data.documents?.document_urls?.[0], data.personal_informations.user_id),
+    },
+  ];
+  // Add optional documents if they exist
+  for (let i = 1; i <= 3; i++) {
+    if (data.documents?.document_urls?.[i]) {
+      documentInputs.push({
+        label: `Document type ${i + 1}`,
+        id: `documentType${i + 1}`,
+        value: extractFileNameFromUrl(data.documents.document_urls[i], data.personal_informations.user_id),
+      });
+    }
+  }
+
   return [
     {
       id: 'personal-information',
@@ -148,45 +171,7 @@ export const summaryFileds = (data: any) => {
     {
       id: 'document-verification',
       title: 'Document Verification',
-      inputs: [
-        {
-          label: 'How long have you been involved in business',
-          id: 'experience',
-          value: data.documents?.experience,
-        },
-        {
-          label: 'Document type 1',
-          id: 'documentType1',
-          value: extractFileNameFromUrl(
-            data.documents?.document_urls?.[0],
-            data.personal_informations.user_id
-          ),
-        },
-        {
-          label: 'Document type 2',
-          id: 'documentType2',
-          value: extractFileNameFromUrl(
-            data.documents?.document_urls?.[1],
-            data.personal_informations.user_id
-          ),
-        },
-        {
-          label: 'Document type 3',
-          id: 'documentType3',
-          value: extractFileNameFromUrl(
-            data.documents?.document_urls?.[2],
-            data.personal_informations.user_id
-          ),
-        },
-        {
-          label: 'Document type 4',
-          id: 'documentType4',
-          value: extractFileNameFromUrl(
-            data.documents?.document_urls?.[3],
-            data.personal_informations.user_id
-          ),
-        },
-      ],
+      inputs: documentInputs,
     },
   ];
 };
