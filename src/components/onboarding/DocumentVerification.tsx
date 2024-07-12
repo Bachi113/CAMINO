@@ -101,7 +101,8 @@ const DocumentVerification = () => {
           const files = new FormData();
           files.append(field, value[0]);
           return files;
-        } else {
+        } else if (field === 'document1') {
+          // Only document 1 is required
           throw new Error(`${field} is required`);
         }
       });
