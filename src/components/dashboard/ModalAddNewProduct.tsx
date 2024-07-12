@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -31,6 +31,7 @@ import { useGetProductCategories } from '@/hooks/query';
 
 interface ModalAddNewProductProps {
   openModal?: boolean;
+  handleProductModal?: (value: boolean) => void;
   triggerButton?: boolean;
   buttonVariant?: 'outline' | 'default' | 'secondary' | 'destructive' | 'ghost' | 'link';
 }
@@ -52,7 +53,12 @@ const validations = yup.object().shape({
   remarks: yup.string(),
 });
 
-const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ openModal, triggerButton, buttonVariant }) => {
+const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({
+  openModal,
+  handleProductModal,
+  triggerButton,
+  buttonVariant,
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(openModal ?? false);
   const [isPending, setIsPending] = useState(false);
 
@@ -100,8 +106,19 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({ openModal, triggerBut
     }
   };
 
+  useEffect(() => {
+    if (openModal) {
+      setIsOpen(openModal);
+    }
+  }, [openModal]);
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(value) => {
+        setIsOpen(value);
+        handleProductModal?.(value);
+      }}>
       {triggerButton && (
         <DialogTrigger asChild>
           <Button size='lg' variant={buttonVariant ?? 'default'} className='gap-2'>

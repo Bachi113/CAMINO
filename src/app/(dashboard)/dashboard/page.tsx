@@ -46,7 +46,8 @@ const DataSection = ({ data }: { data: { label: string; value: string }[] }) => 
     {data.map((item) => (
       <div key={item.label} className='bg-white p-5 rounded-lg shadow-sm border space-y-3'>
         <div className='text-sm font-light text-gray-600'>{item.label}</div>
-        <div className='text-2xl font-medium'>{item.value}</div>
+        {/* <div className='text-2xl font-medium'>{item.value}</div> */}
+        <div className='text-2xl font-medium'>NA</div>
       </div>
     ))}
   </div>

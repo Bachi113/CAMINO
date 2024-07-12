@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -28,6 +28,7 @@ import { HiPlus } from 'react-icons/hi';
 
 interface ModalAddNewCustomerProps {
   openModal?: boolean;
+  handleCustomerModal?: (value: boolean) => void;
   triggerButton?: boolean;
 }
 
@@ -38,8 +39,12 @@ const validations = yup.object().shape({
   address: yup.string().required('Address is required'),
 });
 
-const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ openModal, triggerButton }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(openModal ?? false);
+const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({
+  openModal,
+  handleCustomerModal,
+  triggerButton,
+}) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isPending, setIsPending] = useState(false);
 
   const {
@@ -90,8 +95,19 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({ openModal, triggerB
     }
   };
 
+  useEffect(() => {
+    if (openModal) {
+      setIsOpen(openModal);
+    }
+  }, [openModal]);
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(value) => {
+        setIsOpen(value);
+        handleCustomerModal?.(value);
+      }}>
       {triggerButton && (
         <DialogTrigger asChild>
           <Button size='lg' className='gap-2'>
