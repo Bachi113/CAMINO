@@ -20,6 +20,7 @@ import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
+import { getUser } from '@/app/actions/supabase.actions';
 
 interface IDocumentVerification {
   experience: string;
@@ -47,9 +48,7 @@ async function uploadDocuments(files: FormData[]) {
   const supabase = await supabaseBrowserClient();
 
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getUser();
     if (!user) {
       throw 'Please login to get started.';
     }
