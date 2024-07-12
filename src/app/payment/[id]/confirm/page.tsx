@@ -4,7 +4,6 @@ import { Card, CardHeader } from '@/components/ui/card';
 import stripe from '@/utils/stripe';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import Image from 'next/image';
-import { redirect } from 'next/navigation';
 import { LuLoader } from 'react-icons/lu';
 
 type TypeProps = {
@@ -47,11 +46,23 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
         installments: data.period!,
         payment_method_id: setupIntent.payment_method as string,
       });
+
       if (subscription.error) {
         return <div>{subscription.error}</div>;
       }
       if (subscription?.id) {
-        redirect(`/payment/${data.id}/created`);
+        // redirect(`/payment/${data.id}/created`);
+        return (
+          <div className='flex flex-col items-center gap-4'>
+            <LuLoader className='animate-[spin_2s_linear_infinite]' size={26} />
+            <p className='text-lg font-light'>Subscription created. Redirecting...</p>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.location.href = "/payment/${data.id}/created";`,
+              }}
+            />
+          </div>
+        );
       }
 
       return (
