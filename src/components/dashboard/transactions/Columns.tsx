@@ -3,6 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { TypeTransaction } from '@/types/types';
 import { FaSort } from 'react-icons/fa';
+import { Badge } from '@/components/ui/badge';
 
 export const columns: ColumnDef<TypeTransaction>[] = [
   {
@@ -48,16 +49,32 @@ export const columns: ColumnDef<TypeTransaction>[] = [
     header: 'Customer Name',
     cell: (info) => info.getValue(),
   },
-
   {
     accessorKey: 'product_id',
     header: 'Product ID',
     cell: (info) => info.getValue(),
   },
-
   {
     accessorKey: 'product_name',
     header: 'Product Name',
     cell: (info) => info.getValue(),
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({
+      row: {
+        original: { status },
+      },
+    }) => {
+      const buttonVariant =
+        status === 'completed' ? 'default' : status === 'initiated' ? 'warning' : 'destructive';
+
+      return (
+        <Badge variant={buttonVariant} className='capitalize'>
+          {status}
+        </Badge>
+      );
+    },
   },
 ];
