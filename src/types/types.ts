@@ -4,6 +4,9 @@ export type TypeOnboarding = Database['public']['Tables']['onboarding']['Row'];
 
 export type TypeOrder = Database['public']['Tables']['orders']['Row'];
 
+export type TypeTransaction = Database['public']['Tables']['transactions']['Row'];
+export type EnumTransactionStatus = Database['public']['Enums']['transactionstatus'];
+
 export type TypeProduct = Database['public']['Tables']['products']['Row'];
 
 export type TypeCustomer = Database['public']['Tables']['customers']['Row'];

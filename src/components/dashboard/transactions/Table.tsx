@@ -14,36 +14,33 @@ import SortBy from './Sortby';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn, debounce } from '@/utils/utils';
-import OrderDetails from './OrderDetails';
 import DownloadButton from '../DowloadCsvButton';
-import { useGetOrders } from '@/hooks/query';
-import { TypeOrder } from '@/types/types';
+import { TypeTransaction } from '@/types/types';
 import { queryClient } from '@/app/providers';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import Filter from './Filter';
 import { HiOutlineSearch } from 'react-icons/hi';
 import { LuLoader } from 'react-icons/lu';
 import { TbReload } from 'react-icons/tb';
+import TransactionDetails from './TransactionDetails';
+import { useGetTransactions } from '@/hooks/query';
 
-const OrdersTable: React.FC = () => {
+const TransactionsTable: React.FC = () => {
   const supabase = supabaseBrowserClient();
   const [customerNames, setCustomerNames] = useState<string[]>();
   const [isRotating, setIsRotating] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [selectedProduct, setSelectedProduct] = useState<TypeOrder>();
+  const [selectedProduct, setSelectedProduct] = useState<TypeTransaction>();
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState(1);
   const [pageSize] = useState(7);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading, isError } = useGetOrders(page, pageSize, searchQuery);
+  const { data, isLoading, isError } = useGetTransactions(page, pageSize, searchQuery);
 
   const filteredData = useMemo(() => {
-    return (
-      data &&
-      data.filter((order) => (selectedCustomer ? order.customers?.customer_name === selectedCustomer : true))
-    );
+    return data && data.filter((tx) => (selectedCustomer ? tx.customer_name === selectedCustomer : true));
   }, [data, selectedCustomer]);
 
   const table = useReactTable({
@@ -61,7 +58,7 @@ const OrdersTable: React.FC = () => {
     }
     if (data) {
       const customerNames: string[] = Array.from(
-        new Set(data.map((order) => order.customers?.customer_name).filter((name): name is string => !!name))
+        new Set(data.map((tx) => tx.customer_name).filter((name): name is string => !!name))
       );
 
       setCustomerNames(customerNames);
@@ -74,11 +71,11 @@ const OrdersTable: React.FC = () => {
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
-          table: 'orders',
+          table: 'transactions',
         },
-        () => queryClient.invalidateQueries({ queryKey: ['getOrders'] })
+        () => queryClient.invalidateQueries({ queryKey: ['getTransactions'] })
       )
       .subscribe();
 
@@ -110,7 +107,7 @@ const OrdersTable: React.FC = () => {
 
   const handleRefreshFn = () => {
     setIsRotating(true);
-    queryClient.invalidateQueries({ queryKey: ['getOrders'] });
+    queryClient.invalidateQueries({ queryKey: ['getTransactions'] });
     setTimeout(() => setIsRotating(false), 1000);
   };
 
@@ -123,7 +120,7 @@ const OrdersTable: React.FC = () => {
           </span>
           <Input
             ref={searchInputRef}
-            placeholder='Search order details'
+            placeholder='Search transacrion details'
             defaultValue={searchQuery}
             disabled={isLoading}
             onChange={handleGlobalFilterChange}
@@ -136,7 +133,7 @@ const OrdersTable: React.FC = () => {
           </Button>
           <SortBy setSorting={setSorting} />
           <Filter customerNames={customerNames} onFilterChange={handleFilterChange} />
-          <DownloadButton fileName='orders' data={data!} />
+          <DownloadButton fileName='transacrions' data={data!} />
         </div>
       </div>
 
@@ -146,7 +143,7 @@ const OrdersTable: React.FC = () => {
             {!isError ? (
               <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
             ) : (
-              <span className='text-sm opacity-60'>Error fetching orders.</span>
+              <span className='text-sm opacity-60'>Error fetching transactions.</span>
             )}
           </div>
         ) : (
@@ -205,10 +202,10 @@ const OrdersTable: React.FC = () => {
       </div>
 
       {selectedProduct && (
-        <OrderDetails data={selectedProduct} handleSheetOpen={() => setSelectedProduct(undefined)} />
+        <TransactionDetails data={selectedProduct} handleSheetOpen={() => setSelectedProduct(undefined)} />
       )}
     </>
   );
 };
 
-export default OrdersTable;
+export default TransactionsTable;

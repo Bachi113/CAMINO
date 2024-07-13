@@ -2,6 +2,7 @@ import { HiOutlineArchiveBox } from 'react-icons/hi2';
 import { BsBox } from 'react-icons/bs';
 import { PiUsers } from 'react-icons/pi';
 import { RxDashboard } from 'react-icons/rx';
+import { TbCreditCard } from 'react-icons/tb';
 
 // const sidebarLinks = [
 //   { label: 'Dashboard', path: '/dashboard', logo: <RxDashboard size={18} strokeWidth={0.1} /> },
@@ -15,7 +16,7 @@ import { RxDashboard } from 'react-icons/rx';
 export const commonLinks = [
   { label: 'Dashboard', path: '/dashboard', logo: <RxDashboard size={18} strokeWidth={0.1} /> },
   { label: 'Orders', path: '/orders', logo: <HiOutlineArchiveBox size={20} /> },
-  // { label: 'Transactions', path: '/transactions', logo: TransactionsIcon },
+  { label: 'Transactions', path: '/transactions', logo: <TbCreditCard size={24} strokeWidth={1.4} /> },
 ];
 
 export const merchantLinks = [
