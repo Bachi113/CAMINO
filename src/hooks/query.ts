@@ -1,4 +1,4 @@
-import { getOrdersByMerchant } from '@/app/actions/supabase.actions';
+import { getOrders, getTransactions } from '@/app/actions/supabase.actions';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -121,7 +121,20 @@ const useGetOrders = (page: number, pageSize: number, searchQuery?: string) => {
   return useQuery({
     queryKey: ['getOrders', page, pageSize, searchQuery],
     queryFn: async () => {
-      const response = await getOrdersByMerchant(page, pageSize, searchQuery);
+      const response = await getOrders(page, pageSize, searchQuery);
+      if (response.error) {
+        throw response.error;
+      }
+      return response.data;
+    },
+  });
+};
+
+const useGetTransactions = (page: number, pageSize: number, searchQuery?: string) => {
+  return useQuery({
+    queryKey: ['getTransactions', page, pageSize, searchQuery],
+    queryFn: async () => {
+      const response = await getTransactions(page, pageSize, searchQuery);
       if (response.error) {
         throw response.error;
       }
@@ -276,6 +289,7 @@ export {
   useGetOnboardingData,
   useGetCustomerData,
   useGetOrders,
+  useGetTransactions,
   useGetMerchantCustomers,
   useGetProducts,
   useGetCustomers,

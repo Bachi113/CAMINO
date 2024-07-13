@@ -1,4 +1,4 @@
-import { EnumOrderStatus } from '@/types/types';
+import { EnumOrderStatus, EnumTransactionStatus } from '@/types/types';
 import stripe from '@/utils/stripe';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { headers } from 'next/headers';
@@ -7,11 +7,6 @@ import Stripe from 'stripe';
 
 // Stripe webhook secret key
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
-
-// Helper function to handle subscription events
-const handleSubscriptionEvent = async (subscriptionId: string, status: EnumOrderStatus) => {
-  await supabaseAdmin.from('orders').update({ status }).eq('stripe_id', subscriptionId);
-};
 
 // Main function to handle POST requests from Stripe webhooks
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -34,6 +29,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       case 'invoice.created': {
         // Retrieve the full invoice object from Stripe
         const invoice = await stripe.invoices.retrieve((eventObject as Stripe.Invoice).id);
+        // Create new transaction in the database
+        await handleRecordTransaction(invoice);
+
+        // Finalize and pay the invoice if it's still open
         const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
         if (finalizedInvoice.status === 'open') {
           await stripe.invoices.pay(finalizedInvoice.id);
@@ -42,12 +41,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
       case 'invoice.payment_succeeded': {
         const invoice = await stripe.invoices.retrieve((eventObject as Stripe.Invoice).id);
-        await handleSubscriptionEvent(invoice.subscription as string, 'active');
+        await handleSubscriptionEvent(invoice.subscription as string, 'active', invoice.id, 'completed');
         break;
       }
       case 'invoice.payment_failed': {
         const invoice = await stripe.invoices.retrieve((eventObject as Stripe.Invoice).id);
-        await handleSubscriptionEvent(invoice.subscription as string, 'failed');
+        await handleSubscriptionEvent(invoice.subscription as string, 'failed', invoice.id, 'failed');
         break;
       }
     }
@@ -57,4 +56,48 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     console.error(err.message);
     return NextResponse.json({ message: err.message }, { status: 400 });
   }
+}
+
+async function handleRecordTransaction(invoice: Stripe.Response<Stripe.Invoice>) {
+  const { data: orderDetails } = await supabaseAdmin
+    .from('orders')
+    .select()
+    .eq('stripe_id', invoice.subscription!)
+    .single();
+
+  if (orderDetails == null) {
+    throw new Error(`Subscription not found for invoice ${invoice.id}, subscription ${invoice.subscription}`);
+  }
+
+  const [{ data: customer }, { data: product }] = await Promise.all([
+    supabaseAdmin.from('customers').select().eq('stripe_id', orderDetails.stripe_cus_id).single(),
+    supabaseAdmin.from('products').select().eq('id', orderDetails.product_id).single(),
+  ]);
+
+  if (!customer || !product) {
+    throw new Error('Customer or product not found');
+  }
+
+  await supabaseAdmin.from('transactions').insert({
+    stripe_id: invoice.id,
+    product_name: product.product_name!,
+    product_id: product.id,
+    order_id: orderDetails.id,
+    merchant_id: orderDetails.user_id,
+    customer_id: customer.id,
+    customer_name: customer.customer_name!,
+  });
+}
+
+// Helper function to handle subscription events
+async function handleSubscriptionEvent(
+  subscriptionId: string,
+  status: EnumOrderStatus,
+  invoiceId: string,
+  txStatus: EnumTransactionStatus
+) {
+  await Promise.all([
+    supabaseAdmin.from('orders').update({ status }).eq('stripe_id', subscriptionId),
+    supabaseAdmin.from('transactions').update({ status: txStatus }).eq('stripe_id', invoiceId),
+  ]);
 }

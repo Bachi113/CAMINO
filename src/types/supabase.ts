@@ -484,6 +484,67 @@ export type Database = {
           },
         ];
       };
+      transactions: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+          customer_name: string;
+          id: string;
+          merchant_id: string;
+          order_id: string;
+          product_id: string;
+          product_name: string;
+          status: Database['public']['Enums']['transactionstatus'];
+          stripe_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+          customer_name: string;
+          id?: string;
+          merchant_id: string;
+          order_id: string;
+          product_id: string;
+          product_name: string;
+          status?: Database['public']['Enums']['transactionstatus'];
+          stripe_id: string;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+          customer_name?: string;
+          id?: string;
+          merchant_id?: string;
+          order_id?: string;
+          product_id?: string;
+          product_name?: string;
+          status?: Database['public']['Enums']['transactionstatus'];
+          stripe_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'transactions_customer_id_fkey';
+            columns: ['customer_id'];
+            isOneToOne: false;
+            referencedRelation: 'customers';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'transactions_merchant_id_fkey';
+            columns: ['merchant_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'transactions_product_id_fkey';
+            columns: ['product_id'];
+            isOneToOne: false;
+            referencedRelation: 'products';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -496,6 +557,7 @@ export type Database = {
     };
     Enums: {
       orderstatus: 'pending' | 'processing' | 'failed' | 'active' | 'canceled' | 'completed';
+      transactionstatus: 'initiated' | 'failed' | 'completed';
     };
     CompositeTypes: {
       [_ in never]: never;

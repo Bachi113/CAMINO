@@ -38,7 +38,7 @@ export const getMerchant = async () => {
   return merchant;
 };
 
-export async function getOrdersByMerchant(page: number, pageSize: number, searchQuery?: string) {
+export async function getOrders(page: number, pageSize: number, searchQuery?: string) {
   const merchant = await getMerchant();
   const customer = await getCustomer();
 
@@ -48,7 +48,7 @@ export async function getOrdersByMerchant(page: number, pageSize: number, search
 
   let query = supabaseAdmin
     .from('orders')
-    .select('*, products (product_name), customers (customer_name)')
+    .select('*, products (product_name), customers (customer_name, email)')
     .order('created_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
 
@@ -60,6 +60,38 @@ export async function getOrdersByMerchant(page: number, pageSize: number, search
   }
   if (searchQuery) {
     query = query.ilike('products.product_name', `%${searchQuery}%`);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    return { error };
+  }
+
+  return { data };
+}
+
+export async function getTransactions(page: number, pageSize: number, searchQuery?: string) {
+  const merchant = await getMerchant();
+  const customer = await getCustomer();
+
+  if (!merchant && !customer) {
+    return { error: 'User not found' };
+  }
+
+  let query = supabaseAdmin
+    .from('transactions')
+    .select()
+    .order('created_at', { ascending: false })
+    .range((page - 1) * pageSize, page * pageSize - 1);
+
+  if (merchant) {
+    query = query.eq('merchant_id', merchant.user_id);
+  }
+  if (customer) {
+    query = query.eq('customer_id', customer.id);
+  }
+  if (searchQuery) {
+    query = query.ilike('customer_name', `%${searchQuery}%`);
   }
 
   const { data, error } = await query;
