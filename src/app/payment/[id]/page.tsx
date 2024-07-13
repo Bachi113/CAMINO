@@ -6,7 +6,7 @@ import { supabaseAdmin } from '@/utils/supabase/admin';
 export default async function PaymentPage({ params }: { params: { id: string } }) {
   const { data } = await supabaseAdmin
     .from('orders')
-    .select('*, products (stripe_id, product_name)')
+    .select('*, products (stripe_id, product_name), customers (customer_name, email)')
     .eq('id', params.id)
     .single();
 

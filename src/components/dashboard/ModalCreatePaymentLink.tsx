@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
-import { errorToast, handleCopyPaymentLink } from '@/utils/utils';
+import { errorToast, handleCopyPaymentLink, sendPaymentLinkViaEmail } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreatePaymentLink } from '@/types/types';
@@ -32,6 +32,8 @@ import { HiPlus } from 'react-icons/hi';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { queryClient } from '@/app/providers';
 import { getUser } from '@/app/actions/supabase.actions';
+import { LuLoader } from 'react-icons/lu';
+import { toast } from '../ui/use-toast';
 
 interface ModalCreatePaymentLinkProps {}
 
@@ -60,6 +62,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   const [openProductModal, setOpenProductModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [isSendingLink, setIsSendingLink] = useState(false);
   const [paymentLink, setPaymentLink] = useState('');
 
   const { data: merchantCustomers } = useGetCustomers();
@@ -145,6 +148,32 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
     setValue('installments_options', selectedInstallments);
   };
 
+  // Send payment link to the customer
+  const handleSendPaymentLink = async () => {
+    const customer = merchantCustomers?.find((c) => c.customers?.stripe_id === getValues('stripe_cus_id'));
+    const customerName = customer?.customers?.customer_name || '';
+    const customerEmail = customer?.customers?.email || '';
+    const product = products?.find((p) => p.id === getValues('product_id'));
+    const productName = product?.product_name || '';
+
+    try {
+      setIsSendingLink(true);
+      await sendPaymentLinkViaEmail(
+        customerName,
+        customerEmail,
+        productName,
+        getValues('currency'),
+        getValues('price'),
+        paymentLink
+      );
+      toast({ description: 'Payment link sent successfully' });
+    } catch (error: any) {
+      errorToast(error.response.data.message || `${error}`);
+    } finally {
+      setIsSendingLink(false);
+    }
+  };
+
   return (
     <>
       <ModalAddNewCustomer openModal={openCustomerModal} handleCustomerModal={setOpenCustomerModal} />
@@ -157,7 +186,8 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
             Create payment link
           </Button>
         </DialogTrigger>
-        <DialogContent>
+
+        <DialogContent className='max-w-xl'>
           <DialogHeader className='mb-4'>
             <DialogTitle>Create Payment link</DialogTitle>
             <DialogDescription className='opacity-75'>
@@ -266,12 +296,22 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
             {paymentLink && (
               <InputWrapper label='Payment Link'>
-                <Button
-                  type='button'
-                  onClick={() => handleCopyPaymentLink(paymentLink)}
-                  className='w-full h-10 justify-between bg-secondary/5 text-secondary border'>
-                  {paymentLink} <IoCopyOutline />
-                </Button>
+                <div className='flex gap-2'>
+                  <Button
+                    type='button'
+                    onClick={() => handleCopyPaymentLink(paymentLink)}
+                    className='w-full h-10 justify-between bg-secondary/5 text-secondary border'>
+                    {paymentLink} <IoCopyOutline />
+                  </Button>
+
+                  <Button className='h-10' disabled={isSendingLink} onClick={handleSendPaymentLink}>
+                    {isSendingLink ? (
+                      <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
+                    ) : (
+                      'Send Link'
+                    )}
+                  </Button>
+                </div>
               </InputWrapper>
             )}
 
