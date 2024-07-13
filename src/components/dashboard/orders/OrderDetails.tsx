@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { handleCopyPaymentLink } from '@/utils/utils';
+import { errorToast, handleCopyPaymentLink } from '@/utils/utils';
 import { format } from 'date-fns';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,10 @@ import { IoCopyOutline } from 'react-icons/io5';
 import { TypeOrderDetails } from '@/types/types';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
+import paymentLinkEmail from '@/components/email-template/PaymentEmail';
+import config from '@/config';
+import axios from 'axios';
+import { toast } from '@/components/ui/use-toast';
 
 interface OrderDetailsProps {
   data: TypeOrderDetails;
@@ -43,6 +47,24 @@ const OrderDetails = ({ data, handleSheetOpen }: OrderDetailsProps) => {
       value: data.period ?? '-',
     },
   ];
+
+  // Send payment link to the customer
+  const handleSendPaymentLink = async () => {
+    const customerName = data.customers?.customer_name;
+    const productName = data.products?.product_name;
+    const amount = `${getSymbolFromCurrency(data.currency)} ${data.price}`;
+
+    const emailBody = paymentLinkEmail(customerName!, amount, productName!, paymentLink);
+    const customerEmail = data.customers?.email;
+    const subject = `Payment Link for ${productName} - ${config.app.name}`;
+
+    try {
+      await axios.post('/api/resend', { email: customerEmail, subject, emailBody });
+      toast({ description: 'Payment link sent successfully' });
+    } catch (error: any) {
+      errorToast(error.response.data.message || `${error}`);
+    }
+  };
 
   return (
     <Sheet open={!!data} onOpenChange={handleSheetOpen}>
@@ -97,7 +119,9 @@ const OrderDetails = ({ data, handleSheetOpen }: OrderDetailsProps) => {
         </div>
 
         <SheetFooter>
-          <Button className='w-full h-11'>Send Payment Reminder</Button>
+          <Button className='w-full h-11' onClick={handleSendPaymentLink}>
+            Send Payment Reminder
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

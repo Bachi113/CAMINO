@@ -48,7 +48,7 @@ export async function getOrders(page: number, pageSize: number, searchQuery?: st
 
   let query = supabaseAdmin
     .from('orders')
-    .select('*, products (product_name), customers (customer_name)')
+    .select('*, products (product_name), customers (customer_name, email)')
     .order('created_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
 

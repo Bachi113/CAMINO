@@ -75,6 +75,7 @@ export type TypeOrderDetails = {
   };
   customers?: {
     customer_name: string;
+    email: string;
   };
   period?: number | null;
 };

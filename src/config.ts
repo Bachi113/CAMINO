@@ -1,4 +1,19 @@
-import { TypeConfig } from './types/config';
+// Config Type
+type TypeConfig = {
+  isSupabaseEnabled: boolean;
+  app: {
+    name: string;
+    description: string;
+    url: string;
+  };
+  supportEmail: string;
+  stripe: {
+    baseUrl: string;
+  };
+  resend: {
+    senderEmailAddress: string;
+  };
+};
 
 // Supabase API credentials retrieved from environment variables for secure access.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -11,8 +26,8 @@ const config = {
   // APP: Basic application settings used globally for branding and links.
   app: {
     name: 'Camino',
-    description: 'NextJS SaaS AI Boilerplate',
-    url: 'https://base.builderkit.ai',
+    description: 'Camino is your all-in-one platform for seamless merchant and customer interactions.',
+    url: 'https://caminodb.vercel.app',
   },
 
   // SUPPORT: Contact email for application support, should be updated with an actual email address.
@@ -22,6 +37,10 @@ const config = {
   stripe: {
     // Base URL for Stripe.
     baseUrl: 'https://api.stripe.com',
+  },
+  resend: {
+    // TODO: Update the sender email address for the Resend service.
+    senderEmailAddress: 'Camino <onboarding@resend.dev>',
   },
 };
 
