@@ -24,6 +24,7 @@ import Filter from './Filter';
 import { HiOutlineSearch } from 'react-icons/hi';
 import { LuLoader } from 'react-icons/lu';
 import { TbReload } from 'react-icons/tb';
+import ModalCreatePaymentLink from '../ModalCreatePaymentLink';
 
 const OrdersTable: React.FC = () => {
   const supabase = supabaseBrowserClient();
@@ -137,6 +138,7 @@ const OrdersTable: React.FC = () => {
           <SortBy setSorting={setSorting} />
           <Filter customerNames={customerNames} onFilterChange={handleFilterChange} />
           <DownloadButton fileName='orders' data={data!} />
+          <ModalCreatePaymentLink />
         </div>
       </div>
 

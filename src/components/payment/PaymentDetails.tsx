@@ -21,6 +21,7 @@ interface PaymentDetailsProps {
 const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
   const [isPending, setIsPending] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
+  const [isCustomerDetailsOpen, setIsCustomerDetailsOpen] = useState(true);
   const [installments, setInstallments] = useState(data.installments_options[0].toString());
 
   const router = useRouter();
@@ -68,6 +69,31 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
             <span>{getSymbolFromCurrency(data.currency)}</span>
             <span>{data.price}</span>
           </h2>
+        </div>
+
+        <div>
+          <button
+            onClick={() => setIsCustomerDetailsOpen(!isCustomerDetailsOpen)}
+            className='flex justify-between items-center w-full py-2 text-left'>
+            <span className='text-sm font-medium'>Customer Details</span>
+            {isCustomerDetailsOpen ? (
+              <IoIosArrowUp className='size-5 opacity-50' />
+            ) : (
+              <IoIosArrowDown className='size-5 opacity-50' />
+            )}
+          </button>
+          {isCustomerDetailsOpen && (
+            <div className='space-y-2 text-sm bg-[#F9F9F9] rounded-md px-4 py-3'>
+              <div className='flex justify-between font-medium'>
+                <span className='opacity-50'>Name</span>
+                <span className='max-w-72 truncate capitalize'>{(data as any).customers?.customer_name}</span>
+              </div>
+              <div className='flex justify-between font-medium'>
+                <span className='opacity-50'>Email</span>
+                <span className='max-w-72 truncate'>{(data as any).customers?.email}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         <div>

@@ -1,5 +1,9 @@
+import paymentLinkEmail from '@/components/email-template/PaymentEmail';
 import { toast } from '@/components/ui/use-toast';
+import config from '@/config';
+import axios from 'axios';
 import { type ClassValue, clsx } from 'clsx';
+import getSymbolFromCurrency from 'currency-symbol-map';
 import { twMerge } from 'tailwind-merge';
 
 // This utility function combines and deduplicates class names using clsx and twMerge.
@@ -185,3 +189,20 @@ export function debounce<T extends (...args: any[]) => any>(
     timeout = setTimeout(() => func(...args), wait);
   };
 }
+
+// Send payment link to the customer
+export const sendPaymentLinkViaEmail = async (
+  customerName: string,
+  customerEmail: string,
+  productName: string,
+  currency: string,
+  price: string,
+  paymentLink: string
+) => {
+  const amount = `${getSymbolFromCurrency(currency)}${price}`;
+
+  const emailBody = paymentLinkEmail(customerName!, amount, productName!, paymentLink);
+  const subject = `Payment Link for ${productName} - ${config.app.name}`;
+
+  await axios.post('/api/resend', { email: customerEmail, subject, emailBody });
+};

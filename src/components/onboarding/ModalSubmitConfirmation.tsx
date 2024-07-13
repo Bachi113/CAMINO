@@ -15,17 +15,20 @@ import Link from 'next/link';
 import { errorToast } from '@/utils/utils';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { createProduct } from '@/app/actions/stripe.actions';
+import { LuLoader } from 'react-icons/lu';
 
 interface ModalSubmitConfirmationProps {
   onBoardingId?: string;
 }
 const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps) => {
   const [submitConfirmation, setSubmitConfirmation] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
-    try {
-      const supabase = supabaseBrowserClient();
+    const supabase = supabaseBrowserClient();
 
+    setIsLoading(true);
+    try {
       if (!onBoardingId) {
         throw 'You need to be logged in.';
       }
@@ -49,6 +52,8 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
       setSubmitConfirmation(true);
     } catch (error: any) {
       errorToast(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,9 +90,12 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
               </Link>
             </div>
           ) : (
-            <Button onClick={handleSubmit} className='w-full'>
-              {/* TODO: add loader */}
-              Submit and Continue
+            <Button disabled={isLoading} onClick={handleSubmit} className='w-full'>
+              {isLoading ? (
+                <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
+              ) : (
+                'Submit and Continue'
+              )}
             </Button>
           )}
         </DialogFooter>
