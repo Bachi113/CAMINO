@@ -131,7 +131,7 @@ export type Database = {
           address: string | null;
           created_at: string;
           customer_name: string | null;
-          email: string;
+          email: string | null;
           id: string;
           phone: string | null;
           stripe_id: string | null;
@@ -141,7 +141,7 @@ export type Database = {
           address?: string | null;
           created_at?: string;
           customer_name?: string | null;
-          email: string;
+          email?: string | null;
           id?: string;
           phone?: string | null;
           stripe_id?: string | null;
@@ -151,7 +151,7 @@ export type Database = {
           address?: string | null;
           created_at?: string;
           customer_name?: string | null;
-          email?: string;
+          email?: string | null;
           id?: string;
           phone?: string | null;
           stripe_id?: string | null;

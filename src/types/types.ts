@@ -76,6 +76,7 @@ export type TypeOrderDetails = {
   customers?: {
     customer_name: string;
     email: string;
+    phone: string;
   };
   period?: number | null;
 };
@@ -98,7 +99,7 @@ export type TypeCustomerDetails = {
   merchant_id: string;
   customers: {
     customer_name: string | null;
-    email: string;
+    email: string | null;
     phone: string | null;
     address: string | null;
   } | null;

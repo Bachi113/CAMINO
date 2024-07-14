@@ -44,13 +44,13 @@ export const columns: ColumnDef<TypeCustomerDetails>[] = [
     accessorFn: (row) => row.customers?.email,
     id: 'email',
     header: 'Email',
-    cell: (info) => info.getValue(),
+    cell: (info) => info.getValue() || '-',
   },
   {
     accessorFn: (row) => row.customers?.phone,
     id: 'phone',
     header: 'Phone',
-    cell: (info) => info.getValue(),
+    cell: (info) => info.getValue() || '-',
   },
   {
     accessorFn: (row) => row.customers?.address,

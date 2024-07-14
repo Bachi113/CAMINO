@@ -23,7 +23,7 @@ const LoginLayout = async ({ children }: Props) => {
   const loginType = isMerchantLogin ? 'Merchant' : 'Customer';
 
   return (
-    <div className='h-screen bg-light-purple-gradient pt-28'>
+    <div className='h-screen flex items-center bg-light-purple-gradient'>
       <div className='w-[28%] space-y-2 border rounded-lg p-8 mx-auto'>
         <div className='w-full flex flex-col items-center justify-center gap-5'>
           <Logo />

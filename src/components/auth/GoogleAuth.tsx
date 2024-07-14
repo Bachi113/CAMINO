@@ -12,7 +12,6 @@ export default function GoogleAuth() {
 
   // Ensure the redirect URL is configured correctly in the Supabase project settings.
   // Incorrect configuration can lead to failed authentication attempts or security vulnerabilities.
-  // TODO: handle for camino (admin) login if required
   const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/merchant`;
 
   return (
