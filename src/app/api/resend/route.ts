@@ -13,9 +13,7 @@ export async function POST(req: Request) {
     // Send the welcome email using the Resend instance
     const { error } = await resend.emails.send({
       from: config.resend.senderEmailAddress,
-      // to: email, // For multiple addresses, send as an array of strings. Max 50. It will not send emails to custom emails until you configure your domain in Resend.
-      // TODO: remove hardcoded email address
-      to: 'it@savex.me',
+      to: email, // For multiple addresses, send as an array of strings. Max 50. It will not send emails to custom emails until you configure your domain in Resend.
       subject,
       html: emailBody, // Add email body in HTML format
     });
@@ -26,7 +24,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: `Email sent to ${email}` }, { status: 200 });
   } catch (error: any) {
-    console.error(error.message);
+    console.error(error);
     return NextResponse.json({ message: error.message ?? `${error}` }, { status: 400 });
   }
 }

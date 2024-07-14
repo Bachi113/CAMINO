@@ -54,7 +54,10 @@ const CustomerAccountSettings = () => {
           <Input id='name' value={fullName} onChange={(e) => setFullName(e.target.value)} />
         </InputWrapper>
         <InputWrapper id='email' label='Email address' required>
-          <Input id='email' disabled value={data?.email} />
+          <Input id='email' disabled value={data?.email || ''} />
+        </InputWrapper>
+        <InputWrapper id='phone' label='Phone number' required>
+          <Input id='phone' disabled value={data?.phone || ''} />
         </InputWrapper>
 
         <Button variant='secondary' disabled={data?.customer_name === fullName}>

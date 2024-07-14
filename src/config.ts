@@ -13,6 +13,9 @@ type TypeConfig = {
   resend: {
     senderEmailAddress: string;
   };
+  twilio: {
+    messagingServiceSid: string;
+  };
 };
 
 // Supabase API credentials retrieved from environment variables for secure access.
@@ -41,6 +44,10 @@ const config = {
   resend: {
     // TODO: Update the sender email address for the Resend service.
     senderEmailAddress: 'Camino <onboarding@resend.dev>',
+  },
+  twilio: {
+    // TODO: Update the messaging service SID for Twilio.
+    messagingServiceSid: 'MGXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
   },
 };
 

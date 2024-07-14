@@ -24,10 +24,9 @@ export default function CustomerLoginMagicLinkPage() {
     }
 
     setEmailAddress(email);
-    const response = await signInWithMagicLink(email, 'customer');
-
-    if (typeof response === 'string') {
-      errorToast(response);
+    const error = await signInWithMagicLink(email, 'customer');
+    if (error) {
+      errorToast(error);
       return;
     }
     setIsMagicLinkSent(true);
@@ -64,14 +63,8 @@ export default function CustomerLoginMagicLinkPage() {
           </div>
         ) : (
           <form className='space-y-7'>
-            <InputWrapper label='Email address' required>
-              <Input
-                type='email'
-                id='email'
-                name='email'
-                placeholder='john@gmail.com'
-                className='h-11 bg-accent mt-2'
-              />
+            <InputWrapper id='email' label='Email address' required>
+              <Input type='email' id='email' name='email' placeholder='john@gmail.com' className='h-11' />
             </InputWrapper>
 
             <SubmitButton formAction={handleFormAction}>Continue</SubmitButton>

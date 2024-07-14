@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { errorToast, handleCopyPaymentLink, sendPaymentLinkViaEmail } from '@/utils/utils';
+import { errorToast, handleCopyPaymentLink } from '@/utils/utils';
 import { format } from 'date-fns';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { useState } from 'react';
 import { LuLoader } from 'react-icons/lu';
+import { sendPaymentLinkToCustomer } from '@/utils/send-payment-link';
 
 interface OrderDetailsProps {
   data: TypeOrderDetails;
@@ -53,18 +54,20 @@ const OrderDetails = ({ data, handleSheetOpen }: OrderDetailsProps) => {
   const handleSendPaymentLink = async () => {
     const customerName = data.customers?.customer_name || '';
     const customerEmail = data.customers?.email || '';
+    const customerPhone = data.customers?.phone || '';
     const productName = data.products?.product_name || '';
 
     try {
       setIsLoading(true);
-      await sendPaymentLinkViaEmail(
+      await sendPaymentLinkToCustomer({
         customerName,
         customerEmail,
+        customerPhone,
         productName,
-        data.currency,
-        data.price,
-        paymentLink
-      );
+        currency: data.currency,
+        price: data.price,
+        paymentLink,
+      });
       toast({ description: 'Payment link sent successfully' });
     } catch (error: any) {
       errorToast(error.response.data.message || `${error}`);

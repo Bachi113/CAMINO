@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
-import { errorToast, handleCopyPaymentLink, sendPaymentLinkViaEmail } from '@/utils/utils';
+import { errorToast, handleCopyPaymentLink } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreatePaymentLink } from '@/types/types';
@@ -34,6 +34,7 @@ import { queryClient } from '@/app/providers';
 import { getUser } from '@/app/actions/supabase.actions';
 import { LuLoader } from 'react-icons/lu';
 import { toast } from '../ui/use-toast';
+import { sendPaymentLinkToCustomer } from '@/utils/send-payment-link';
 
 interface ModalCreatePaymentLinkProps {}
 
@@ -153,19 +154,21 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
     const customer = merchantCustomers?.find((c) => c.customers?.stripe_id === getValues('stripe_cus_id'));
     const customerName = customer?.customers?.customer_name || '';
     const customerEmail = customer?.customers?.email || '';
+    const customerPhone = customer?.customers?.phone || '';
     const product = products?.find((p) => p.id === getValues('product_id'));
     const productName = product?.product_name || '';
 
     try {
       setIsSendingLink(true);
-      await sendPaymentLinkViaEmail(
+      await sendPaymentLinkToCustomer({
         customerName,
+        customerPhone,
         customerEmail,
         productName,
-        getValues('currency'),
-        getValues('price'),
-        paymentLink
-      );
+        currency: getValues('currency'),
+        price: getValues('price'),
+        paymentLink,
+      });
       toast({ description: 'Payment link sent successfully' });
     } catch (error: any) {
       errorToast(error.response.data.message || `${error}`);
