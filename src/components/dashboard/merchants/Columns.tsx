@@ -2,8 +2,6 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { TypeMerchantDetails } from '@/types/types';
 
-export const formatDate = (date: string | null | undefined) => (date ? format(new Date(date), 'Pp') : '-');
-
 export const formatAddress = (address: TypeMerchantDetails['business_addresses']) =>
   address ? `${address.street_address}, ${address.postal_code}, ${address.country}` : '-';
 
@@ -19,7 +17,7 @@ export const columns: ColumnDef<TypeMerchantDetails>[] = [
   {
     accessorKey: 'onboarded_at',
     header: 'Dated At',
-    cell: ({ row }) => formatDate(row.original.onboarded_at),
+    cell: ({ row }) => format(new Date(row.original.onboarded_at!), 'Pp'),
   },
   {
     accessorKey: 'personal_informations.id',

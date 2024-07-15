@@ -136,6 +136,7 @@ export async function getAllMerchants(page: number, pageSize: number, searchQuer
     bank_details (account_number, swift_code, iban_code)
   `
     )
+    .not('onboarded_at', 'is', null)
     .order('onboarded_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
 
