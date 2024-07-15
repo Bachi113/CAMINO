@@ -116,7 +116,7 @@ const CustomersTable: React.FC = () => {
           </span>
           <Input
             ref={searchInputRef}
-            placeholder='Search order details'
+            placeholder='Search customer details'
             defaultValue={searchQuery}
             disabled={isLoading}
             onChange={handleGlobalFilterChange}
