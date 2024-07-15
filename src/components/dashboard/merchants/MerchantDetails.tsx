@@ -2,8 +2,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { TypeMerchantDetails } from '@/types/types';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
-import { formatAddress, formatName } from './Columns';
-import { format } from 'date-fns';
+import { formatAddress, formatDate, formatName } from './Columns';
 
 interface MerchantDetailsProps {
   data: TypeMerchantDetails;
@@ -14,7 +13,7 @@ const MerchantDetails = ({ data, handleSheetOpen }: MerchantDetailsProps) => {
   const dataToDisplay = data && [
     {
       label: 'Merchant Onboarded On',
-      value: format(new Date(data.onboarded_at!), 'Pp'),
+      value: formatDate(data.onboarded_at),
     },
     {
       label: 'Merchant Name',
