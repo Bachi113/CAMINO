@@ -23,10 +23,11 @@ export const sendPaymentLinkToCustomer = async (data: TypeSendPaymentLinkToCusto
     await sendPaymentLinkViaEmail(customerName, customerEmail, productName, amount, paymentLink);
   }
 
-  // Send payment link to the customer via SMS
-  if (customerPhone) {
-    await sendPaymentLinkViaSMS(customerName, customerPhone, productName, amount, paymentLink);
-  }
+  // TODO: Uncomment this code after implementing the SMS service w/ Twilio
+  // // Send payment link to the customer via SMS
+  // if (customerPhone) {
+  //   await sendPaymentLinkViaSMS(customerName, customerPhone, productName, amount, paymentLink);
+  // }
 };
 
 // Send payment link to the customer via email
