@@ -53,10 +53,6 @@ export async function getOrders(page: number, pageSize: number, searchQuery?: st
   const merchant = await getMerchant();
   const customer = await getCustomer();
 
-  if (!merchant && !customer) {
-    return { error: 'User not found' };
-  }
-
   let query = supabaseAdmin
     .from('orders')
     .select('*, products (product_name), customers (customer_name, email, phone)')
@@ -86,10 +82,6 @@ export async function getTransactions(page: number, pageSize: number, searchQuer
   const admin = await getAdmin();
   const merchant = await getMerchant();
   const customer = await getCustomer();
-
-  if (!merchant && !customer) {
-    return { error: 'User not found' };
-  }
 
   let query = supabaseAdmin
     .from('transactions')
