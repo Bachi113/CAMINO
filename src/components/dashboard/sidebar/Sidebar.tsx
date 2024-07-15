@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import ButtonSignout from '@/components/ButtonSignout';
 import { TypeUserType } from '@/types/types';
-import { commonLinks, merchantLinks } from './links';
+import { adminLinks, commonLinks, merchantLinks } from './links';
 import { IoSettingsOutline } from 'react-icons/io5';
 
 interface SidebarProps {
@@ -17,13 +17,20 @@ interface SidebarProps {
 const accountSettingsLink = {
   label: 'Account Settings',
   path: '/account-settings',
-  logo: <IoSettingsOutline size={20} />,
+  logo: <IoSettingsOutline size={18} />,
 };
 
 const Sidebar: FC<SidebarProps> = ({ userType }) => {
   const pathname = usePathname();
 
-  let sidebarLinks = userType === 'merchant' ? [...commonLinks, ...merchantLinks] : commonLinks;
+  const isTypeMerchant = userType === 'merchant';
+  const isTypeAdmin = userType === 'admin';
+
+  let sidebarLinks = isTypeAdmin
+    ? [...commonLinks, ...adminLinks]
+    : isTypeMerchant
+      ? [...commonLinks, ...merchantLinks]
+      : commonLinks;
   sidebarLinks = [...sidebarLinks, accountSettingsLink];
 
   return (

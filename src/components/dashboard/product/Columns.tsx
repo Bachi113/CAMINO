@@ -10,12 +10,10 @@ export const columns: ColumnDef<TypeProduct>[] = [
     accessorFn: (row, index) => index + 1,
     id: 'sr_no',
     header: 'Sr No.',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'id',
     header: 'Product ID',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'created_at',
@@ -39,7 +37,6 @@ export const columns: ColumnDef<TypeProduct>[] = [
   {
     accessorKey: 'product_name',
     header: 'Product Name',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'price',
@@ -53,7 +50,6 @@ export const columns: ColumnDef<TypeProduct>[] = [
   {
     accessorKey: 'category',
     header: 'Category',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'remarks',

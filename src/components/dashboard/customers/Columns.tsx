@@ -10,12 +10,10 @@ export const columns: ColumnDef<TypeCustomerDetails>[] = [
     accessorFn: (row, index) => index + 1,
     id: 'sr_no',
     header: 'Sr No.',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'customer_id',
     header: 'Customer ID',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'created_at',
@@ -38,7 +36,6 @@ export const columns: ColumnDef<TypeCustomerDetails>[] = [
     accessorFn: (row) => row.customers?.customer_name,
     id: 'customer_name',
     header: 'Customer Name',
-    cell: (info) => info.getValue(),
   },
   {
     accessorFn: (row) => row.customers?.email,
@@ -56,6 +53,5 @@ export const columns: ColumnDef<TypeCustomerDetails>[] = [
     accessorFn: (row) => row.customers?.address,
     id: 'address',
     header: 'Address',
-    cell: (info) => info.getValue(),
   },
 ];

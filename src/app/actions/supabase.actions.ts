@@ -25,8 +25,18 @@ export const getUserType = async () => {
   if (customer) {
     return 'customer';
   }
+
+  const admin = await getAdmin();
+  if (admin) {
+    return 'admin';
+  }
 };
 
+export const getAdmin = async () => {
+  const supabase = supabaseServerClient();
+  const { data: admin } = await supabase.from('admins').select().single();
+  return admin;
+};
 export const getCustomer = async () => {
   const supabase = supabaseServerClient();
   const { data: customer } = await supabase.from('customers').select().single();
@@ -92,6 +102,31 @@ export async function getTransactions(page: number, pageSize: number, searchQuer
   }
   if (searchQuery) {
     query = query.ilike('customer_name', `%${searchQuery}%`);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    return { error };
+  }
+
+  return { data };
+}
+
+export async function getAllMerchants(page: number, pageSize: number, searchQuery?: string) {
+  let query = supabaseAdmin
+    .from('onboarding')
+    .select(
+      `id, onboarded_at,
+    personal_informations (id, first_name, last_name),
+    business_addresses (city, street_address, postal_code, country),
+    bank_details (account_number, swift_code, iban_code)
+  `
+    )
+    .order('onboarded_at', { ascending: false })
+    .range((page - 1) * pageSize, page * pageSize - 1);
+
+  if (searchQuery) {
+    query = query.ilike('personal_informations.first_name', `%${searchQuery}%`);
   }
 
   const { data, error } = await query;

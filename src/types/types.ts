@@ -12,8 +12,30 @@ export type TypeProduct = Database['public']['Tables']['products']['Row'];
 export type TypeCustomer = Database['public']['Tables']['customers']['Row'];
 export type EnumOrderStatus = Database['public']['Enums']['orderstatus'];
 
+// Merchant Details Type
+export type TypeMerchantDetails = {
+  id: string;
+  onboarded_at: string | null;
+  personal_informations: {
+    id: string;
+    first_name: string;
+    last_name: string;
+  } | null;
+  business_addresses: {
+    city: string;
+    street_address: string;
+    postal_code: string;
+    country: string;
+  } | null;
+  bank_details: {
+    account_number: string;
+    swift_code: string | null;
+    iban_code: string;
+  } | null;
+};
+
 // User Type
-export type TypeUserType = 'merchant' | 'customer';
+export type TypeUserType = 'merchant' | 'customer' | 'admin';
 
 // Create Product
 export type TypeCreateProduct = {
