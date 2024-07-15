@@ -19,8 +19,9 @@ const LoginLayout = async ({ children }: Props) => {
   const headersList = headers();
   const pathname = headersList.get('x-current-path') || '';
   const isMerchantLogin = pathname.includes('/merchant/login');
+  const isAdminLogin = pathname.includes('/admin/login');
 
-  const loginType = isMerchantLogin ? 'Merchant' : 'Customer';
+  const loginType = isAdminLogin ? 'Admin' : isMerchantLogin ? 'Merchant' : 'Customer';
 
   return (
     <div className='h-screen flex items-center bg-light-purple-gradient'>

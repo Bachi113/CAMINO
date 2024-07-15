@@ -88,3 +88,68 @@ export const customerData2 = [
     value: '10%',
   },
 ];
+
+// Admin Data
+
+// Admin Dashboard Data
+
+export const adminData1 = [
+  {
+    label: 'User Acquisition Rate',
+    value: '24%',
+  },
+  {
+    label: 'User Retention Rate',
+    value: '70%',
+  },
+  {
+    label: 'Customer Lifetime Value',
+    value: '£2736',
+  },
+];
+
+export const adminData2 = [
+  {
+    label: 'Average Order Value (AOV)',
+    value: '£2736',
+  },
+  {
+    label: 'Transaction Volume',
+    value: '1736',
+  },
+  {
+    label: 'Delinquency Rate',
+    value: '12%',
+  },
+  {
+    label: 'Repayment Rate',
+    value: '12%',
+  },
+  {
+    label: 'Repeat Purchase Rate',
+    value: '12%',
+  },
+  {
+    label: 'Revenue Growth Rate',
+    value: '12%',
+  },
+];
+
+export const adminData3 = [
+  {
+    label: 'Merchant Adoption Rate',
+    value: '8%',
+  },
+  {
+    label: 'Net Promoter Score (NPS)',
+    value: '8',
+  },
+  {
+    label: 'Conversion Rate',
+    value: '24%',
+  },
+  {
+    label: 'Cancellation Rate',
+    value: '6%',
+  },
+];

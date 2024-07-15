@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { handleCustomerLogin, handleMerchantLogin } from '../utils';
+import { handleAdminLogin, handleCustomerLogin, handleMerchantLogin } from '../utils';
 
 export async function GET(request: Request, { params }: { params: { user: string } }) {
   const requestUrl = new URL(request.url);
@@ -8,13 +8,13 @@ export async function GET(request: Request, { params }: { params: { user: string
   const origin = requestUrl.origin;
 
   try {
-    if (params.user === 'customer') {
-      await handleCustomerLogin(token_hash);
-    } else if (params.user === 'merchant') {
+    if (params.user === 'merchant') {
       await handleMerchantLogin(token_hash, code);
       return NextResponse.redirect(`${origin}/onboarding`);
-    } else {
-      // TODO: Handle for camino (admin)
+    } else if (params.user === 'customer') {
+      await handleCustomerLogin(token_hash);
+    } else if (params.user === 'admin') {
+      await handleAdminLogin(token_hash);
     }
 
     return NextResponse.redirect(`${origin}/dashboard`);

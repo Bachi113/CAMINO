@@ -1,4 +1,10 @@
-import { getOrders, getTransactions } from '@/app/actions/supabase.actions';
+import {
+  getAdmin,
+  getAllCustomers,
+  getAllMerchants,
+  getOrders,
+  getTransactions,
+} from '@/app/actions/supabase.actions';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -117,6 +123,21 @@ const useGetCustomerData = () => {
   });
 };
 
+const useGetAdminData = () => {
+  const supabase = supabaseBrowserClient();
+  return useQuery({
+    queryKey: ['getAdmin'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('admins').select('*').single();
+
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+  });
+};
+
 const useGetOrders = (page: number, pageSize: number, searchQuery?: string) => {
   return useQuery({
     queryKey: ['getOrders', page, pageSize, searchQuery],
@@ -135,6 +156,19 @@ const useGetTransactions = (page: number, pageSize: number, searchQuery?: string
     queryKey: ['getTransactions', page, pageSize, searchQuery],
     queryFn: async () => {
       const response = await getTransactions(page, pageSize, searchQuery);
+      if (response.error) {
+        throw response.error;
+      }
+      return response.data;
+    },
+  });
+};
+
+const useGetMerchnats = (page: number, pageSize: number, searchQuery?: string) => {
+  return useQuery({
+    queryKey: ['getAllMerchants', page, pageSize, searchQuery],
+    queryFn: async () => {
+      const response = await getAllMerchants(page, pageSize, searchQuery);
       if (response.error) {
         throw response.error;
       }
@@ -191,26 +225,28 @@ const useGetMerchantCustomers = ({ page, pageSize, searchQuery }: UseGetMerchant
   return useQuery({
     queryKey: ['getMerchantCustomers', page, pageSize, searchQuery],
     queryFn: async () => {
-      // Build the base query
-      let query = supabase
-        .from('merchants_customers')
-        .select('*, customers (customer_name, email, phone, address)')
-        .range((page - 1) * pageSize, page * pageSize - 1);
+      const admin = await getAdmin();
 
-      if (searchQuery) {
-        query = query.ilike('customers.customer_name', `%${searchQuery}%`);
+      if (admin) {
+        return getAllCustomers(page, pageSize, searchQuery);
+      } else {
+        let query = supabase
+          .from('merchants_customers')
+          .select('*, customers (customer_name, email, phone, address)')
+          .range((page - 1) * pageSize, page * pageSize - 1);
+
+        if (searchQuery) {
+          query = query.ilike('customers.customer_name', `%${searchQuery}%`);
+        }
+
+        const { data, error } = await query;
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        return data;
       }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Error fetching merchant customers:', error);
-        throw new Error(`Error fetching merchant customers: ${error.message}`);
-      }
-
-      return data;
     },
-    staleTime: 60000, // 1 minute
   });
 };
 
@@ -288,8 +324,10 @@ export {
   useGetVerificationDocuments,
   useGetOnboardingData,
   useGetCustomerData,
+  useGetAdminData,
   useGetOrders,
   useGetTransactions,
+  useGetMerchnats,
   useGetMerchantCustomers,
   useGetProducts,
   useGetCustomers,

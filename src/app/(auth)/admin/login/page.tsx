@@ -4,32 +4,36 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import InputWrapper from '@/components/InputWrapper';
-import GoogleAuth from '@/components/auth/GoogleAuth';
 import { errorToast } from '@/utils/utils';
 import { signInWithMagicLink } from '@/app/actions/login.actions';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 import { Button } from '@/components/ui/button';
 import { SubmitButton } from '@/components/SubmitButton';
 
-export default function MerchantLoginPage() {
+export default function AdminLoginPage() {
   const [emailAddress, setEmailAddress] = useState('');
   const [isMagicLinkSent, setIsMagicLinkSent] = useState(false);
 
   const handleFormAction = async (formData: FormData) => {
-    const email = formData.get('email') as string;
-    if (!email) {
-      errorToast('Email is required');
-      return;
-    }
+    try {
+      const email = formData.get('email') as string;
+      if (!email) {
+        throw 'Email is required';
+      }
+      if (!email.endsWith('@savex.me')) {
+        throw 'The entered email is not authorised for admin login';
+      }
 
-    setEmailAddress(email);
-    const error = await signInWithMagicLink(email, 'merchant');
+      setEmailAddress(email);
+      const error = await signInWithMagicLink(email, 'admin');
+      if (error) {
+        throw error;
+      }
 
-    if (error) {
-      errorToast(error);
-      return;
+      setIsMagicLinkSent(true);
+    } catch (error) {
+      errorToast(`${error}`);
     }
-    setIsMagicLinkSent(true);
   };
 
   return (
@@ -40,7 +44,7 @@ export default function MerchantLoginPage() {
             We have sent a magic link to <br /> <span className='font-medium'>{emailAddress}</span>
           </span>
         ) : (
-          'Please enter your below details to login'
+          'Please enter the authorised email to login'
         )}
       </p>
       {isMagicLinkSent ? (
@@ -55,14 +59,6 @@ export default function MerchantLoginPage() {
         </div>
       ) : (
         <div className='w-full space-y-6'>
-          <GoogleAuth />
-
-          <div className='flex items-center gap-2'>
-            <hr className='w-full' />
-            <span>or</span>
-            <hr className='w-full' />
-          </div>
-
           <form className='space-y-7'>
             <InputWrapper label='Email address' required>
               <Input

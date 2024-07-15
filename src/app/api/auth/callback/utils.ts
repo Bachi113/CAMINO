@@ -69,3 +69,33 @@ export async function handleCustomerLogin(token_hash: string | null) {
     throw error.message;
   }
 }
+
+export async function handleAdminLogin(token_hash: string | null) {
+  const supabase = supabaseServerClient();
+
+  if (token_hash === null) {
+    throw new Error('Invalid magic link');
+  }
+
+  // Handle Magic Link verification
+  const { data, error: authError } = await supabase.auth.verifyOtp({
+    token_hash,
+    type: 'email' as EmailOtpType,
+  });
+  if (authError) {
+    throw authError.message;
+  }
+
+  const userEmail = data.user?.email;
+  const { data: admin } = await supabaseAdmin.from('admins').select('id').eq('email', userEmail!).single();
+
+  if (admin == null) {
+    const userId = data.user?.id;
+    const { error: insertError } = await supabaseAdmin
+      .from('admins')
+      .insert({ user_id: userId!, email: userEmail! });
+    if (insertError) {
+      throw insertError.message;
+    }
+  }
+}

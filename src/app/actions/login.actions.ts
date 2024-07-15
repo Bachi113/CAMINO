@@ -4,7 +4,7 @@ import { supabaseAdmin } from '@/utils/supabase/admin';
 import { supabaseServerClient } from '@/utils/supabase/server';
 import { headers } from 'next/headers';
 
-export async function signInWithMagicLink(email: string, user: 'customer' | 'merchant') {
+export async function signInWithMagicLink(email: string, user: 'customer' | 'merchant' | 'admin') {
   const supabase = supabaseServerClient();
 
   try {

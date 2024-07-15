@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { BsHandbag } from 'react-icons/bs';
 import { LuUser2 } from 'react-icons/lu';
 import Image from 'next/image';
+import { MdOutlineAdminPanelSettings } from 'react-icons/md';
 
 const Home: FC = async () => {
   const user = await getUser();
@@ -34,17 +35,23 @@ const Home: FC = async () => {
           </p>
         </CardContent>
 
-        <CardFooter className='flex gap-2'>
+        <CardFooter className='flex flex-col gap-2'>
           <Link href='/merchant/login' className='w-full'>
-            <Button variant='default' size='lg' className='gap-2 font-normal'>
-              <BsHandbag className='size-4' />
+            <Button variant='outline' size='lg' className='w-full gap-2 font-normal'>
+              <BsHandbag className='size-4' strokeWidth={0.3} />
               <span>Merchant Login</span>
             </Button>
           </Link>
           <Link href='/customer/login' className='w-full'>
-            <Button variant='outline' size='lg' className='gap-2 font-normal'>
+            <Button variant='outline' size='lg' className='w-full gap-2 font-normal'>
               <LuUser2 className='size-4' />
               <span>Customer Login</span>
+            </Button>
+          </Link>
+          <Link href='/admin/login' className='w-full'>
+            <Button size='lg' className='w-full gap-2 font-normal'>
+              <MdOutlineAdminPanelSettings className='size-5' />
+              <span>Admin Login</span>
             </Button>
           </Link>
         </CardFooter>

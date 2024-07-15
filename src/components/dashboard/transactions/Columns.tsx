@@ -10,7 +10,6 @@ export const columns: ColumnDef<TypeTransaction>[] = [
     accessorFn: (row, index) => index + 1,
     id: 'sr_no',
     header: 'Sr No.',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'created_at',
@@ -32,32 +31,26 @@ export const columns: ColumnDef<TypeTransaction>[] = [
   {
     accessorKey: 'stripe_id',
     header: 'Txn ID',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'order_id',
     header: 'Order ID',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'customer_id',
     header: 'Customer ID',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'customer_name',
     header: 'Customer Name',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'product_id',
     header: 'Product ID',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'product_name',
     header: 'Product Name',
-    cell: (info) => info.getValue(),
   },
   {
     accessorKey: 'status',
