@@ -1,4 +1,10 @@
-import { getAllMerchants, getOrders, getTransactions } from '@/app/actions/supabase.actions';
+import {
+  getAdmin,
+  getAllCustomers,
+  getAllMerchants,
+  getOrders,
+  getTransactions,
+} from '@/app/actions/supabase.actions';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -219,26 +225,28 @@ const useGetMerchantCustomers = ({ page, pageSize, searchQuery }: UseGetMerchant
   return useQuery({
     queryKey: ['getMerchantCustomers', page, pageSize, searchQuery],
     queryFn: async () => {
-      // Build the base query
-      let query = supabase
-        .from('merchants_customers')
-        .select('*, customers (customer_name, email, phone, address)')
-        .range((page - 1) * pageSize, page * pageSize - 1);
+      const admin = await getAdmin();
 
-      if (searchQuery) {
-        query = query.ilike('customers.customer_name', `%${searchQuery}%`);
+      if (admin) {
+        return getAllCustomers(page, pageSize, searchQuery);
+      } else {
+        let query = supabase
+          .from('merchants_customers')
+          .select('*, customers (customer_name, email, phone, address)')
+          .range((page - 1) * pageSize, page * pageSize - 1);
+
+        if (searchQuery) {
+          query = query.ilike('customers.customer_name', `%${searchQuery}%`);
+        }
+
+        const { data, error } = await query;
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        return data;
       }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Error fetching merchant customers:', error);
-        throw new Error(`Error fetching merchant customers: ${error.message}`);
-      }
-
-      return data;
     },
-    staleTime: 60000, // 1 minute
   });
 };
 
