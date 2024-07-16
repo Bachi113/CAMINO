@@ -24,7 +24,11 @@ import { LuLoader } from 'react-icons/lu';
 import { TbReload } from 'react-icons/tb';
 import { queryClient } from '@/app/providers';
 
-const CustomersTable: React.FC = () => {
+interface CustomersTableProps {
+  isMerchant: boolean;
+}
+
+const CustomersTable: React.FC<CustomersTableProps> = ({ isMerchant }) => {
   const [isRotating, setIsRotating] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
@@ -38,6 +42,7 @@ const CustomersTable: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading } = useGetMerchantCustomers({
+    isMerchant,
     page,
     pageSize,
     searchQuery,
@@ -135,7 +140,7 @@ const CustomersTable: React.FC = () => {
             onIdFilterChange={handleIdFilterChange}
           />
           <DownloadButton data={data} fileName='customers' />
-          <ModalAddNewCustomer triggerButton={true} />
+          {isMerchant && <ModalAddNewCustomer triggerButton={true} />}
         </div>
       </div>
 

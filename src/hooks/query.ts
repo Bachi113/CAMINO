@@ -1,10 +1,4 @@
-import {
-  getAdmin,
-  getAllCustomers,
-  getAllMerchants,
-  getOrders,
-  getTransactions,
-} from '@/app/actions/supabase.actions';
+import { getAllCustomers, getAllMerchants, getOrders, getTransactions } from '@/app/actions/supabase.actions';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -213,23 +207,25 @@ const useGetProducts = () => {
   });
 };
 interface UseGetMerchantCustomersParams {
+  isMerchant: boolean;
   page: number;
   pageSize: number;
   nameFilter?: string;
   idFilter?: string;
   searchQuery?: string;
 }
-const useGetMerchantCustomers = ({ page, pageSize, searchQuery }: UseGetMerchantCustomersParams) => {
+const useGetMerchantCustomers = ({
+  isMerchant,
+  page,
+  pageSize,
+  searchQuery,
+}: UseGetMerchantCustomersParams) => {
   const supabase = supabaseBrowserClient();
 
   return useQuery({
     queryKey: ['getMerchantCustomers', page, pageSize, searchQuery],
     queryFn: async () => {
-      const admin = await getAdmin();
-
-      if (admin) {
-        return getAllCustomers(page, pageSize, searchQuery);
-      } else {
+      if (isMerchant) {
         let query = supabase
           .from('merchants_customers')
           .select('*, customers (customer_name, email, phone, address)')
@@ -245,6 +241,8 @@ const useGetMerchantCustomers = ({ page, pageSize, searchQuery }: UseGetMerchant
         }
 
         return data;
+      } else {
+        return getAllCustomers(page, pageSize, searchQuery);
       }
     },
   });

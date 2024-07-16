@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { supabaseServerClient } from '@/utils/supabase/server';
+import { setUserRoleCookie } from '@/utils/user-role';
 import { EmailOtpType } from '@supabase/supabase-js';
 
 export async function handleMerchantLogin(token_hash: string | null, code: string | null) {
@@ -22,6 +23,8 @@ export async function handleMerchantLogin(token_hash: string | null, code: strin
   if (error) {
     throw error.message;
   }
+
+  await setUserRoleCookie('merchant');
 }
 
 export async function handleCustomerLogin(token_hash: string | null) {
@@ -68,6 +71,8 @@ export async function handleCustomerLogin(token_hash: string | null) {
   if (error) {
     throw error.message;
   }
+
+  await setUserRoleCookie('customer');
 }
 
 export async function handleAdminLogin(token_hash: string | null) {
@@ -98,4 +103,6 @@ export async function handleAdminLogin(token_hash: string | null) {
       throw insertError.message;
     }
   }
+
+  await setUserRoleCookie('admin');
 }

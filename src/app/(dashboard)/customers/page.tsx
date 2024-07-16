@@ -1,12 +1,15 @@
 import NavTitle from '@/components/dashboard/NavTitle';
 import CustomersTable from '@/components/dashboard/customers/Table';
+import { getUserRoleFromCookie } from '@/utils/user-role';
 import React from 'react';
 
-const Page = () => {
+const Page = async () => {
+  const userType = await getUserRoleFromCookie();
+
   return (
     <div className='p-8 w-full'>
       <NavTitle />
-      <CustomersTable />
+      <CustomersTable isMerchant={userType === 'merchant'} />
     </div>
   );
 };

@@ -11,10 +11,11 @@ import {
   merchantData2,
   merchantData3,
 } from './data';
-import { getUserType } from '@/app/actions/supabase.actions';
+import { TypeUserType } from '@/types/types';
+import { getUserRoleFromCookie } from '@/utils/user-role';
 
 export default async function MerchantDashboard() {
-  const userType = await getUserType();
+  const userType = (await getUserRoleFromCookie()) as TypeUserType;
 
   const isAdmin = userType === 'admin';
   const isMerchant = userType === 'merchant';
