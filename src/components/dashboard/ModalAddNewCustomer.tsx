@@ -32,7 +32,7 @@ interface ModalAddNewCustomerProps {
   triggerButton?: boolean;
 }
 
-const validations = yup.object().shape({
+export const customerValidations = yup.object().shape({
   name: yup.string().required('Name is required'),
   email: yup.string().required('Email is required'),
   phone: yup.string().required('Phone is required'),
@@ -53,7 +53,7 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({
     handleSubmit,
     formState: { errors },
   } = useForm<TypeCreateCustomer>({
-    resolver: yupResolver(validations),
+    resolver: yupResolver(customerValidations),
   });
 
   const handleCreateCustomer = async (formData: TypeCreateCustomer) => {
