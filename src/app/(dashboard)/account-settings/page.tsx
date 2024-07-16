@@ -1,11 +1,11 @@
-import React from 'react';
 import NavTitle from '@/components/dashboard/NavTitle';
 import { CustomerAccountSettings, MerchantAccountSettings } from '@/components/dashboard/account-settings';
-import { getUserType } from '@/app/actions/supabase.actions';
 import AdminAccountSettings from '@/components/dashboard/account-settings/AdminAccountSettings';
+import { TypeUserType } from '@/types/types';
+import { getUserRoleFromCookie } from '@/utils/user-role';
 
 export default async function AccountSettings() {
-  const userType = await getUserType();
+  const userType = (await getUserRoleFromCookie()) as TypeUserType;
 
   return (
     <div className='p-8 w-full space-y-12'>

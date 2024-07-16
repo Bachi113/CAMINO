@@ -102,7 +102,7 @@ const MerchantsTable: React.FC = () => {
           </span>
           <Input
             ref={searchInputRef}
-            placeholder='Search transacrion details'
+            placeholder='Search merchant details'
             defaultValue={searchQuery}
             disabled={isLoading}
             onChange={handleGlobalFilterChange}

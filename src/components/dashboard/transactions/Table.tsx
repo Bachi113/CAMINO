@@ -120,7 +120,7 @@ const TransactionsTable: React.FC = () => {
           </span>
           <Input
             ref={searchInputRef}
-            placeholder='Search transacrion details'
+            placeholder='Search transaction details'
             defaultValue={searchQuery}
             disabled={isLoading}
             onChange={handleGlobalFilterChange}

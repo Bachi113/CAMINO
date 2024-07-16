@@ -2,6 +2,7 @@
 
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { supabaseServerClient } from '@/utils/supabase/server';
+import { getUserRoleFromCookie } from '@/utils/user-role';
 
 export const getUser = async () => {
   const supabase = supabaseServerClient();
@@ -15,28 +16,6 @@ export const getUser = async () => {
   return data.user;
 };
 
-export const getUserType = async () => {
-  const merchant = await getMerchant();
-  if (merchant) {
-    return 'merchant';
-  }
-
-  const customer = await getCustomer();
-  if (customer) {
-    return 'customer';
-  }
-
-  const admin = await getAdmin();
-  if (admin) {
-    return 'admin';
-  }
-};
-
-export const getAdmin = async () => {
-  const supabase = supabaseServerClient();
-  const { data: admin } = await supabase.from('admins').select().single();
-  return admin;
-};
 export const getCustomer = async () => {
   const supabase = supabaseServerClient();
   const { data: customer } = await supabase.from('customers').select().single();
@@ -49,9 +28,7 @@ export const getMerchant = async () => {
 };
 
 export async function getOrders(page: number, pageSize: number, searchQuery?: string) {
-  const admin = await getAdmin();
-  const merchant = await getMerchant();
-  const customer = await getCustomer();
+  const userType = await getUserRoleFromCookie();
 
   let query = supabaseAdmin
     .from('orders')
@@ -59,13 +36,16 @@ export async function getOrders(page: number, pageSize: number, searchQuery?: st
     .order('created_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
 
-  if (!admin) {
-    if (merchant) {
-      query = query.eq('user_id', merchant.user_id);
-    } else if (customer) {
-      query = query.eq('stripe_cus_id', customer.stripe_id!);
-    }
+  if (userType == 'merchant') {
+    const merchant = await getMerchant();
+    const merchantId = merchant?.user_id;
+    query = query.eq('user_id', merchantId!);
+  } else if (userType == 'customer') {
+    const customer = await getCustomer();
+    const customerId = customer?.id;
+    query = query.eq('stripe_cus_id', customerId!);
   }
+
   if (searchQuery) {
     query = query.ilike('products.product_name', `%${searchQuery}%`);
   }
@@ -79,9 +59,7 @@ export async function getOrders(page: number, pageSize: number, searchQuery?: st
 }
 
 export async function getTransactions(page: number, pageSize: number, searchQuery?: string) {
-  const admin = await getAdmin();
-  const merchant = await getMerchant();
-  const customer = await getCustomer();
+  const userType = await getUserRoleFromCookie();
 
   let query = supabaseAdmin
     .from('transactions')
@@ -89,13 +67,16 @@ export async function getTransactions(page: number, pageSize: number, searchQuer
     .order('created_at', { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
 
-  if (!admin) {
-    if (merchant) {
-      query = query.eq('merchant_id', merchant.user_id);
-    } else if (customer) {
-      query = query.eq('customer_id', customer.id);
-    }
+  if (userType == 'merchant') {
+    const merchant = await getMerchant();
+    const merchantId = merchant?.user_id;
+    query = query.eq('merchant_id', merchantId!);
+  } else if (userType == 'customer') {
+    const customer = await getCustomer();
+    const customerId = customer?.id;
+    query = query.eq('customer_id', customerId!);
   }
+
   if (searchQuery) {
     query = query.ilike('customer_name', `%${searchQuery}%`);
   }

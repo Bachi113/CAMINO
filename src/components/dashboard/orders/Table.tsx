@@ -26,7 +26,11 @@ import { LuLoader } from 'react-icons/lu';
 import { TbReload } from 'react-icons/tb';
 import ModalCreatePaymentLink from '../ModalCreatePaymentLink';
 
-const OrdersTable: React.FC = () => {
+interface OrdersTableProps {
+  isMerchant: boolean;
+}
+
+const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
   const supabase = supabaseBrowserClient();
   const [customerNames, setCustomerNames] = useState<string[]>();
   const [isRotating, setIsRotating] = useState(false);
@@ -138,7 +142,7 @@ const OrdersTable: React.FC = () => {
           <SortBy setSorting={setSorting} />
           <Filter customerNames={customerNames} onFilterChange={handleFilterChange} />
           <DownloadButton fileName='orders' data={data!} />
-          <ModalCreatePaymentLink />
+          {isMerchant && <ModalCreatePaymentLink />}
         </div>
       </div>
 
