@@ -136,7 +136,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
           />
         </div>
         <div className='flex items-center gap-2'>
-          <Button size='icon' variant='outline' onClick={handleRefreshFn}>
+          <Button size='icon' variant='outline' onClick={handleRefreshFn} className='size-10 shadow-none'>
             <TbReload size={20} className={cn(isRotating && 'animate-[spin_1s_linear]')} />
           </Button>
           <SortBy setSorting={setSorting} />
