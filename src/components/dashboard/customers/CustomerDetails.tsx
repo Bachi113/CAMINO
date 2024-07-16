@@ -62,6 +62,7 @@ const CustomerDetails = ({ handleSheetOpen, data }: CustomerDetailsProps) => {
 
     queryClient.invalidateQueries({ queryKey: ['getMerchantCustomers'] });
     toast({ description: 'Customer updated successfully' });
+    handleSheetOpen();
   };
 
   return (

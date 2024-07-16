@@ -13,7 +13,7 @@ import { columns } from './Columns';
 import ModalAddNewProduct from '../ModalAddNewProduct';
 import SortBy from './Sortby';
 import { useGetMerchantProducts } from '@/hooks/query';
-import ProductDescription from './ProductDetails';
+import ProductDetails from './ProductDetails';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn, debounce } from '@/utils/utils';
@@ -171,7 +171,7 @@ const ProductsTable: React.FC = () => {
         </Button>
       </div>
       {selectedProduct && (
-        <ProductDescription handleSheetOpen={() => setSelectedProduct(undefined)} data={selectedProduct} />
+        <ProductDetails handleSheetOpen={() => setSelectedProduct(undefined)} data={selectedProduct} />
       )}
     </>
   );
