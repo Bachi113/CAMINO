@@ -25,11 +25,11 @@ export default async function MerchantDashboard() {
   const data3 = isAdmin ? adminData3 : isMerchant ? merchantData3 : [];
 
   return (
-    <div className='p-8 w-full'>
+    <div className='p-6 w-full'>
       <NavTitle />
 
       {isMerchant ? (
-        <div className='flex justify-end gap-2 mt-10 mb-8'>
+        <div className='flex justify-end gap-2 mt-6 mb-8'>
           <ModalAddNewProduct triggerButton={true} buttonVariant='outline' />
           <ModalCreatePaymentLink />
         </div>

@@ -5,6 +5,8 @@ import { format } from 'date-fns';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { TypeOrder } from '@/types/types';
 import { FaSort } from 'react-icons/fa';
+import { IoCopyOutline } from 'react-icons/io5';
+import { handleCopyPaymentLink } from '@/utils/utils';
 
 export const columns: ColumnDef<TypeOrder>[] = [
   {
@@ -47,7 +49,6 @@ export const columns: ColumnDef<TypeOrder>[] = [
     header: 'Customer Name',
     cell: ({ row: { original } }) => (original as any).customers?.customer_name,
   },
-
   {
     accessorKey: 'price',
     header: 'Total Amount',
@@ -57,11 +58,32 @@ export const columns: ColumnDef<TypeOrder>[] = [
       </div>
     ),
   },
-
   {
     accessorKey: 'period',
     header: 'Installments',
     cell: (info) => info.getValue() ?? '-',
+  },
+  {
+    accessorKey: 'id',
+    header: 'Payment Link',
+    cell: (info) => {
+      const linkId = info.getValue() as string;
+      const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${linkId}`;
+      return (
+        <Button
+          type='button'
+          variant='outline'
+          size='sm'
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCopyPaymentLink(paymentLink);
+          }}
+          className='w-full h-7 justify-center gap-1 opacity-80 px-2'>
+          <span>...{linkId}</span>
+          <IoCopyOutline />
+        </Button>
+      );
+    },
   },
   {
     accessorKey: 'status',

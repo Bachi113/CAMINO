@@ -170,13 +170,7 @@ const MerchantAccountSettings = () => {
                   </Button>
                 )}
 
-                {index != 4 ? (
-                  <Separator />
-                ) : (
-                  <p className='text-xs text-destructive'>
-                    If any of the document needs to bu updated pls contact our customer support
-                  </p>
-                )}
+                {index != 4 && <Separator />}
               </div>
             ))}
           </div>

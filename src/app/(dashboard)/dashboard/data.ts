@@ -91,8 +91,6 @@ export const customerData2 = [
 
 // Admin Data
 
-// Admin Dashboard Data
-
 export const adminData1 = [
   {
     label: 'User Acquisition Rate',
