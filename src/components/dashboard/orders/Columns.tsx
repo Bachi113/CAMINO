@@ -36,7 +36,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
     },
   },
   {
-    accessorKey: 'product_name',
+    accessorKey: 'products.product_name',
     header: 'Product',
     cell: ({ row: { original } }) => <div className='w-24'>{(original as any).products?.product_name}</div>,
   },
@@ -45,7 +45,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
     header: 'Quantity',
   },
   {
-    accessorKey: 'customer_name',
+    accessorKey: 'customers.customer_name',
     header: 'Customer Name',
     cell: ({ row: { original } }) => (original as any).customers?.customer_name,
   },
