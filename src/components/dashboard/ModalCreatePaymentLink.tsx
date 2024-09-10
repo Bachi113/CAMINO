@@ -25,7 +25,7 @@ import { TypeCreatePaymentLink } from '@/types/types';
 import { useGetCustomers, useGetProducts } from '@/hooks/query';
 import ModalAddNewCustomer from './ModalAddNewCustomer';
 import { FiPlus } from 'react-icons/fi';
-import ModalAddNewProduct, { currencyOptions } from './ModalAddNewProduct';
+import ModalAddNewProduct from './ModalAddNewProduct';
 import { Checkbox } from '../ui/checkbox';
 import { IoCopyOutline } from 'react-icons/io5';
 import { HiPlus } from 'react-icons/hi';
@@ -35,11 +35,12 @@ import { getUser } from '@/app/actions/supabase.actions';
 import { LuLoader } from 'react-icons/lu';
 import { toast } from '../ui/use-toast';
 import { sendPaymentLinkToCustomer } from '@/utils/send-payment-link';
+import { currencyOptions } from '@/utils/contsants/currencies';
 
 interface ModalCreatePaymentLinkProps {}
 
 const initialData = {
-  currency: currencyOptions[0],
+  currency: currencyOptions[0].value,
   quantity: 1,
   installments_options: [],
 };
@@ -257,8 +258,8 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {currencyOptions.map((option) => (
-                          <SelectItem key={option} value={option}>
-                            {option} ({getSymbolFromCurrency(option)})
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label} ({getSymbolFromCurrency(option.value)})
                           </SelectItem>
                         ))}
                       </SelectContent>

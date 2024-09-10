@@ -5,7 +5,7 @@ export const personalInformationSchema = yup.object().shape({
   firstName: yup.string().required('First Name is required'),
   lastName: yup.string().required('Last Name is required'),
   email: yup.string().email('Invalid email address').required('Email is required'),
-  phone: yup.string().required('Phone Number is required'),
+  phone: yup.number().typeError('Enter a valid phone number').required('Phone Number is required'),
   terms: yup
     .boolean()
     .oneOf([true], 'You must accept the terms and conditions')
@@ -16,7 +16,7 @@ export type IPersonalInformation = {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
+  phone: number;
   terms: boolean;
 };
 
@@ -70,7 +70,7 @@ export const businessAddressSchema = yup.object().shape({
   city: yup.string().required('City is required'),
   postalCode: yup.string().required('Postal Code is required'),
   country: yup.string().required('Country is required'),
-  phoneNumber: yup.number().required('Phone Number is required'),
+  phoneNumber: yup.number().typeError('Enter a valid phone number').required('Phone Number is required'),
 });
 
 export interface IBusinessAddressField {
@@ -86,7 +86,6 @@ export interface CheckboxField {
   value: string;
 }
 
-//
 export type IBankDetails = {
   bankName: string;
   bankAccountNumber: number;
@@ -111,7 +110,7 @@ export const BankDetailsSchema = yup.object().shape({
   ibanNumber: yup
     .string()
     .required('IBAN Number is required')
-    .max(15, 'IBAN Number must be at most 15 characters'),
+    .max(34, 'IBAN Number must be at most 34 characters'),
   swiftCode: yup.string().optional().max(15, 'Swift Code must be at most 15 characters'),
   purchasingCurrency: yup.string().required('Purchasing Currency is required'),
 });

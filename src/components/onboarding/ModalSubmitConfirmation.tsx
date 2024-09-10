@@ -38,6 +38,7 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
       if (product.error) {
         throw `${product.error}`;
       }
+
       const { error } = await supabase
         .from('onboarding')
         .update({
@@ -64,15 +65,14 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
           Submit Form
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className='gap-6'>
         {submitConfirmation && (
-          <div>
-            <FaCheck className='rounded-full size-12 text-white p-2 bg-green-500' />
-          </div>
+          <FaCheck className='rounded-full size-12 mx-auto text-white p-2 bg-green-500' />
         )}
-        <DialogHeader>
-          <DialogTitle>Confirm Submission</DialogTitle>
-          <DialogDescription>
+
+        <DialogHeader className='space-y-3'>
+          <DialogTitle className='text-center'>Confirm Submission</DialogTitle>
+          <DialogDescription className='text-center'>
             Please confirm that all details are correct before submitting.
           </DialogDescription>
         </DialogHeader>

@@ -9,7 +9,7 @@ export const getUser = async () => {
   const { data, error } = await supabase.auth.getUser();
 
   if (error) {
-    console.error('User not found:', error.message);
+    // console.error('User not found:', error.message);
     return null;
   }
 
