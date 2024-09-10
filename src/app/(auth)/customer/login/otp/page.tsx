@@ -6,7 +6,7 @@ import { SubmitButton } from '@/components/SubmitButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { countryOptions } from '@/utils/country-codes';
+import { countryOptions } from '@/utils/contsants/country-codes';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { errorToast } from '@/utils/utils';
 import Link from 'next/link';
@@ -32,7 +32,11 @@ export default function CustomerLoginOtpPage() {
         throw 'Phone number is required with a valid country code.';
       }
 
-      const fullPhoneNumber = `${selectedPhoneCode}${phoneNumber}`;
+      const country = countryOptions.find((c) => c.code === selectedPhoneCode);
+      if (!country) {
+        throw new Error('Please select the country code');
+      }
+      const fullPhoneNumber = `${country.phoneCode}${phoneNumber}`;
       setPhoneNumber(fullPhoneNumber);
 
       // Send OTP to the phone number
@@ -133,7 +137,7 @@ export default function CustomerLoginOtpPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {countryOptions.map((option) => (
-                        <SelectItem key={option.code} value={option.phoneCode}>
+                        <SelectItem key={option.code} value={option.code}>
                           <div className='flex items-center gap-2'>
                             <ReactCountryFlag
                               svg
@@ -143,7 +147,8 @@ export default function CustomerLoginOtpPage() {
                                 height: '1.2em',
                               }}
                             />
-                            <span>{option.phoneCode}</span>
+                            <span>{option.name}</span>
+                            <span>({option.phoneCode})</span>
                           </div>
                         </SelectItem>
                       ))}

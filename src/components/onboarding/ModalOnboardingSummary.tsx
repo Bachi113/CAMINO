@@ -7,6 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/utils';
@@ -19,14 +20,14 @@ import { BiEdit } from 'react-icons/bi';
 import { useRouter } from 'next/navigation';
 import { onboardingData } from '@/app/onboarding/[onboarding]/routes';
 
-type ModalOnboardingSummaryProps = {
-  isOpen: boolean;
-  handleModalOpen: () => void;
-};
-
 const { sections: sidebarItems } = onboardingData;
 
-const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handleModalOpen }) => {
+interface ModalOnboardingSummaryProps {
+  showModal?: boolean;
+}
+
+const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ showModal }) => {
+  const [isOpen, setIsOpen] = useState(showModal ?? false);
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
   const router = useRouter();
@@ -66,15 +67,23 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ isOpen, handl
     }, 100);
   }, [sections, isOpen]);
 
+  const handleModalOpen = () => {
+    setIsOpen(!isOpen);
+  };
+
   const handleRouteChange = (id: string) => {
-    if (id === 'document-verification') {
-      return handleModalOpen();
-    }
+    handleModalOpen();
     router.push(`/onboarding/${id}`);
   };
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger className='w-full'>
+        <Button size='xl' variant='outline' type='button' onClick={handleModalOpen}>
+          View Summary
+        </Button>
+      </DialogTrigger>
+
       <DialogContent className='max-w-3xl'>
         <DialogHeader>
           <DialogTitle className='text-slate-800'>Review Your Information</DialogTitle>

@@ -1,8 +1,10 @@
 'use client';
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { downloadCSV, errorToast } from '@/utils/utils';
+import { errorToast } from '@/utils/utils';
 import { FiDownload } from 'react-icons/fi';
+import { downloadCSV } from '@/utils/download-file';
 
 interface DownloadButtonProps {
   data?: Record<string, any>[];

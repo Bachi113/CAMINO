@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
-import { useGetBankDetails } from '@/hooks/query';
+import { useGetBankDetails, useGetVerificationDocuments } from '@/hooks/query';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { bankFields } from '@/utils/form-fields';
 import { BankDetailsSchema, IBankDetails } from '@/types/validations';
@@ -17,40 +17,9 @@ import { saveData, updateData } from '@/app/actions/onboarding.actions';
 import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
-
-const bankOptions = [
-  {
-    value: 'bank1',
-    label: 'Bank 1',
-  },
-  {
-    value: 'bank2',
-    label: 'Bank 2',
-  },
-  {
-    value: 'bank3',
-    label: 'Bank 3',
-  },
-  {
-    value: 'bank4',
-    label: 'Bank 4',
-  },
-];
-
-const currencyOptions = [
-  {
-    value: 'GBP',
-    label: 'GBP',
-  },
-  {
-    value: 'USD',
-    label: 'USD',
-  },
-  {
-    value: 'EUR',
-    label: 'EUR',
-  },
-];
+import { currencyOptions } from '@/utils/contsants/currencies';
+import { bankOptions } from '@/utils/contsants/banks';
+import ModalOnboardingSummary from './ModalOnboardingSummary';
 
 const BankDetails = () => {
   const router = useRouter();
@@ -67,6 +36,7 @@ const BankDetails = () => {
   });
 
   const { data } = useGetBankDetails();
+  const { data: documentsData } = useGetVerificationDocuments();
 
   useEffect(() => {
     if (data) {
@@ -176,7 +146,10 @@ const BankDetails = () => {
                 </InputWrapper>
               )}
 
-              <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+              <div className='flex gap-2'>
+                <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+                {documentsData && <ModalOnboardingSummary />}
+              </div>
             </div>
           </form>
         </div>

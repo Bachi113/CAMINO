@@ -1,10 +1,11 @@
 'use client';
 
-import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import {
   SortingState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -13,7 +14,7 @@ import { columns } from './Columns';
 import SortBy from './Sortby';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn, debounce } from '@/utils/utils';
+import { cn } from '@/utils/utils';
 import OrderDetails from './OrderDetails';
 import DownloadButton from '../DowloadCsvButton';
 import { useGetOrders } from '@/hooks/query';
@@ -37,12 +38,8 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedProduct, setSelectedProduct] = useState<TypeOrder>();
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(7);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading, isError } = useGetOrders(page, pageSize, searchQuery);
+  const { data, isLoading, isError } = useGetOrders();
 
   const filteredData = useMemo(() => {
     return (
@@ -57,13 +54,11 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     state: { sorting },
   });
 
   useEffect(() => {
-    if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
     if (data) {
       const customerNames: string[] = Array.from(
         new Set(data.map((order) => order.customers?.customer_name).filter((name): name is string => !!name))
@@ -94,19 +89,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
 
   const handleGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    debounce(() => setSearchQuery(value), 500)();
-  };
-
-  const handlePreviousPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (data?.length === pageSize) {
-      setPage(page + 1);
-    }
+    table.setGlobalFilter(value);
   };
 
   const handleFilterChange = (customerName: string | null) => {
@@ -121,20 +104,18 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
 
   return (
     <>
-      <div className='mt-10 flex justify-between items-center w-full'>
+      <div className='mt-5 flex justify-between items-center w-full'>
         <div className='relative'>
           <span className='absolute left-2 top-3'>
             <HiOutlineSearch className='text-gray-500' />
           </span>
           <Input
-            ref={searchInputRef}
-            placeholder='Search order details'
-            defaultValue={searchQuery}
-            disabled={isLoading}
+            placeholder='Type here to search order'
             onChange={handleGlobalFilterChange}
             className='w-[350px] h-10 pl-8'
           />
         </div>
+
         <div className='flex items-center gap-2'>
           <Button size='icon' variant='outline' onClick={handleRefreshFn} className='size-10 shadow-none'>
             <TbReload size={20} className={cn(isRotating && 'animate-[spin_1s_linear]')} />
@@ -146,7 +127,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
         </div>
       </div>
 
-      <div className='mt-8'>
+      <div className='mt-6'>
         {isLoading || isError ? (
           <div className='flex gap-3 justify-center items-center h-full'>
             {!isError ? (
@@ -156,7 +137,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
             )}
           </div>
         ) : (
-          <Table className='bg-white overflow-auto rounded-md w-full'>
+          <Table className='max-h-[calc(100vh-180px)] bg-white overflow-auto rounded-md w-full'>
             <TableHeader className='h-[54px]'>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -195,19 +176,6 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
             </TableBody>
           </Table>
         )}
-      </div>
-
-      <div className='flex justify-end gap-2 mt-4'>
-        <Button variant='outline' size='sm' onClick={handlePreviousPage} disabled={page === 1}>
-          Previous
-        </Button>
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={handleNextPage}
-          disabled={!data || data.length <= pageSize}>
-          Next
-        </Button>
       </div>
 
       {selectedProduct && (

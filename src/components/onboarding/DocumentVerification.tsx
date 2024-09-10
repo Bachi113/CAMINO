@@ -62,8 +62,8 @@ async function uploadDocuments(files: FormData[]) {
       if (!file) {
         throw new Error(`Document ${index + 1} does not exist.`);
       }
-      const key = `${user.id}-${file.name}`;
 
+      const key = `${user.id}-${file.name}`;
       const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_NAME!;
       return supabase.storage.from(bucketName).upload(key, file, { upsert: true });
     });
@@ -85,7 +85,7 @@ async function uploadDocuments(files: FormData[]) {
 
 const DocumentVerification = () => {
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showSummaryModl, setShowSummaryModal] = useState(false);
 
   const {
     register,
@@ -128,12 +128,9 @@ const DocumentVerification = () => {
     setValue(fieldName, {});
   };
 
-  const openSummaryModal = () => {
-    setShowModal(true);
-  };
-
   const handleFormSubmit = async (formData: IDocumentVerification) => {
     setLoading(true);
+
     try {
       const fileUploadPromises = documentsToUpload
         .map(({ field, value }) => {
@@ -153,8 +150,6 @@ const DocumentVerification = () => {
       const fileData = await Promise.all(fileUploadPromises);
       const fileUrls = await uploadDocuments(fileData);
 
-      console.log(fileUrls, '---fileUrls');
-
       if (fileUrls.error) {
         throw fileUrls.error;
       }
@@ -173,7 +168,7 @@ const DocumentVerification = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
-      openSummaryModal();
+      setShowSummaryModal(true);
     } catch (error: any) {
       errorToast(`${error}`);
     } finally {
@@ -226,9 +221,10 @@ const DocumentVerification = () => {
                       key={doc.field}
                       label={`Document Verification ${index + 1}`}
                       className='flex justify-between items-center w-full'
+                      labelClassName='mb-0'
                       required={index === 0}>
                       <Input type='file' id={doc.field} {...register(docField)} className='hidden' />
-                      <div className='flex items-center'>
+                      <div className='flex items-center gap-2'>
                         {!uploadedFileName && !rawFileName && (
                           <label
                             htmlFor={doc.field}
@@ -255,19 +251,11 @@ const DocumentVerification = () => {
               </div>
               <div className='flex gap-2'>
                 <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
-                {data && (
-                  <Button size='xl' variant='outline' type='button' onClick={openSummaryModal}>
-                    View Summary
-                  </Button>
-                )}
+                {data && <ModalOnboardingSummary showModal={showSummaryModl} />}
               </div>
             </div>
           </form>
         </div>
-
-        {showModal && (
-          <ModalOnboardingSummary isOpen={showModal} handleModalOpen={() => setShowModal(!showModal)} />
-        )}
       </div>
     </>
   );

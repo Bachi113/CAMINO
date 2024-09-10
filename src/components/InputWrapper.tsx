@@ -26,6 +26,7 @@ interface InputWrapperProps {
   children?: ReactNode;
   extraOption?: ReactNode;
   className?: string | string[];
+  labelClassName?: string | string[];
   required?: boolean;
 }
 
@@ -39,12 +40,13 @@ const InputWrapper: FC<InputWrapperProps> = ({
   children,
   extraOption,
   className,
+  labelClassName,
   required,
 }) => {
   return (
     <div className={cn('w-full relative text-default font-medium', className)}>
       <div>
-        <label htmlFor={id} className='flex items-end gap-1 mb-2'>
+        <label htmlFor={id} className={cn('flex items-end gap-1 mb-2', labelClassName)}>
           {/* Displays extra options, aligning them with the label. Mostly Icons to be shown before the Label. */}
           {extraOption && <div className='w-4'>{extraOption}</div>}
           <div className='flex items-end gap-1 w-full'>

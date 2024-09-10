@@ -9,7 +9,7 @@ export const getUser = async () => {
   const { data, error } = await supabase.auth.getUser();
 
   if (error) {
-    console.error('User not found:', error.message);
+    // console.error('User not found:', error.message);
     return null;
   }
 
@@ -27,14 +27,13 @@ export const getMerchant = async () => {
   return merchant;
 };
 
-export async function getOrders(page: number, pageSize: number, searchQuery?: string) {
+export async function getOrders() {
   const userType = await getUserRoleFromCookie();
 
   let query = supabaseAdmin
     .from('orders')
     .select('*, products (product_name), customers (customer_name, email, phone)')
-    .order('created_at', { ascending: false })
-    .range((page - 1) * pageSize, page * pageSize - 1);
+    .order('created_at', { ascending: false });
 
   if (userType == 'merchant') {
     const merchant = await getMerchant();
@@ -46,10 +45,6 @@ export async function getOrders(page: number, pageSize: number, searchQuery?: st
     query = query.eq('stripe_cus_id', customerId!);
   }
 
-  if (searchQuery) {
-    query = query.ilike('products.product_name', `%${searchQuery}%`);
-  }
-
   const { data, error } = await query;
   if (error) {
     return { error };
@@ -58,14 +53,10 @@ export async function getOrders(page: number, pageSize: number, searchQuery?: st
   return { data };
 }
 
-export async function getTransactions(page: number, pageSize: number, searchQuery?: string) {
+export async function getTransactions() {
   const userType = await getUserRoleFromCookie();
 
-  let query = supabaseAdmin
-    .from('transactions')
-    .select()
-    .order('created_at', { ascending: false })
-    .range((page - 1) * pageSize, page * pageSize - 1);
+  let query = supabaseAdmin.from('transactions').select().order('created_at', { ascending: false });
 
   if (userType == 'merchant') {
     const merchant = await getMerchant();
@@ -77,10 +68,6 @@ export async function getTransactions(page: number, pageSize: number, searchQuer
     query = query.eq('customer_id', customerId!);
   }
 
-  if (searchQuery) {
-    query = query.ilike('customer_name', `%${searchQuery}%`);
-  }
-
   const { data, error } = await query;
   if (error) {
     return { error };
@@ -89,17 +76,11 @@ export async function getTransactions(page: number, pageSize: number, searchQuer
   return { data };
 }
 
-export async function getAllCustomers(page: number, pageSize: number, searchQuery?: string) {
-  let query = supabaseAdmin
+export async function getAllCustomers() {
+  const { data, error } = await supabaseAdmin
     .from('merchants_customers')
-    .select('*, customers (customer_name, email, phone, address)')
-    .range((page - 1) * pageSize, page * pageSize - 1);
+    .select('*, customers (customer_name, email, phone, address)');
 
-  if (searchQuery) {
-    query = query.ilike('customers.customer_name', `%${searchQuery}%`);
-  }
-
-  const { data, error } = await query;
   if (error) {
     throw new Error(error.message);
   }
@@ -107,8 +88,8 @@ export async function getAllCustomers(page: number, pageSize: number, searchQuer
   return data;
 }
 
-export async function getAllMerchants(page: number, pageSize: number, searchQuery?: string) {
-  let query = supabaseAdmin
+export async function getAllMerchants() {
+  const { data, error } = await supabaseAdmin
     .from('onboarding')
     .select(
       `id, onboarded_at,
@@ -118,14 +99,8 @@ export async function getAllMerchants(page: number, pageSize: number, searchQuer
   `
     )
     .not('onboarded_at', 'is', null)
-    .order('onboarded_at', { ascending: false })
-    .range((page - 1) * pageSize, page * pageSize - 1);
+    .order('onboarded_at', { ascending: false });
 
-  if (searchQuery) {
-    query = query.ilike('personal_informations.first_name', `%${searchQuery}%`);
-  }
-
-  const { data, error } = await query;
   if (error) {
     return { error };
   }

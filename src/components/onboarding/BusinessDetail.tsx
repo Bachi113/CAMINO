@@ -9,13 +9,14 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
 import NavigationButton from '@/components/onboarding/NavigationButton';
-import { useGetBuinessDetail } from '@/hooks/query';
+import { useGetBuinessDetail, useGetVerificationDocuments } from '@/hooks/query';
 import { IBusinessDetail, businessDetailSchema } from '@/types/validations';
 import { businessDetailsFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/actions/onboarding.actions';
 import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
+import ModalOnboardingSummary from './ModalOnboardingSummary';
 
 const BusinessDetail = () => {
   const router = useRouter();
@@ -31,6 +32,7 @@ const BusinessDetail = () => {
   });
 
   const { data } = useGetBuinessDetail();
+  const { data: documentsData } = useGetVerificationDocuments();
 
   useEffect(() => {
     if (data) {
@@ -92,7 +94,11 @@ const BusinessDetail = () => {
                 </InputWrapper>
               ))}
             </div>
-            <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+
+            <div className='flex gap-2'>
+              <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+              {documentsData && <ModalOnboardingSummary />}
+            </div>
           </form>
         </div>
       </div>

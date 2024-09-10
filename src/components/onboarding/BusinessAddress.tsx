@@ -9,7 +9,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
 import { IBusinessAddress, businessAddressSchema } from '@/types/validations';
-import { useGetBusinessAddress } from '@/hooks/query';
+import { useGetBusinessAddress, useGetVerificationDocuments } from '@/hooks/query';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { businessAddressFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/actions/onboarding.actions';
@@ -18,7 +18,8 @@ import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import ReactCountryFlag from 'react-country-flag';
-import { countryOptions } from '@/utils/country-codes';
+import { countryOptions } from '@/utils/contsants/country-codes';
+import ModalOnboardingSummary from './ModalOnboardingSummary';
 
 const BusinessAddress = () => {
   const router = useRouter();
@@ -37,6 +38,7 @@ const BusinessAddress = () => {
   });
 
   const { data } = useGetBusinessAddress();
+  const { data: documentsData } = useGetVerificationDocuments();
 
   useEffect(() => {
     if (data) {
@@ -49,7 +51,9 @@ const BusinessAddress = () => {
       const phoneMatch = data.phone_number.match(/^\+(\d+)\s(.*)$/);
       if (phoneMatch) {
         const [, countryCode, phoneNumber] = phoneMatch;
-        setSelectedPhoneCode(`+${countryCode}`);
+        const country = countryOptions.find((c) => c.phoneCode === `+${countryCode}`);
+        const countryCodeName = country?.code;
+        setSelectedPhoneCode(countryCodeName!);
         setValue('phoneNumber', parseInt(phoneNumber, 10));
       } else {
         setValue('phoneNumber', parseInt(data.phone_number, 10));
@@ -58,16 +62,21 @@ const BusinessAddress = () => {
   }, [setValue, data]);
 
   const handleFormSubmit = async (formData: IBusinessAddress) => {
-    setLoading(true);
-
-    const dataToUpdate = {
-      street_address: formData.streetAddress,
-      city: formData.city,
-      postal_code: formData.postalCode,
-      country: formData.country,
-      phone_number: `${selectedPhoneCode} ${formData.phoneNumber}`,
-    };
     try {
+      const country = countryOptions.find((c) => c.code === selectedPhoneCode);
+      if (!country) {
+        throw new Error('Please select the country code');
+      }
+      const dataToUpdate = {
+        street_address: formData.streetAddress,
+        city: formData.city,
+        postal_code: formData.postalCode,
+        country: formData.country,
+        phone_number: `${country?.phoneCode} ${formData.phoneNumber}`,
+      };
+
+      setLoading(true);
+
       if (data) {
         const res = await updateData({ ...dataToUpdate, id: data.id }, 'business_addresses');
         if (res?.error) throw res.error;
@@ -79,7 +88,7 @@ const BusinessAddress = () => {
       queryClient.invalidateQueries({ queryKey: ['getBusinessAddress'] });
       router.push('/onboarding/bank-account-details');
     } catch (error: any) {
-      errorToast(error || 'An unknown error occurred.');
+      errorToast(error || `${error}` || 'An unknown error occurred.');
       setLoading(false);
     }
   };
@@ -133,7 +142,7 @@ const BusinessAddress = () => {
                             </SelectTrigger>
                             <SelectContent>
                               {countryOptions.map((option) => (
-                                <SelectItem key={option.code} value={option.phoneCode}>
+                                <SelectItem key={option.code} value={option.code}>
                                   <div className='flex items-center gap-2'>
                                     <ReactCountryFlag
                                       svg
@@ -143,7 +152,8 @@ const BusinessAddress = () => {
                                         height: '1.2em',
                                       }}
                                     />
-                                    <span>{option.phoneCode}</span>
+                                    <span>{option.name}</span>
+                                    <span>({option.phoneCode})</span>
                                   </div>
                                 </SelectItem>
                               ))}
@@ -176,7 +186,11 @@ const BusinessAddress = () => {
                   </InputWrapper>
                 ))}
               </div>
-              <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+
+              <div className='flex gap-2'>
+                <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+                {documentsData && <ModalOnboardingSummary />}
+              </div>
             </div>
           </form>
         </div>

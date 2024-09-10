@@ -132,11 +132,11 @@ const useGetAdminData = () => {
   });
 };
 
-const useGetOrders = (page: number, pageSize: number, searchQuery?: string) => {
+const useGetOrders = () => {
   return useQuery({
-    queryKey: ['getOrders', page, pageSize, searchQuery],
+    queryKey: ['getOrders'],
     queryFn: async () => {
-      const response = await getOrders(page, pageSize, searchQuery);
+      const response = await getOrders();
       if (response.error) {
         throw response.error;
       }
@@ -145,11 +145,11 @@ const useGetOrders = (page: number, pageSize: number, searchQuery?: string) => {
   });
 };
 
-const useGetTransactions = (page: number, pageSize: number, searchQuery?: string) => {
+const useGetTransactions = () => {
   return useQuery({
-    queryKey: ['getTransactions', page, pageSize, searchQuery],
+    queryKey: ['getTransactions'],
     queryFn: async () => {
-      const response = await getTransactions(page, pageSize, searchQuery);
+      const response = await getTransactions();
       if (response.error) {
         throw response.error;
       }
@@ -158,11 +158,11 @@ const useGetTransactions = (page: number, pageSize: number, searchQuery?: string
   });
 };
 
-const useGetMerchnats = (page: number, pageSize: number, searchQuery?: string) => {
+const useGetMerchnats = () => {
   return useQuery({
-    queryKey: ['getAllMerchants', page, pageSize, searchQuery],
+    queryKey: ['getAllMerchants'],
     queryFn: async () => {
-      const response = await getAllMerchants(page, pageSize, searchQuery);
+      const response = await getAllMerchants();
       if (response.error) {
         throw response.error;
       }
@@ -206,43 +206,24 @@ const useGetProducts = () => {
     },
   });
 };
-interface UseGetMerchantCustomersParams {
-  isMerchant: boolean;
-  page: number;
-  pageSize: number;
-  nameFilter?: string;
-  idFilter?: string;
-  searchQuery?: string;
-}
-const useGetMerchantCustomers = ({
-  isMerchant,
-  page,
-  pageSize,
-  searchQuery,
-}: UseGetMerchantCustomersParams) => {
+
+const useGetMerchantCustomers = (isMerchant: boolean) => {
   const supabase = supabaseBrowserClient();
 
   return useQuery({
-    queryKey: ['getMerchantCustomers', page, pageSize, searchQuery],
+    queryKey: ['getMerchantCustomers'],
     queryFn: async () => {
       if (isMerchant) {
-        let query = supabase
+        const { data, error } = await supabase
           .from('merchants_customers')
-          .select('*, customers (customer_name, email, phone, address)')
-          .range((page - 1) * pageSize, page * pageSize - 1);
+          .select('*, customers (customer_name, email, phone, address)');
 
-        if (searchQuery) {
-          query = query.ilike('customers.customer_name', `%${searchQuery}%`);
-        }
-
-        const { data, error } = await query;
         if (error) {
           throw new Error(error.message);
         }
-
         return data;
       } else {
-        return getAllCustomers(page, pageSize, searchQuery);
+        return getAllCustomers();
       }
     },
   });
@@ -260,40 +241,23 @@ const useGetMerchantCustomerIdAndNames = () => {
       if (error) {
         throw error;
       }
-
       return data;
     },
   });
 };
 
-interface UseGetMerchantProductsParams {
-  page: number;
-  pageSize: number;
-  searchQuery?: string;
-}
-
-const useGetMerchantProducts = ({ page, pageSize, searchQuery }: UseGetMerchantProductsParams) => {
+const useGetMerchantProducts = () => {
   const supabase = supabaseBrowserClient();
 
   return useQuery({
-    queryKey: ['getMerchantProducts', page, pageSize, searchQuery],
+    queryKey: ['getMerchantProducts'],
     queryFn: async () => {
-      let query = supabase
-        .from('products')
-        .select('*')
-        .range((page - 1) * pageSize, page * pageSize - 1);
-
-      if (searchQuery) {
-        query = query.ilike('product_name', `%${searchQuery}%`);
-      }
-
-      const { data, error } = await query;
+      const { data, error } = await supabase.from('products').select('*');
 
       if (error) {
         console.error('Error fetching products:', error);
         throw new Error(`Error fetching products: ${error.message}`);
       }
-
       return data;
     },
   });

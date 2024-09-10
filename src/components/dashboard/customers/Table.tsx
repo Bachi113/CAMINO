@@ -1,10 +1,11 @@
 'use client';
 
-import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import {
   SortingState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -13,7 +14,7 @@ import { columns } from './Columns';
 import SortBy from './Sortby';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn, debounce } from '@/utils/utils';
+import { cn } from '@/utils/utils';
 import ModalAddNewCustomer from '../ModalAddNewCustomer';
 import { useGetMerchantCustomers } from '@/hooks/query';
 import CustomerDetails from './CustomerDetails';
@@ -36,17 +37,8 @@ const CustomersTable: React.FC<CustomersTableProps> = ({ isMerchant }) => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [customerNames, setCustomerNames] = useState<string[]>();
   const [customerIds, setCustomerIds] = useState<string[]>();
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(7);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading } = useGetMerchantCustomers({
-    isMerchant,
-    page,
-    pageSize,
-    searchQuery,
-  });
+  const { data, isLoading } = useGetMerchantCustomers(isMerchant);
 
   const filteredData = useMemo(() => {
     return (
@@ -68,13 +60,11 @@ const CustomersTable: React.FC<CustomersTableProps> = ({ isMerchant }) => {
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     state: { sorting },
   });
 
   useEffect(() => {
-    if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
     if (data) {
       const customerNames: string[] = data.map((customer) => customer.customers?.customer_name ?? '');
       const customerIds: string[] = data.map((customer) => customer.customer_id);
@@ -85,17 +75,7 @@ const CustomersTable: React.FC<CustomersTableProps> = ({ isMerchant }) => {
 
   const handleGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    debounce(() => setSearchQuery(value), 500)();
-  };
-
-  const handlePreviousPage = () => {
-    setPage((prevPage) => Math.max(prevPage - 1, 1));
-  };
-
-  const handleNextPage = () => {
-    if (data?.length === pageSize) {
-      setPage((prevPage) => prevPage + 1);
-    }
+    table.setGlobalFilter(value);
   };
 
   const handleNameFilterChange = (customerName: string | null) => {
@@ -114,20 +94,18 @@ const CustomersTable: React.FC<CustomersTableProps> = ({ isMerchant }) => {
 
   return (
     <>
-      <div className='mt-10 flex justify-between items-center w-full'>
+      <div className='mt-5 flex justify-between items-center w-full'>
         <div className='relative'>
           <span className='absolute left-2 top-3'>
             <HiOutlineSearch className='text-gray-500' />
           </span>
           <Input
-            ref={searchInputRef}
-            placeholder='Search customer details'
-            defaultValue={searchQuery}
-            disabled={isLoading}
+            placeholder='Type here to search customer'
             onChange={handleGlobalFilterChange}
             className='w-[350px] h-10 pl-8'
           />
         </div>
+
         <div className='flex items-center gap-2'>
           <Button size='icon' variant='outline' onClick={handleRefreshFn} className='size-10 shadow-none'>
             <TbReload size={20} className={cn(isRotating && 'animate-[spin_1s_linear]')} />
@@ -144,14 +122,14 @@ const CustomersTable: React.FC<CustomersTableProps> = ({ isMerchant }) => {
         </div>
       </div>
 
-      <div className='mt-8'>
+      <div className='mt-6'>
         {isLoading ? (
           <div className='flex gap-3 justify-center items-center h-full text-slate-500'>
             <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
             <span className='font-medium'>Loading...</span>
           </div>
         ) : (
-          <Table className='bg-white overflow-auto rounded-md'>
+          <Table className='max-h-[calc(100vh-180px)] bg-white overflow-auto rounded-md'>
             <TableHeader className='h-[54px]'>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -191,18 +169,7 @@ const CustomersTable: React.FC<CustomersTableProps> = ({ isMerchant }) => {
           </Table>
         )}
       </div>
-      <div className='flex justify-end gap-2 mt-4'>
-        <Button variant='outline' size='sm' onClick={handlePreviousPage} disabled={page === 1}>
-          Previous
-        </Button>
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={handleNextPage}
-          disabled={!data || data.length < pageSize}>
-          Next
-        </Button>
-      </div>
+
       {selectedCustomer && (
         <CustomerDetails handleSheetOpen={() => setSelectedCustomer(undefined)} data={selectedCustomer} />
       )}

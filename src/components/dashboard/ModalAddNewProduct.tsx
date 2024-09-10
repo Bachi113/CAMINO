@@ -28,6 +28,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import { HiPlus } from 'react-icons/hi';
 import { getUser } from '@/app/actions/supabase.actions';
 import { useGetProductCategories } from '@/hooks/query';
+import { currencyOptions } from '@/utils/contsants/currencies';
 
 interface ModalAddNewProductProps {
   openModal?: boolean;
@@ -36,12 +37,10 @@ interface ModalAddNewProductProps {
   buttonVariant?: 'outline' | 'default' | 'secondary' | 'destructive' | 'ghost' | 'link';
 }
 
-export const currencyOptions = ['GBP', 'USD', 'CAD', 'EUR'];
-
 const initialData = {
   product_name: '',
   category: '',
-  currency: currencyOptions[0],
+  currency: currencyOptions[0].value,
   price: '',
 };
 
@@ -168,9 +167,9 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {currencyOptions.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option} ({getSymbolFromCurrency(option)})
+                  {currencyOptions.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label} ({getSymbolFromCurrency(item.value)})
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -68,10 +68,10 @@ export default async function OnBoarding({ params }: TypeParams) {
           </div>
         </div>
         <Link
-          href='mailto:contact@camino.com'
+          href='mailto:contact@camino.fi'
           className='flex items-center gap-2 text-default text-sm font-normal leading-5 mt-5'>
           <MdOutlineEmail className='size-5' />
-          <p>contact@camino.com</p>
+          <p>contact@camino.fi</p>
         </Link>
       </div>
       <div className='w-full md:w-3/5 py-6 px-9 overflow-auto'>{ActiveStepFormComponent(activeStep)}</div>

@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
 import { errorToast } from '@/utils/utils';
 import { IPersonalInformation, personalInformationSchema } from '@/types/validations';
-import { useGetPersonalInfo } from '@/hooks/query';
+import { useGetPersonalInfo, useGetVerificationDocuments } from '@/hooks/query';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { personalInfoFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/actions/onboarding.actions';
@@ -20,7 +20,8 @@ import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ReactCountryFlag from 'react-country-flag';
-import { countryOptions } from '@/utils/country-codes';
+import { countryOptions } from '@/utils/contsants/country-codes';
+import ModalOnboardingSummary from './ModalOnboardingSummary';
 
 const PersonalInformation = () => {
   const router = useRouter();
@@ -40,6 +41,7 @@ const PersonalInformation = () => {
   });
 
   const { data } = useGetPersonalInfo();
+  const { data: documentsData } = useGetVerificationDocuments();
 
   useEffect(() => {
     if (data) {
@@ -52,25 +54,31 @@ const PersonalInformation = () => {
       const phoneMatch = data.phone.match(/^\+(\d+)\s(.*)$/);
       if (phoneMatch) {
         const [, countryCode, phoneNumber] = phoneMatch;
-        setSelectedPhoneCode(`+${countryCode}`);
-        setValue('phone', parseInt(phoneNumber, 10).toString());
+        const country = countryOptions.find((c) => c.phoneCode === `+${countryCode}`);
+        const countryCodeName = country?.code;
+        setSelectedPhoneCode(countryCodeName!);
+        setValue('phone', parseInt(phoneNumber, 10));
       } else {
-        setValue('phone', parseInt(data.phone, 10).toString());
+        setValue('phone', parseInt(data.phone, 10));
       }
     }
   }, [data, setValue]);
 
   const handleFormSubmit = async (formData: IPersonalInformation) => {
-    setLoading(true);
-
-    const dataToUpdate = {
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
-      phone: `${selectedPhoneCode} ${formData.phone}`,
-    };
-
     try {
+      const country = countryOptions.find((c) => c.code === selectedPhoneCode);
+      if (!country) {
+        throw new Error('Please select the country code');
+      }
+      const dataToUpdate = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: `${country?.phoneCode} ${formData.phone}`,
+      };
+
+      setLoading(true);
+
       if (data) {
         const res = await updateData({ ...dataToUpdate, id: data.id }, 'personal_informations');
         if (res?.error) throw res.error;
@@ -82,7 +90,7 @@ const PersonalInformation = () => {
       queryClient.invalidateQueries({ queryKey: ['getPersonalInfo'] });
       router.push('/onboarding/business-details');
     } catch (error: any) {
-      errorToast(error.message);
+      errorToast(error.message || `${error}`);
       setLoading(false);
     }
   };
@@ -113,7 +121,7 @@ const PersonalInformation = () => {
                             </SelectTrigger>
                             <SelectContent>
                               {countryOptions.map((option) => (
-                                <SelectItem key={option.code} value={option.phoneCode}>
+                                <SelectItem key={option.code} value={option.code}>
                                   <div className='flex items-center gap-2'>
                                     <ReactCountryFlag
                                       svg
@@ -123,7 +131,8 @@ const PersonalInformation = () => {
                                         height: '1.2em',
                                       }}
                                     />
-                                    <span>{option.phoneCode}</span>
+                                    <span>{option.name}</span>
+                                    <span>({option.phoneCode})</span>
                                   </div>
                                 </SelectItem>
                               ))}
@@ -168,11 +177,11 @@ const PersonalInformation = () => {
                     />
                     <label htmlFor='terms' className='text-sm font-medium space-x-1'>
                       <span>I agree to</span>
-                      <Link href='' className='text-primary'>
+                      <Link href='/terms-of-service' target='_blank' className='text-primary'>
                         Camino Terms
                       </Link>
                       <span>&</span>
-                      <Link href='' className='text-primary'>
+                      <Link href='/privacy-policy' target='_blank' className='text-primary'>
                         Privacy Policy
                       </Link>
                     </label>
@@ -180,7 +189,10 @@ const PersonalInformation = () => {
                 </InputWrapper>
               </div>
 
-              <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+              <div className='flex gap-2'>
+                <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
+                {documentsData && <ModalOnboardingSummary />}
+              </div>
             </div>
           </form>
         </div>

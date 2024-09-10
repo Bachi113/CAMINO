@@ -16,13 +16,12 @@ import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { useGetProductCategories } from '@/hooks/query';
+import { currencyOptions } from '@/utils/contsants/currencies';
 
 interface ProductDetailsProps {
   handleSheetOpen: () => void;
   data: TypeProductDetails;
 }
-
-export const currencyOptions = ['GBP', 'USD', 'CAD', 'EUR'];
 
 const productValidations = yup.object().shape({
   product_name: yup.string().required('Product name is required'),
@@ -143,8 +142,8 @@ const ProductDetails: FC<ProductDetailsProps> = ({ handleSheetOpen, data }) => {
                     </SelectTrigger>
                     <SelectContent>
                       {currencyOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option} ({getSymbolFromCurrency(option)})
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label} ({getSymbolFromCurrency(option.value)})
                         </SelectItem>
                       ))}
                     </SelectContent>

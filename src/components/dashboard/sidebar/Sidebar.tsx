@@ -12,6 +12,7 @@ import { IoSettingsOutline } from 'react-icons/io5';
 
 interface SidebarProps {
   userType: TypeUserType;
+  userName: string;
 }
 
 const accountSettingsLink = {
@@ -20,7 +21,7 @@ const accountSettingsLink = {
   logo: <IoSettingsOutline size={18} />,
 };
 
-const Sidebar: FC<SidebarProps> = ({ userType }) => {
+const Sidebar: FC<SidebarProps> = ({ userType, userName }) => {
   const pathname = usePathname();
 
   const isTypeMerchant = userType === 'merchant';
@@ -36,9 +37,12 @@ const Sidebar: FC<SidebarProps> = ({ userType }) => {
   return (
     <div className='min-h-screen flex flex-col justify-between h-full p-7 min-w-[250px] bg-white border-r'>
       <div>
-        <div className='mb-8'>
-          <Image src='/logo.png' width={85} height={40} alt='logo' />
-        </div>
+        <Image src='/logo.png' width={85} height={40} alt='logo' className='mb-3' />
+
+        <p className='h-10 text-sm text-slate-600 mb-4 capitalize'>
+          Welcome, <span className='font-medium'>{userName}</span>!
+        </p>
+
         <div>
           {sidebarLinks.map((link) => (
             <Link
