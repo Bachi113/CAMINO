@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 
-export type TypeFilename = 'transactions' | 'orders' | 'customers' | 'products';
+export type TypeFilename = 'transactions' | 'orders' | 'customers' | 'products' | 'merchants';
 
 const headers = {
   transactions: [
@@ -28,6 +28,7 @@ const headers = {
   ],
   customers: ['Sr No.', 'Customer ID', 'Date Added', 'Customer Name', 'Email', 'Phone', 'Address'],
   products: ['Sr No.', 'Product ID', 'Date Added', 'Product Name', 'Price', 'Category', 'Description'],
+  merchants: ['Sr No.', 'Merchant ID', 'Date Added', 'Merchant Name', 'Email', 'Phone', 'Address', 'Status'],
 };
 
 function convertToCSV(data: any, type: TypeFilename): string {
@@ -35,7 +36,7 @@ function convertToCSV(data: any, type: TypeFilename): string {
 
   switch (type) {
     case 'transactions':
-      rows = data.map((row: any, index: string) => [
+      rows = data.map((row: any, index: number) => [
         index + 1,
         format(new Date(row.created_at), 'Pp'),
         row.stripe_id,
@@ -49,7 +50,7 @@ function convertToCSV(data: any, type: TypeFilename): string {
       break;
 
     case 'orders':
-      rows = data.map((row: any, index: string) => [
+      rows = data.map((row: any, index: number) => [
         index + 1,
         row.id,
         format(new Date(row.created_at), 'Pp'),
@@ -64,7 +65,7 @@ function convertToCSV(data: any, type: TypeFilename): string {
       break;
 
     case 'customers':
-      rows = data.map((row: any, index: string) => [
+      rows = data.map((row: any, index: number) => [
         index + 1,
         row.customer_id,
         format(new Date(row.created_at), 'MMM dd, yyyy'),
@@ -76,7 +77,7 @@ function convertToCSV(data: any, type: TypeFilename): string {
       break;
 
     case 'products':
-      rows = data.map((row: any, index: string) => [
+      rows = data.map((row: any, index: number) => [
         index + 1,
         row.id,
         format(new Date(row.created_at), 'MMM dd, yyyy'),
@@ -84,6 +85,19 @@ function convertToCSV(data: any, type: TypeFilename): string {
         `${row.currency} ${row.price}`,
         row.category,
         row.remarks,
+      ]);
+      break;
+
+    case 'merchants':
+      rows = data.map((row: any, index: number) => [
+        index + 1,
+        row.merchant_id,
+        format(new Date(row.created_at), 'MMM dd, yyyy'),
+        row.merchant_name,
+        row.email || '-',
+        row.phone || '-',
+        row.address || '-',
+        row.status,
       ]);
       break;
 
