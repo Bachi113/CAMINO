@@ -90,7 +90,7 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
             <div className='space-y-1'>
               <div className='flex justify-between items-center'>
                 <span className='font-medium'>Total Amount:</span>
-                <span className='font-semibold'>
+                <span className='text-lg font-semibold'>
                   {currency} {price}
                 </span>
               </div>
