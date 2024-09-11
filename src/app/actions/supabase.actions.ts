@@ -41,7 +41,7 @@ export async function getOrders() {
     query = query.eq('user_id', merchantId!);
   } else if (userType == 'customer') {
     const customer = await getCustomer();
-    const customerId = customer?.id;
+    const customerId = customer?.stripe_id;
     query = query.eq('stripe_cus_id', customerId!);
   }
 

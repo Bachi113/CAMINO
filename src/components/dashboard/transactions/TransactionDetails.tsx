@@ -7,6 +7,8 @@ import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
 import { getInvoice } from '@/app/actions/stripe.actions';
 import { errorToast } from '@/utils/utils';
+import { useState } from 'react';
+import { LuLoader } from 'react-icons/lu';
 
 interface TransactionDetailsProps {
   data: TypeTransaction;
@@ -14,6 +16,8 @@ interface TransactionDetailsProps {
 }
 
 const TransactionDetails = ({ data, handleSheetOpen }: TransactionDetailsProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const dataToDisplay = data && [
     {
       label: 'Txn Date',
@@ -42,7 +46,10 @@ const TransactionDetails = ({ data, handleSheetOpen }: TransactionDetailsProps) 
   ];
 
   const handleInvoiceAndRecieptDownload = async () => {
+    setIsLoading(true);
     const invoice = await getInvoice(data.stripe_id);
+    setIsLoading(false);
+
     if (invoice.error) {
       errorToast(invoice.error);
       return;
@@ -58,7 +65,7 @@ const TransactionDetails = ({ data, handleSheetOpen }: TransactionDetailsProps) 
             <div className='space-y-1'>
               <SheetTitle className='text-secondary'>Transaction Details</SheetTitle>
               <p className='font-normal text-base'>
-                Transaction ID: <span className='font-bold'>{data.id}</span>
+                Txn ID: <span className='font-bold'>{data.stripe_id}</span>
               </p>
             </div>
           </SheetHeader>
@@ -87,11 +94,17 @@ const TransactionDetails = ({ data, handleSheetOpen }: TransactionDetailsProps) 
           </div>
         </div>
 
-        <SheetFooter>
-          <Button className='w-full h-11' onClick={handleInvoiceAndRecieptDownload}>
-            Get Invoice & Receipt
-          </Button>
-        </SheetFooter>
+        {data.status === 'completed' && (
+          <SheetFooter>
+            <Button className='w-full h-11' onClick={handleInvoiceAndRecieptDownload}>
+              {isLoading ? (
+                <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
+              ) : (
+                'Get Invoice & Receipt'
+              )}
+            </Button>
+          </SheetFooter>
+        )}
       </SheetContent>
     </Sheet>
   );

@@ -4,11 +4,11 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { errorToast } from '@/utils/utils';
 import { FiDownload } from 'react-icons/fi';
-import { downloadCSV } from '@/utils/download-file';
+import { downloadCSV, TypeFilename } from '@/utils/download-file';
 
 interface DownloadButtonProps {
   data?: Record<string, any>[];
-  fileName: string;
+  fileName: TypeFilename;
 }
 
 const DownloadButton = ({ data, fileName }: DownloadButtonProps) => {
