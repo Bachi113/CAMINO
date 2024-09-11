@@ -59,9 +59,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 }
 
 async function handleRecordTransaction(invoice: Stripe.Response<Stripe.Invoice>) {
-  const tx = await supabaseAdmin.from('transactions').select('id').eq('stripe_id', invoice.id).single();
+  const { data: tx } = await supabaseAdmin
+    .from('transactions')
+    .select('id')
+    .eq('stripe_id', invoice.id)
+    .single();
   if (tx != null) {
-    return NextResponse.json({ message: 'Transaction already exists' }, { status: 200 });
+    throw new Error('Transaction already exists');
   }
 
   const { data: orderDetails } = await supabaseAdmin
