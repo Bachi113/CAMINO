@@ -21,7 +21,12 @@ export function SubmitButton({ children, isLoading, ...props }: Props) {
   const isPending = isLoading || (pending && action === props.formAction);
 
   return (
-    <Button {...props} type='submit' size='xl' aria-disabled={pending} disabled={isPending || props.disabled}>
+    <Button
+      {...props}
+      type='submit'
+      size={props.size || 'xl'}
+      aria-disabled={pending}
+      disabled={isPending || props.disabled}>
       {isPending ? <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} /> : children}
     </Button>
   );
