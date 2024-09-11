@@ -1,68 +1,27 @@
 'use client';
 
 import { FC, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import InputWrapper from '@/components/InputWrapper';
 import { TypeOrder } from '@/types/types';
-import { createSetupCheckoutSession, getCustomerPaymentMethods } from '@/app/actions/stripe.actions';
-import { errorToast } from '@/utils/utils';
-import { useRouter } from 'next/navigation';
-import { BarLoader } from 'react-spinners';
-import { supabaseBrowserClient } from '@/utils/supabase/client';
 import getSymbolFromCurrency from 'currency-symbol-map';
+import ModalSubscriptionOverview from './ModalSubscriptionOverview';
 
 interface PaymentDetailsProps {
   data: TypeOrder;
 }
 
 const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
-  const [isPending, setIsPending] = useState(false);
+  const defaultInstallment = data.period?.toString() || data.installments_options[0].toString();
+  const [installments, setInstallments] = useState(defaultInstallment);
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
   const [isCustomerDetailsOpen, setIsCustomerDetailsOpen] = useState(true);
-  const [installments, setInstallments] = useState(data.installments_options[0].toString());
-
-  const router = useRouter();
-
-  const handleVerifyPaymentMethod = async () => {
-    setIsPending(true);
-
-    const supabase = supabaseBrowserClient();
-    await supabase
-      .from('orders')
-      .update({ period: Number(installments) })
-      .eq('id', data.id);
-
-    const paymentMethods = await getCustomerPaymentMethods(data.stripe_cus_id);
-    if (paymentMethods.error) {
-      errorToast(paymentMethods.error);
-      return;
-    }
-
-    if (paymentMethods.data?.length === 0) {
-      // Create setup checkout session for user to add payment method
-      const session = await createSetupCheckoutSession({
-        currency: data.currency,
-        customer_id: data.stripe_cus_id,
-        paymentId: data.id,
-      });
-      if (session.error) {
-        errorToast(session.error);
-        return;
-      }
-      router.push(session.url!);
-    } else {
-      router.push(`/payment/${data.id}/confirm`);
-    }
-  };
-
-  const totalAmount = Number(data.price) * data.quantity;
 
   return (
     <>
-      <CardContent className='space-y-6 pb-8'>
+      <CardContent className='space-y-6'>
         <div className='text-center p-6 space-y-3'>
           <p className='font-medium'>Amount to be paid</p>
           <h2 className='text-4xl font-semibold space-x-1'>
@@ -121,7 +80,7 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
                 <span className='opacity-50'>Total Amount</span>
                 <div className='space-x-1'>
                   <span>{getSymbolFromCurrency(data.currency)}</span>
-                  <span>{totalAmount}</span>
+                  <span>{Number(data.price) * data.quantity}</span>
                 </div>
               </div>
             </div>
@@ -145,13 +104,7 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
       </CardContent>
 
       <CardFooter>
-        <Button
-          size='xl'
-          disabled={isPending}
-          className='w-full rounded-lg'
-          onClick={handleVerifyPaymentMethod}>
-          {isPending ? <BarLoader height={1} /> : 'Confirm Payment'}
-        </Button>
+        <ModalSubscriptionOverview data={data} installments={installments} />
       </CardFooter>
     </>
   );

@@ -98,12 +98,6 @@ export async function createSubscription(data: TypeCreateSubscription) {
       end_behavior: 'cancel',
     });
 
-    // const status = subscription.status === 'active' ? 'active' : 'processing';
-    // await supabaseServerClient()
-    //   .from('orders')
-    //   .update({ stripe_id: subscription.id, status })
-    //   .eq('id', data.id);
-
     await supabaseServerClient()
       .from('orders')
       .update({
@@ -138,5 +132,18 @@ export async function createSetupCheckoutSession(data: TypeCreatePaymentMethodCS
   } catch (error: any) {
     console.error(error);
     return { error: error.message ?? `${error}` };
+  }
+}
+
+export async function getInvoice(invoiceId: string) {
+  try {
+    const invoice = await stripe.invoices.retrieve(invoiceId);
+    return {
+      url: invoice.hosted_invoice_url,
+      pdf: invoice.invoice_pdf,
+    };
+  } catch (error) {
+    console.error(error);
+    return { error: `${error}` };
   }
 }

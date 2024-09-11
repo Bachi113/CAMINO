@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { TypeTransaction } from '@/types/types';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
+import { getInvoice } from '@/app/actions/stripe.actions';
+import { errorToast } from '@/utils/utils';
 
 interface TransactionDetailsProps {
   data: TypeTransaction;
@@ -38,6 +40,15 @@ const TransactionDetails = ({ data, handleSheetOpen }: TransactionDetailsProps) 
       value: data.product_name,
     },
   ];
+
+  const handleInvoiceAndRecieptDownload = async () => {
+    const invoice = await getInvoice(data.stripe_id);
+    if (invoice.error) {
+      errorToast(invoice.error);
+      return;
+    }
+    window.open(invoice.url!, '_blank');
+  };
 
   return (
     <Sheet open={!!data} onOpenChange={handleSheetOpen}>
@@ -77,7 +88,9 @@ const TransactionDetails = ({ data, handleSheetOpen }: TransactionDetailsProps) 
         </div>
 
         <SheetFooter>
-          <Button className='w-full h-11'>Download Invoice</Button>
+          <Button className='w-full h-11' onClick={handleInvoiceAndRecieptDownload}>
+            Get Invoice & Receipt
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
