@@ -26,6 +26,35 @@ import { TbReload } from 'react-icons/tb';
 import TransactionDetails from './TransactionDetails';
 import { useGetTransactions } from '@/hooks/query';
 
+// const data = [
+//   {
+//     id: '5e69dfb1287',
+//     created_at: '2024-09-11T14:42:24.625374+00:00',
+//     stripe_id: 'in_1Pxrk3SJAHz9RUEIwlcM2nIe',
+//     order_id: 'a8b903262d8',
+//     merchant_id: 'a8514366-0847-4d4c-89ec-3a76afcfca59',
+//     customer_id: '7831756d05a',
+//     customer_name: 'Nada Farook',
+//     product_id: '98a69baf8e8',
+//     product_name: 'Glory C3 Smartphone',
+//     status: 'initiated',
+//   },
+//   {
+//     id: '4fb7d94dee4',
+//     created_at: '2024-09-11T14:42:04.035471+00:00',
+//     stripe_id: 'in_1Pxrk3SJAHz9RUEIwlcM2nIe',
+//     order_id: 'a8b903262d8',
+//     merchant_id: 'a8514366-0847-4d4c-89ec-3a76afcfca59',
+//     customer_id: '7831756d05a',
+//     customer_name: 'Nada Farook',
+//     product_id: '98a69baf8e8',
+//     product_name: 'Glory C3 Smartphone',
+//     status: 'initiated',
+//   },
+// ];
+// const isLoading = false;
+// const isError = null;
+
 const TransactionsTable: React.FC = () => {
   const supabase = supabaseBrowserClient();
   const [customerNames, setCustomerNames] = useState<string[]>();
@@ -114,7 +143,7 @@ const TransactionsTable: React.FC = () => {
           </Button>
           <SortBy setSorting={setSorting} />
           <Filter customerNames={customerNames} onFilterChange={handleFilterChange} />
-          <DownloadButton fileName='transacrions' data={data!} />
+          <DownloadButton fileName='transactions' data={data!} />
         </div>
       </div>
 

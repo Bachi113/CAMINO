@@ -90,7 +90,7 @@ const OrderDetails = ({ data, handleSheetOpen }: OrderDetailsProps) => {
           </SheetHeader>
 
           <div className='space-y-4'>
-            <div className='text-center bg-zinc-100 border py-8 rounded-md mb-4'>
+            <div className='text-center bg-zinc-100 border py-6 rounded-md mb-4'>
               <p className='text-base leading-7 font-medium text-black'>Order Price</p>
               <p className='text-3xl leading-10 font-semibold mt-1'>
                 {getSymbolFromCurrency(data.currency)} {data.price}
@@ -128,15 +128,17 @@ const OrderDetails = ({ data, handleSheetOpen }: OrderDetailsProps) => {
           </div>
         </div>
 
-        <SheetFooter>
-          <Button className='w-full h-11' disabled={isLoading} onClick={handleSendPaymentLink}>
-            {isLoading ? (
-              <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
-            ) : (
-              'Send Payment Link'
-            )}
-          </Button>
-        </SheetFooter>
+        {data.status === 'pending' && (
+          <SheetFooter>
+            <Button className='w-full h-11' disabled={isLoading} onClick={handleSendPaymentLink}>
+              {isLoading ? (
+                <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
+              ) : (
+                'Send Payment Link'
+              )}
+            </Button>
+          </SheetFooter>
+        )}
       </SheetContent>
     </Sheet>
   );

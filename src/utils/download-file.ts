@@ -1,129 +1,105 @@
-const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, any> => {
-  return Object.keys(obj).reduce<Record<string, any>>((acc, k) => {
-    const pre = prefix.length ? prefix + '.' : '';
-    if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
-      Object.assign(acc, flattenObject(obj[k], pre + k));
-    } else {
-      acc[pre + k] = obj[k];
-    }
-    return acc;
-  }, {});
-};
+import { format } from 'date-fns';
 
-const getDefaultHeaderMapping = (): { [key: string]: string } => ({
-  created_at: 'Created At',
-  customer_id: 'Customer ID',
-  'customers.phone': 'Phone',
-  'customers.email': 'Email',
-  'customers.customer_name': 'Customer Name',
-  'customers.address': 'Address',
-  price: 'Price',
-  quantity: 'Quantity',
-  currency: 'Currency',
-  tsx_id: 'Txn ID',
-  customer_name: 'customer_name',
-  category: 'Category',
-  remarks: 'Description',
-  period: 'Installments',
-});
+export type TypeFilename = 'transactions' | 'orders' | 'customers' | 'products';
 
-const getFileSpecificHeaderMapping = (fileName: string): { [key: string]: string } => {
-  switch (fileName) {
-    case 'products':
-      return {
-        id: 'Product ID',
-        product_name: 'Product Name',
-      };
-    case 'orders':
-      return {
-        id: 'Order ID',
-        status: 'Status',
-        'products.product_name': 'Product',
-      };
-    case 'customers':
-      return {};
-    case 'transactions':
-      return {
-        'product.product_name': 'Product',
-      };
-    default:
-      return {};
-  }
-};
-
-const filterHeaders = (header: string, fileName: string): boolean => {
-  let excludedFields: string[] = [];
-
-  switch (fileName) {
-    case 'products':
-      excludedFields = ['status', 'product_id'];
-      break;
-    case 'orders':
-      excludedFields = ['product_id'];
-      break;
-    case 'customers':
-      excludedFields = ['id'];
-      break;
-    case 'transactions':
-      excludedFields = ['stripe_id', 'merchant_id', 'customers.customer_name'];
-      break;
-    default:
-      excludedFields = [];
-  }
-
-  const commonExclusions = [
-    'user_id',
-    'stripe_id',
-    'merchant_id',
-    'customers.id',
-    'customers.user_id',
-    'customers.stripe_id',
-    'next_instalment_date',
-    'end_instalment_date',
-    'paid_amount',
-    'installments_options',
-    'stripe_cus_id',
-  ];
-
-  excludedFields = [...commonExclusions, ...excludedFields];
-
-  return !excludedFields.some((field) => header === field || header.endsWith(`.${field}`));
-};
-
-const convertToCSV = (data: Record<string, any>[], fileName: string) => {
-  const defaultHeaderMapping = getDefaultHeaderMapping();
-  const fileSpecificHeaderMapping = getFileSpecificHeaderMapping(fileName);
-  const headerMapping = { ...defaultHeaderMapping, ...fileSpecificHeaderMapping };
-
-  // Flatten all objects in the data array
-  const flattenedData = data.map((item) => flattenObject(item));
-
-  // Determine headers based on headerMapping
-  const headers = [
+const headers = {
+  transactions: [
     'Sr No.',
-    ...Array.from(
-      new Set(
-        flattenedData.flatMap((item) => Object.keys(item).filter((header) => filterHeaders(header, fileName)))
-      )
-    ).map((header) => headerMapping[header] || header),
-  ];
-
-  // Map rows and include 'SR No.' as the first column
-  const csvRows = flattenedData.map((row, index) =>
-    [
-      index + 1,
-      ...headers.slice(1).map((header) => {
-        // Find the original key corresponding to the header
-        const originalKey = Object.keys(headerMapping).find((key) => headerMapping[key] === header) || header;
-        return JSON.stringify(row[originalKey] ?? '');
-      }),
-    ].join(',')
-  );
-
-  return [headers.join(','), ...csvRows].join('\r\n');
+    'Txn date',
+    'Txn ID',
+    'Order ID',
+    'Customer ID',
+    'Customer Name',
+    'Product ID',
+    'Product Name',
+    'Status',
+  ],
+  orders: [
+    'Sr No.',
+    'Order ID',
+    'Order Date',
+    'Product',
+    'Quantity',
+    'Customer Name',
+    'Total Amount',
+    'Installments',
+    'Payment Link',
+    'Status',
+  ],
+  customers: ['Sr No.', 'Customer ID', 'Date Added', 'Customer Name', 'Email', 'Phone', 'Address'],
+  products: ['Sr No.', 'Product ID', 'Date Added', 'Product Name', 'Price', 'Category', 'Description'],
 };
 
-export const downloadCSV = (data: Record<string, any>[], fileName: string) => {
+function convertToCSV(data: any, type: TypeFilename): string {
+  let rows: string[];
+
+  switch (type) {
+    case 'transactions':
+      rows = data.map((row: any, index: string) => [
+        index + 1,
+        format(new Date(row.created_at), 'Pp'),
+        row.stripe_id,
+        row.order_id,
+        row.customer_id,
+        row.customer_name,
+        row.product_id,
+        row.product_name,
+        row.status,
+      ]);
+      break;
+
+    case 'orders':
+      rows = data.map((row: any, index: string) => [
+        index + 1,
+        row.id,
+        format(new Date(row.created_at), 'Pp'),
+        row.products.product_name,
+        row.quantity,
+        row.customers.customer_name,
+        `${row.currency} ${Number(row.price) * row.quantity}`,
+        row.period ?? '-',
+        `${process.env.NEXT_PUBLIC_APP_URL}/payment/${row.id}`,
+        row.status,
+      ]);
+      break;
+
+    case 'customers':
+      rows = data.map((row: any, index: string) => [
+        index + 1,
+        row.customer_id,
+        format(new Date(row.created_at), 'MMM dd, yyyy'),
+        row.customers.customer_name,
+        row.customers.email || '-',
+        row.customers.phone || '-',
+        row.customers.address,
+      ]);
+      break;
+
+    case 'products':
+      rows = data.map((row: any, index: string) => [
+        index + 1,
+        row.id,
+        format(new Date(row.created_at), 'MMM dd, yyyy'),
+        row.product_name,
+        `${row.currency} ${row.price}`,
+        row.category,
+        row.remarks,
+      ]);
+      break;
+
+    default:
+      throw new Error(`Unsupported table type: ${type}`);
+  }
+
+  const csvRows = [
+    headers[type].join(','),
+    ...rows.map((row) => (row as any).map((value: any) => JSON.stringify(value)).join(',')),
+  ];
+
+  return csvRows.join('\n');
+}
+
+export const downloadCSV = (data: any, fileName: TypeFilename) => {
   try {
     const csvData = convertToCSV(data, fileName);
     const blob = new Blob([csvData], { type: 'text/csv' });
@@ -131,11 +107,11 @@ export const downloadCSV = (data: Record<string, any>[], fileName: string) => {
     const a = document.createElement('a');
     a.setAttribute('hidden', '');
     a.setAttribute('href', url);
-    a.setAttribute('download', fileName ?? 'download.csv');
+    a.setAttribute('download', `${fileName}.csv`);
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   } catch (error) {
-    console.log('Error downloading CSV', error);
+    console.error('Error downloading CSV', error);
   }
 };
