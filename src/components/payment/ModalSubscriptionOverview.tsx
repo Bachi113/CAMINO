@@ -25,7 +25,8 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
-  const { id, stripe_cus_id: customer_id, price, currency } = data;
+  const { id, stripe_cus_id: customer_id, price, quantity, currency } = data;
+  const totalAmount = Number(price) * quantity;
   const period = Number(installments);
 
   const router = useRouter();
@@ -42,7 +43,7 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
     day: 'numeric',
   });
 
-  const installmentAmount = (parseFloat(price) / period).toFixed(2);
+  const installmentAmount = (parseFloat(totalAmount.toString()) / period).toFixed(2);
 
   const handleVerifyPaymentMethod = async () => {
     setIsPending(true);
@@ -91,7 +92,7 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
               <div className='flex justify-between items-center'>
                 <span className='font-medium'>Total Amount:</span>
                 <span className='text-lg font-semibold'>
-                  {currency} {price}
+                  {currency} {totalAmount}
                 </span>
               </div>
               <div className='flex justify-between items-center'>

@@ -43,6 +43,9 @@ export async function createCustomer(data: TypeCreateCustomer) {
       name: data.name,
       email: data.email,
       phone: data.phone,
+      address: {
+        line1: data.address,
+      },
       metadata: {
         created_by: user.id,
       },

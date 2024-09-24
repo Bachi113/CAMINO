@@ -46,6 +46,8 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
     setIsPending(false);
   };
 
+  const totalAmount = Number(data.price) * data.quantity;
+
   return (
     <>
       <CardContent className='space-y-6 pb-8'>
@@ -53,7 +55,7 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
           <p className='font-medium'>Amount to be paid</p>
           <h2 className='text-4xl font-semibold space-x-2'>
             <span>{getSymbolFromCurrency(data.currency)}</span>
-            <span>{data.price}</span>
+            <span>{totalAmount}</span>
           </h2>
         </div>
 
