@@ -48,7 +48,8 @@ export default async function ConfirmPaymentPage({ params }: { params: { id: str
     );
   }
 
-  const installmentAmount = (parseFloat(data.price) / data.period!).toFixed(2);
+  const totalAmount = Number(data.price) * data.quantity;
+  const installmentAmount = (parseFloat(totalAmount.toString()) / data.period!).toFixed(2);
   const installmentDates = getInstallmentDates(new Date(), data.period!);
 
   return (
@@ -63,7 +64,7 @@ export default async function ConfirmPaymentPage({ params }: { params: { id: str
             <p className='font-medium'>Subscription created successfully 🎉</p>
             <h2 className='text-4xl font-semibold space-x-1'>
               <span>{getSymbolFromCurrency(data.currency)}</span>
-              <span>{data.price}</span>
+              <span>{totalAmount}</span>
             </h2>
           </div>
 
