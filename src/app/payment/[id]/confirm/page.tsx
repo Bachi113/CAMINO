@@ -4,6 +4,7 @@ import { Card, CardHeader } from '@/components/ui/card';
 import stripe from '@/utils/stripe';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 import { LuLoader } from 'react-icons/lu';
 
 type TypeProps = {
@@ -20,6 +21,7 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
     .from('orders')
     .select('*, products (stripe_id)')
     .eq('id', params.id)
+    .eq('status', 'pending')
     .single();
 
   if (data == null) {
@@ -29,6 +31,10 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
         <p className='text-sm'>Please contact support</p>
       </div>
     );
+  }
+
+  if (!data.period) {
+    redirect(`/payment/${data.id}`);
   }
 
   if (searchParams.session_id) {

@@ -8,6 +8,7 @@ export default async function PaymentPage({ params }: { params: { id: string } }
     .from('orders')
     .select('*, products (stripe_id, product_name), customers (customer_name, email)')
     .eq('id', params.id)
+    .eq('status', 'pending')
     .single();
 
   return (
