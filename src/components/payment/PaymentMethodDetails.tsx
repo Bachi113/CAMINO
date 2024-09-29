@@ -75,7 +75,10 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
 
         <div>
           <p className='text-lg font-medium mb-3'>Payment Method</p>
-          <RadioGroup value={paymentMethodId} onValueChange={setPaymentMethodId}>
+          <RadioGroup
+            value={paymentMethodId}
+            onValueChange={setPaymentMethodId}
+            className='max-h-52 overflow-auto'>
             {paymentMethods.map((pm) => (
               <div key={pm.id} className='h-12 flex items-center space-x-2 border rounded-lg px-3'>
                 <RadioGroupItem value={pm.id} id={pm.id} />
