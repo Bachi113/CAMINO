@@ -57,7 +57,6 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
         return <div>{subscription.error}</div>;
       }
       if (subscription?.id) {
-        // redirect(`/payment/${data.id}/created`);
         return (
           <div className='flex flex-col items-center gap-4'>
             <LuLoader className='animate-[spin_2s_linear_infinite]' size={26} />

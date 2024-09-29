@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -18,9 +18,10 @@ import { createProduct } from '@/app/actions/stripe.actions';
 import { LuLoader } from 'react-icons/lu';
 
 interface ModalSubmitConfirmationProps {
+  disabled: boolean;
   onBoardingId?: string;
 }
-const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps) => {
+const ModalSubmitConfirmation: FC<ModalSubmitConfirmationProps> = ({ onBoardingId, disabled }) => {
   const [submitConfirmation, setSubmitConfirmation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,6 +30,10 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
 
     setIsLoading(true);
     try {
+      if (disabled) {
+        throw 'Please complete all the onboarding steps';
+      }
+
       if (!onBoardingId) {
         throw 'You need to be logged in.';
       }
@@ -60,7 +65,7 @@ const ModalSubmitConfirmation = ({ onBoardingId }: ModalSubmitConfirmationProps)
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild disabled={disabled} className='disabled:bg-primary/15 disabled:text-black/50'>
         <Button className='w-full' size='lg'>
           Submit Form
         </Button>
