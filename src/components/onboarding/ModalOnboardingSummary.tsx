@@ -28,6 +28,7 @@ interface ModalOnboardingSummaryProps {
 
 const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ showModal }) => {
   const [isOpen, setIsOpen] = useState(showModal ?? false);
+  const [disableConfirmation, setDisableConfirmation] = useState(true);
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
   const router = useRouter();
@@ -35,6 +36,13 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ showModal }) 
   const { data, isLoading } = useGetOnboardingData();
 
   const sections = summaryFileds(data);
+
+  useEffect(() => {
+    if (data) {
+      const hasNullValues = Object.values(data).some((value) => value === null);
+      setDisableConfirmation(hasNullValues);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -134,7 +142,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ showModal }) 
               Cancel
             </Button>
           </DialogClose>
-          <ModalSubmitConfirmation onBoardingId={data?.id} />
+          <ModalSubmitConfirmation disabled={disableConfirmation} onBoardingId={data?.id} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

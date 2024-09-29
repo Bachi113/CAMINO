@@ -60,9 +60,7 @@ export async function createCustomer(data: TypeCreateCustomer) {
 
 export async function getCustomerPaymentMethods(customerId: string) {
   try {
-    const paymentMethods = await stripe.customers.listPaymentMethods(customerId, {
-      limit: 5,
-    });
+    const paymentMethods = await stripe.customers.listPaymentMethods(customerId);
     return { data: paymentMethods.data };
   } catch (error: any) {
     console.error(error);

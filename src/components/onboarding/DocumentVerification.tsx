@@ -85,7 +85,7 @@ async function uploadDocuments(files: FormData[]) {
 
 const DocumentVerification = () => {
   const [loading, setLoading] = useState(false);
-  const [showSummaryModl, setShowSummaryModal] = useState(false);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
 
   const {
     register,
@@ -251,7 +251,7 @@ const DocumentVerification = () => {
               </div>
               <div className='flex gap-2'>
                 <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
-                {data && <ModalOnboardingSummary showModal={showSummaryModl} />}
+                {(showSummaryModal || data) && <ModalOnboardingSummary showModal={showSummaryModal} />}
               </div>
             </div>
           </form>
