@@ -12,7 +12,7 @@ import { BarLoader } from 'react-spinners';
 import { useRouter } from 'next/navigation';
 import { createSetupCheckoutSession, getCustomerPaymentMethods } from '@/app/actions/stripe.actions';
 import { errorToast } from '@/utils/utils';
-import { supabaseBrowserClient } from '@/utils/supabase/client';
+import { updateOrderForPeriodAndInterval } from '@/app/actions/supabase.actions';
 import { TypeInterval, TypeOrder } from '@/types/types';
 import { LuCalendarDays } from 'react-icons/lu';
 import { intervalOptions, TypeInstallmentOption } from '@/utils/installment-options';
@@ -66,14 +66,10 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
   const handleVerifyPaymentMethod = async () => {
     setIsPending(true);
 
-    const supabase = supabaseBrowserClient();
-    await supabase
-      .from('orders')
-      .update({
-        period: period,
-        interval: interval,
-      })
-      .eq('id', id);
+    const response = await updateOrderForPeriodAndInterval(id, { period, interval });
+    if (response) {
+      errorToast(response);
+    }
 
     const paymentMethods = await getCustomerPaymentMethods(customer_id);
     if (paymentMethods.error) {

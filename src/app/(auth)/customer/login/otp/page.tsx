@@ -103,7 +103,7 @@ export default function CustomerLoginOtpPage() {
         {isMagicLinkSent ? (
           <div className='flex flex-col justify-center gap-1'>
             <Link href='https://mail.google.com' target='_blank' className='block'>
-              <Button size='xl'>Go to mail & Verify</Button>
+              <Button size='xl'>Check your Email & Verify</Button>
             </Link>
             <Button variant='link' onClick={() => setIsMagicLinkSent(false)} className='font-normal'>
               <MdOutlineKeyboardBackspace className='mr-2' />
