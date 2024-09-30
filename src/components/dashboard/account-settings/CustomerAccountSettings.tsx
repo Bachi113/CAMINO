@@ -65,7 +65,7 @@ const CustomerAccountSettings = () => {
         </Button>
       </form>
 
-      <ModalDeleteAccount className='p-0' />
+      <ModalDeleteAccount />
     </div>
   );
 };

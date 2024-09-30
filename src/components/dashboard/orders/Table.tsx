@@ -31,51 +31,6 @@ interface OrdersTableProps {
   isMerchant: boolean;
 }
 
-// const data = [
-//   {
-//     id: '6c31189d27b',
-//     created_at: '2024-09-11T14:40:35.165044+00:00',
-//     user_id: 'a8514366-0847-4d4c-89ec-3a76afcfca59',
-//     stripe_id: null,
-//     stripe_cus_id: 'cus_QpWjoP1MVe7uVL',
-//     product_id: '98a69baf8e8',
-//     currency: 'USD',
-//     price: '20',
-//     quantity: 1,
-//     installments_options: [3, 6, 12, 24],
-//     period: null,
-//     status: 'pending',
-//     products: { product_name: 'Glory C3 Smartphone' },
-//     customers: {
-//       email: 'nadaaofficial19@gmail.com',
-//       phone: '+91 9152018835',
-//       customer_name: 'Nada Farook',
-//     },
-//   },
-//   {
-//     id: 'a8b903262d8',
-//     created_at: '2024-09-11T14:38:29.821959+00:00',
-//     user_id: 'a8514366-0847-4d4c-89ec-3a76afcfca59',
-//     stripe_id: 'sub_1Pxrk3SJAHz9RUEILnMmybrd',
-//     stripe_cus_id: 'cus_QpWjoP1MVe7uVL',
-//     product_id: '98a69baf8e8',
-//     currency: 'USD',
-//     price: '20',
-//     quantity: 1,
-//     installments_options: [3, 6, 12, 24],
-//     period: 3,
-//     status: 'processing',
-//     products: { product_name: 'Glory C3 Smartphone' },
-//     customers: {
-//       email: 'nadaaofficial19@gmail.com',
-//       phone: '+91 9152018835',
-//       customer_name: 'Nada Farook',
-//     },
-//   },
-// ];
-// const isLoading = false;
-// const isError = null;
-
 const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
   const supabase = supabaseBrowserClient();
   const [customerNames, setCustomerNames] = useState<string[]>();

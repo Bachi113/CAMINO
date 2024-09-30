@@ -1,6 +1,6 @@
 'use client';
 
-import { TypeOrder } from '@/types/types';
+import { TypeInterval, TypeOrder } from '@/types/types';
 import { Button } from '../ui/button';
 import { CardContent, CardFooter } from '../ui/card';
 import { BarLoader } from 'react-spinners';
@@ -37,6 +37,7 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
       price: data.price,
       quantity: data.quantity,
       installments: data.period!,
+      interval: data.interval as TypeInterval,
     });
     if (subscription.error) {
       errorToast(subscription.error);
@@ -78,7 +79,7 @@ const PaymentMethodDetails: FC<PaymentMethodDetailsProps> = ({ data, paymentMeth
           <RadioGroup
             value={paymentMethodId}
             onValueChange={setPaymentMethodId}
-            className='max-h-52 overflow-auto'>
+            className='max-h-52 overflow-auto gap-3'>
             {paymentMethods.map((pm) => (
               <div key={pm.id} className='h-12 flex items-center space-x-2 border rounded-lg px-3'>
                 <RadioGroupItem value={pm.id} id={pm.id} />

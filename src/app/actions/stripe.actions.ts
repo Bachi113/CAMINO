@@ -85,7 +85,7 @@ export async function createSubscription(data: TypeCreateSubscription) {
                 product: data.product_id,
                 currency: data.currency,
                 recurring: {
-                  interval: 'month',
+                  interval: data.interval,
                 },
                 unit_amount_decimal: amount.toFixed(0),
               },
