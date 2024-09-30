@@ -42,7 +42,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
   },
   {
     accessorKey: 'quantity',
-    header: 'Quantity',
+    header: 'Qty',
   },
   {
     accessorKey: 'customers.customer_name',

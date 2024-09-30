@@ -7,7 +7,7 @@ const Page = async () => {
   const userType = await getUserRoleFromCookie();
 
   return (
-    <div className='p-8 w-full'>
+    <div className='w-full p-6'>
       <NavTitle userType='customer' />
       <CustomersTable isMerchant={userType === 'merchant'} />
     </div>

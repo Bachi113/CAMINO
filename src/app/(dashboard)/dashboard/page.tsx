@@ -25,7 +25,7 @@ export default async function MerchantDashboard() {
   const data3 = isAdmin ? adminData3 : isMerchant ? merchantData3 : [];
 
   return (
-    <div className='p-6 w-full'>
+    <div className='w-full p-6'>
       <NavTitle userType={userType} />
 
       {isMerchant ? (
