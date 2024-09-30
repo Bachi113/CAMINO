@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
       {isMagicLinkSent ? (
         <div className='flex flex-col justify-center gap-1'>
           <Link href='https://mail.google.com' target='_blank' className='block'>
-            <Button size='xl'>Go to mail</Button>
+            <Button size='xl'>Check your Email</Button>
           </Link>
           <Button variant='link' onClick={() => setIsMagicLinkSent(false)} className='font-normal'>
             <MdOutlineKeyboardBackspace className='mr-2' />

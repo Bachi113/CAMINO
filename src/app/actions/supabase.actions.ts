@@ -4,6 +4,16 @@ import { supabaseAdmin } from '@/utils/supabase/admin';
 import { supabaseServerClient } from '@/utils/supabase/server';
 import { getUserRoleFromCookie } from '@/utils/user-role';
 
+export const updateOrderForPeriodAndInterval = async (
+  id: string,
+  { period, interval }: { period: number; interval: string }
+) => {
+  const { error } = await supabaseAdmin.from('orders').update({ period, interval }).eq('id', id);
+  console.error(error);
+
+  return error?.message;
+};
+
 export const getUser = async () => {
   const supabase = supabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
