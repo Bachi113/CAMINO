@@ -1,4 +1,10 @@
-import { getAllCustomers, getAllMerchants, getOrders, getTransactions } from '@/app/actions/supabase.actions';
+import {
+  getAllCustomers,
+  getAllMerchants,
+  getOrders,
+  getTransactions,
+  getTransactionsByOrderId,
+} from '@/app/actions/supabase.actions';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -158,6 +164,19 @@ const useGetTransactions = () => {
   });
 };
 
+const useGetTransactionsByOrderId = (orderId: string) => {
+  return useQuery({
+    queryKey: ['getTransactionsByOrderId'],
+    queryFn: async () => {
+      const response = await getTransactionsByOrderId(orderId);
+      if (response.error) {
+        throw response.error;
+      }
+      return response.data;
+    },
+  });
+};
+
 const useGetMerchnats = () => {
   return useQuery({
     queryKey: ['getAllMerchants'],
@@ -289,6 +308,7 @@ export {
   useGetAdminData,
   useGetOrders,
   useGetTransactions,
+  useGetTransactionsByOrderId,
   useGetMerchnats,
   useGetMerchantCustomers,
   useGetProducts,

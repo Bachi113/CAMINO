@@ -12,6 +12,7 @@ import { toast } from '@/components/ui/use-toast';
 import { FC, useState } from 'react';
 import { LuLoader } from 'react-icons/lu';
 import { sendPaymentLinkToCustomer } from '@/utils/send-payment-link';
+import { useGetTransactionsByOrderId } from '@/hooks/query';
 
 interface OrderDetailsProps {
   data: TypeOrderDetails;
@@ -19,7 +20,9 @@ interface OrderDetailsProps {
 }
 
 const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+
+  const { data: transactions } = useGetTransactionsByOrderId(data.id);
 
   const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${data.id}`;
 
@@ -29,9 +32,21 @@ const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
       value: `${getSymbolFromCurrency(data.currency)} ${Number(data.price) * data.quantity}`,
     },
     {
-      label: 'Amount Paid till date',
-      value: data.paid_amount ?? '-',
+      label: 'Instalments',
+      value: data.period ?? '-',
     },
+    ...(transactions && transactions.length > 0
+      ? [
+          {
+            label: 'Last Installment Date',
+            value: format(new Date(transactions[0].created_at), 'MMM dd, yyyy'),
+          },
+          {
+            label: 'Installments Completed',
+            value: transactions.length,
+          },
+        ]
+      : []),
     {
       label: 'Order Date',
       value: format(new Date(data.created_at), 'MMM dd, yyyy'),
@@ -43,10 +58,6 @@ const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
     {
       label: 'Customer Name',
       value: data.customers?.customer_name,
-    },
-    {
-      label: 'Instalments',
-      value: data.period ?? '-',
     },
     {
       label: 'Interval',
@@ -62,7 +73,7 @@ const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
     const productName = data.products?.product_name || '';
 
     try {
-      setIsLoading(true);
+      setIsSending(true);
       await sendPaymentLinkToCustomer({
         customerName,
         customerEmail,
@@ -76,7 +87,7 @@ const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
     } catch (error: any) {
       errorToast(error.response.data.message || `${error}`);
     } finally {
-      setIsLoading(false);
+      setIsSending(false);
     }
   };
 
@@ -134,8 +145,8 @@ const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
 
         {data.status === 'pending' && (
           <SheetFooter>
-            <Button className='w-full h-11' disabled={isLoading} onClick={handleSendPaymentLink}>
-              {isLoading ? (
+            <Button className='w-full h-11' disabled={isSending} onClick={handleSendPaymentLink}>
+              {isSending ? (
                 <LuLoader className='animate-[spin_2s_linear_infinite]' size={16} />
               ) : (
                 'Send Payment Link'
