@@ -2,14 +2,18 @@ import { Card, CardHeader } from '@/components/ui/card';
 import PaymentDetails from '@/components/payment/PaymentDetails';
 import Image from 'next/image';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import { redirect } from 'next/navigation';
 
 export default async function PaymentPage({ params }: { params: { id: string } }) {
   const { data } = await supabaseAdmin
     .from('orders')
     .select('*, products (stripe_id, product_name), customers (customer_name, email)')
     .eq('id', params.id)
-    .eq('status', 'pending')
     .single();
+
+  if (data && data.status !== 'pending') {
+    redirect(`/payment/${data.id}/created`);
+  }
 
   return (
     <div className='w-11/12 md:w-[30%]'>

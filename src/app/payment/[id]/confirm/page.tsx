@@ -22,7 +22,6 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
     .from('orders')
     .select('*, products (stripe_id)')
     .eq('id', params.id)
-    .eq('status', 'pending')
     .single();
 
   if (data == null) {
@@ -36,6 +35,8 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
 
   if (!data.period) {
     redirect(`/payment/${data.id}`);
+  } else if (data.status !== 'pending') {
+    redirect(`/payment/${data.id}/created`);
   }
 
   if (searchParams.session_id) {

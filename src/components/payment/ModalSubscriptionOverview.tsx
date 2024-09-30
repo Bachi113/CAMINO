@@ -16,6 +16,8 @@ import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeInterval, TypeOrder } from '@/types/types';
 import { LuCalendarDays } from 'react-icons/lu';
 import { intervalOptions, TypeInstallmentOption } from '@/utils/installment-options';
+import ModalAllPaymentDates from './ModalAllPaymentDates';
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 interface ModalSubscriptionOverviewProps {
   data: TypeOrder;
@@ -65,7 +67,13 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
     setIsPending(true);
 
     const supabase = supabaseBrowserClient();
-    await supabase.from('orders').update({ period, interval }).eq('id', id);
+    await supabase
+      .from('orders')
+      .update({
+        period: period,
+        interval: interval,
+      })
+      .eq('id', id);
 
     const paymentMethods = await getCustomerPaymentMethods(customer_id);
     if (paymentMethods.error) {
@@ -88,9 +96,7 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger className={cn(buttonVariants({ size: 'lg' }), 'w-full rounded-lg')}>
-        Preview
-      </DialogTrigger>
+      <DialogTrigger className={cn(buttonVariants({ size: 'lg' }), 'w-full rounded-lg')}>Next</DialogTrigger>
 
       <DialogContent className='w-11/12 md:w-[30%] p-0'>
         <Card className='w-full shadow-xl'>
@@ -125,21 +131,28 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
               </div>
             </div>
 
-            <div className='space-y-4 bg-gray-50 p-4 rounded-lg'>
-              <div className='flex items-center space-x-3'>
-                <LuCalendarDays className='text-primary' />
-                <div>
-                  <p className='font-medium'>First Payment Date</p>
-                  <p className='text-sm text-gray-600'>{firstPaymentDate}</p>
+            <div className='flex items-start justify-between bg-gray-50 p-4 rounded-lg'>
+              <div className='space-y-4'>
+                <div className='flex items-center space-x-3'>
+                  <LuCalendarDays className='text-primary' />
+                  <div>
+                    <p className='font-medium'>First Payment Date</p>
+                    <p className='text-sm text-gray-600'>{firstPaymentDate}</p>
+                  </div>
+                </div>
+                <div className='flex items-center space-x-3'>
+                  <LuCalendarDays className='text-primary' />
+                  <div>
+                    <p className='font-medium'>Next Payment Date</p>
+                    <p className='text-sm text-gray-600'>{nextPaymentDate(interval)}</p>
+                  </div>
                 </div>
               </div>
-              <div className='flex items-center space-x-3'>
-                <LuCalendarDays className='text-primary' />
-                <div>
-                  <p className='font-medium'>Next Payment Date</p>
-                  <p className='text-sm text-gray-600'>{nextPaymentDate(interval)}</p>
-                </div>
-              </div>
+              <ModalAllPaymentDates
+                period={period}
+                interval={interval as TypeInterval}
+                amount={`${getSymbolFromCurrency(currency)} ${installmentAmount}`}
+              />
             </div>
 
             <div className='space-y-2'>

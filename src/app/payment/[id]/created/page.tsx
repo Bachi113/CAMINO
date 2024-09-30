@@ -5,22 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { LuCheckCircle2 } from 'react-icons/lu';
 import { BiCircle } from 'react-icons/bi';
-
-const getInstallmentDates = (startDate: Date, numberOfInstallments: number) => {
-  const dates = [];
-  const currentDate = new Date(startDate);
-
-  for (let i = 0; i < numberOfInstallments; i++) {
-    if (i === 0) {
-      dates.push('Today');
-    } else {
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      dates.push(currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-    }
-  }
-
-  return dates;
-};
+import { getInstallmentDates } from '@/utils/utils';
+import { TypeInterval } from '@/types/types';
 
 export default async function ConfirmPaymentPage({ params }: { params: { id: string } }) {
   const { data } = await supabaseAdmin.from('orders').select().eq('id', params.id).single();
@@ -50,7 +36,7 @@ export default async function ConfirmPaymentPage({ params }: { params: { id: str
 
   const totalAmount = Number(data.price) * data.quantity;
   const installmentAmount = (parseFloat(totalAmount.toString()) / data.period!).toFixed(2);
-  const installmentDates = getInstallmentDates(new Date(), data.period!);
+  const installmentDates = getInstallmentDates(new Date(), data.period!, data.interval as TypeInterval);
 
   return (
     <div className='w-11/12 md:w-[30%]'>
