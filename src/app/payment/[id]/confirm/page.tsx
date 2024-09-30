@@ -1,6 +1,7 @@
 import { createSubscription, getCustomerPaymentMethods } from '@/app/actions/stripe.actions';
 import PaymentMethodDetails from '@/components/payment/PaymentMethodDetails';
 import { Card, CardHeader } from '@/components/ui/card';
+import { TypeInterval } from '@/types/types';
 import stripe from '@/utils/stripe';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import Image from 'next/image';
@@ -51,6 +52,7 @@ export default async function ConfirmPaymentPage({ params, searchParams }: TypeP
         quantity: data.quantity,
         installments: data.period!,
         payment_method_id: setupIntent.payment_method as string,
+        interval: data.interval as TypeInterval,
       });
 
       if (subscription.error) {

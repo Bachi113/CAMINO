@@ -2,27 +2,35 @@
 
 import { FC, useState } from 'react';
 import { CardContent, CardFooter } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import InputWrapper from '@/components/InputWrapper';
 import { TypeOrder } from '@/types/types';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import ModalSubscriptionOverview from './ModalSubscriptionOverview';
+import { TypeInstallmentOption } from '@/utils/installment-options';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 
 interface PaymentDetailsProps {
   data: TypeOrder;
 }
 
 const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
-  const defaultInstallment = data.period?.toString() || data.installments_options[0].toString();
-  const [installments, setInstallments] = useState(defaultInstallment);
+  const installmentOptions = data.installments_options as TypeInstallmentOption[];
+  const [selectedInstallment, setSelectedInstallment] = useState(installmentOptions[0]);
   const [isDetailsOpen, setIsDetailsOpen] = useState(true);
   const [isCustomerDetailsOpen, setIsCustomerDetailsOpen] = useState(true);
+
+  const totalAmount = Number(data.price) * data.quantity;
+
+  const handleInstallmentSelection = (id: string) => {
+    const installment = installmentOptions.find((item) => item.id === Number(id))!;
+    setSelectedInstallment(installment);
+  };
 
   return (
     <>
       <CardContent className='space-y-6'>
-        <div className='text-center p-6 space-y-3'>
+        <div className='text-center pt-4 space-y-2'>
           <p className='font-medium'>Amount to be paid</p>
           <h2 className='text-4xl font-semibold space-x-1'>
             <span>{getSymbolFromCurrency(data.currency)}</span>
@@ -80,31 +88,42 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
                 <span className='opacity-50'>Total Amount</span>
                 <div className='space-x-1'>
                   <span>{getSymbolFromCurrency(data.currency)}</span>
-                  <span>{Number(data.price) * data.quantity}</span>
+                  <span>{totalAmount}</span>
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        <InputWrapper id='installments' label='Select number of instalments'>
-          <Select value={installments} onValueChange={setInstallments}>
-            <SelectTrigger id='installments' className='h-10'>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {data.installments_options.map((installment) => (
-                <SelectItem key={installment} value={installment.toString()}>
-                  {installment}
-                </SelectItem>
+        <InputWrapper id='installments' label='Select installment option'>
+          <div className='max-h-40 overflow-auto'>
+            <RadioGroup
+              defaultValue={installmentOptions[0]?.id.toString()}
+              onValueChange={handleInstallmentSelection}>
+              {installmentOptions.map((option) => (
+                <label
+                  key={option.id}
+                  htmlFor={`installment${option.id}`}
+                  className='h-10 flex items-center text-sm space-x-2 border rounded-md cursor-pointer px-3'>
+                  <RadioGroupItem value={option.id.toString()} id={`installment${option.id}`} />
+                  <div className='w-full flex items-center justify-between space-x-6'>
+                    <div>{option.count} installments</div>
+                    <div>
+                      <span className='font-semibold'>
+                        {getSymbolFromCurrency(data.currency)} {(totalAmount / option.count).toFixed(2)} /
+                      </span>{' '}
+                      <span className='font-normal'>{option.interval}</span>
+                    </div>
+                  </div>
+                </label>
               ))}
-            </SelectContent>
-          </Select>
+            </RadioGroup>
+          </div>
         </InputWrapper>
       </CardContent>
 
       <CardFooter>
-        <ModalSubscriptionOverview data={data} installments={installments} />
+        <ModalSubscriptionOverview data={data} installment={selectedInstallment} />
       </CardFooter>
     </>
   );

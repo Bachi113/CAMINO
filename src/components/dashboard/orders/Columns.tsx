@@ -64,6 +64,11 @@ export const columns: ColumnDef<TypeOrder>[] = [
     cell: (info) => info.getValue() ?? '-',
   },
   {
+    accessorKey: 'interval',
+    header: 'Interval',
+    cell: (info) => info.getValue() ?? '-',
+  },
+  {
     accessorKey: 'id',
     header: 'Payment Link',
     cell: (info) => {

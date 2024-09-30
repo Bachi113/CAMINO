@@ -269,6 +269,7 @@ export type Database = {
           bank_details: string | null;
           business_addresses: string | null;
           business_details: string | null;
+          created_at: string;
           documents: string | null;
           id: string;
           onboarded_at: string | null;
@@ -280,6 +281,7 @@ export type Database = {
           bank_details?: string | null;
           business_addresses?: string | null;
           business_details?: string | null;
+          created_at?: string;
           documents?: string | null;
           id?: string;
           onboarded_at?: string | null;
@@ -291,6 +293,7 @@ export type Database = {
           bank_details?: string | null;
           business_addresses?: string | null;
           business_details?: string | null;
+          created_at?: string;
           documents?: string | null;
           id?: string;
           onboarded_at?: string | null;
@@ -348,7 +351,8 @@ export type Database = {
           created_at: string;
           currency: string;
           id: string;
-          installments_options: number[];
+          installments_options: Json[];
+          interval: string | null;
           period: number | null;
           price: string;
           product_id: string;
@@ -362,7 +366,8 @@ export type Database = {
           created_at?: string;
           currency: string;
           id?: string;
-          installments_options: number[];
+          installments_options: Json[];
+          interval?: string | null;
           period?: number | null;
           price: string;
           product_id: string;
@@ -376,7 +381,8 @@ export type Database = {
           created_at?: string;
           currency?: string;
           id?: string;
-          installments_options?: number[];
+          installments_options?: Json[];
+          interval?: string | null;
           period?: number | null;
           price?: string;
           product_id?: string;

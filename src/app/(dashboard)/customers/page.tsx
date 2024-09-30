@@ -8,7 +8,7 @@ const Page = async () => {
 
   return (
     <div className='p-8 w-full'>
-      <NavTitle />
+      <NavTitle userType='customer' />
       <CustomersTable isMerchant={userType === 'merchant'} />
     </div>
   );

@@ -26,7 +26,7 @@ export default async function MerchantDashboard() {
 
   return (
     <div className='p-6 w-full'>
-      <NavTitle />
+      <NavTitle userType={userType} />
 
       {isMerchant ? (
         <div className='flex justify-end gap-2 mt-6 mb-8'>

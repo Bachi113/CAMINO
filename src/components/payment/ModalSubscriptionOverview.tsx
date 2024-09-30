@@ -13,35 +13,58 @@ import { useRouter } from 'next/navigation';
 import { createSetupCheckoutSession, getCustomerPaymentMethods } from '@/app/actions/stripe.actions';
 import { errorToast } from '@/utils/utils';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
-import { TypeOrder } from '@/types/types';
+import { TypeInterval, TypeOrder } from '@/types/types';
 import { LuCalendarDays } from 'react-icons/lu';
+import { TypeInstallmentOption } from '@/utils/installment-options';
 
 interface ModalSubscriptionOverviewProps {
   data: TypeOrder;
-  installments: string;
+  installment: TypeInstallmentOption;
 }
 
-const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, installments }) => {
+const intervalOptions = {
+  day: 'daily',
+  week: 'weekly',
+  month: 'monthly',
+  year: 'yearly',
+};
+
+const today = new Date();
+const firstPaymentDate = today.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const nextPaymentDate = (interval: TypeInterval) => {
+  const currentDate = new Date(today);
+  const intervalMapping: { [key: string]: () => void } = {
+    day: () => currentDate.setDate(today.getDate() + 1),
+    week: () => currentDate.setDate(today.getDate() + 7),
+    month: () => currentDate.setMonth(today.getMonth() + 1),
+    year: () => currentDate.setFullYear(today.getFullYear() + 1),
+  };
+
+  (intervalMapping[interval] || intervalMapping['month'])();
+
+  return currentDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+
+const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, installment }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
   const { id, stripe_cus_id: customer_id, price, quantity, currency } = data;
   const totalAmount = Number(price) * quantity;
-  const period = Number(installments);
+  const period = installment.count;
+  const interval = installment.interval;
+  const intervalText = intervalOptions[installment.interval];
 
   const router = useRouter();
-
-  const today = new Date();
-  const firstPaymentDate = today.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-  const nextPaymentDate = new Date(today.setMonth(today.getMonth() + 1)).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
 
   const installmentAmount = (parseFloat(totalAmount.toString()) / period).toFixed(2);
 
@@ -49,7 +72,7 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
     setIsPending(true);
 
     const supabase = supabaseBrowserClient();
-    await supabase.from('orders').update({ period: period }).eq('id', id);
+    await supabase.from('orders').update({ period, interval }).eq('id', id);
 
     const paymentMethods = await getCustomerPaymentMethods(customer_id);
     if (paymentMethods.error) {
@@ -96,14 +119,16 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
                 </span>
               </div>
               <div className='flex justify-between items-center'>
-                <span className='font-medium'>Monthly Payment:</span>
+                <span className='font-medium'>Installment Amount:</span>
                 <span className='font-semibold'>
                   {currency} {installmentAmount}
                 </span>
               </div>
               <div className='flex justify-between items-center'>
                 <span className='font-medium'>Installment Plan:</span>
-                <span>{period} monthly payments</span>
+                <div>
+                  {period} {intervalText} payments
+                </div>
               </div>
             </div>
 
@@ -119,15 +144,22 @@ const ModalSubscriptionOverview: FC<ModalSubscriptionOverviewProps> = ({ data, i
                 <LuCalendarDays className='text-primary' />
                 <div>
                   <p className='font-medium'>Next Payment Date</p>
-                  <p className='text-sm text-gray-600'>{nextPaymentDate}</p>
+                  <p className='text-sm text-gray-600'>{nextPaymentDate(interval)}</p>
                 </div>
               </div>
             </div>
 
             <div className='space-y-2'>
               <p className='text-sm text-gray-600'>
-                By confirming, you agree to the terms of the subscription and authorize for {period} monthly
-                payments of {currency} {installmentAmount}.
+                By confirming, you agree to the terms of the subscription and authorize for{' '}
+                <span className='font-semibold'>
+                  {period} {intervalText}
+                </span>{' '}
+                payments of{' '}
+                <span className='font-medium'>
+                  {currency} {installmentAmount}
+                </span>
+                .
               </p>
               <div className='flex items-center space-x-2'>
                 <HiOutlineCreditCard className='text-gray-400' />

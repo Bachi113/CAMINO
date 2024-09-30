@@ -10,14 +10,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { cn, errorToast } from '@/utils/utils';
+import { errorToast } from '@/utils/utils';
 import { deleteUser } from '@/app/actions/supabase.actions';
 
 interface ModalDeleteAccountProps {
   userId?: string;
-  className?: string;
 }
-const ModalDeleteAccount = ({ userId, className }: ModalDeleteAccountProps) => {
+const ModalDeleteAccount = ({ userId }: ModalDeleteAccountProps) => {
   const handleSubmit = async () => {
     const response = await deleteUser(userId);
     if (response?.error) {
@@ -28,9 +27,7 @@ const ModalDeleteAccount = ({ userId, className }: ModalDeleteAccountProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='ghost' className={cn('text-red-500 hover:text-red-600', className)}>
-          Delete Account
-        </Button>
+        <Button variant='destructive'>Delete Account</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

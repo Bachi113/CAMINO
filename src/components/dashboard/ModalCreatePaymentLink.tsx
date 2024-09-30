@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
-import { errorToast, handleCopyPaymentLink } from '@/utils/utils';
+import { cn, errorToast, handleCopyPaymentLink } from '@/utils/utils';
 import { BarLoader } from 'react-spinners';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeCreatePaymentLink } from '@/types/types';
@@ -36,6 +36,18 @@ import { LuLoader } from 'react-icons/lu';
 import { toast } from '../ui/use-toast';
 import { sendPaymentLinkToCustomer } from '@/utils/send-payment-link';
 import { currencyOptions } from '@/utils/contsants/currencies';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { BiChevronDown } from 'react-icons/bi';
+import { CheckIcon } from '@radix-ui/react-icons';
+import { installmentOptions, TypeInstallmentOption } from '@/utils/installment-options';
 
 interface ModalCreatePaymentLinkProps {}
 
@@ -51,16 +63,12 @@ const validations = yup.object().shape({
   currency: yup.string().required('Currency is required'),
   price: yup.string().required('Price is required'),
   quantity: yup.number().required('Quantity is required').positive().integer().min(1),
-  installments_options: yup
-    .array()
-    .of(yup.number().required('Max installments is required'))
-    .required('Max installments is required'),
+  installments_options: yup.array().required('Max installments is required'),
 });
-
-const installmentOptions = ['3', '6', '12', '24'];
 
 const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
+  const [openCustomerSelect, setOpenCustomerSelect] = useState(false);
   const [openProductModal, setOpenProductModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -83,6 +91,8 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   });
 
   const selectedProduct = products?.find((product) => product.id === watch('product_id'));
+  const selectedCustomer = merchantCustomers?.find((c) => c.customers?.stripe_id === watch('stripe_cus_id'));
+  const totalAmount = Number(watch('price')) * watch('quantity');
 
   useEffect(() => {
     if (selectedProduct) {
@@ -90,6 +100,13 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
       setValue('price', selectedProduct.price);
     }
   }, [selectedProduct, setValue]);
+
+  useEffect(() => {
+    if (!products) {
+      return;
+    }
+    setValue('product_id', products[0].id);
+  }, [products, setValue]);
 
   const handleCreatePaymentLink = async (formData: TypeCreatePaymentLink) => {
     const supabase = supabaseBrowserClient();
@@ -105,7 +122,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
         throw 'User not found';
       }
 
-      const installmentOptions = formData.installments_options.sort((a, b) => a - b);
+      const installmentOptions = formData.installments_options;
       const { data: paymentLink, error } = await supabase
         .from('orders')
         .insert({
@@ -139,7 +156,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
     }
   };
 
-  const handleInstallmentChange = (value: number, checked: boolean) => {
+  const handleInstallmentChange = (value: TypeInstallmentOption, checked: boolean) => {
     const selectedInstallments = getValues('installments_options');
     if (checked) {
       selectedInstallments.push(value);
@@ -152,10 +169,9 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
   // Send payment link to the customer
   const handleSendPaymentLink = async () => {
-    const customer = merchantCustomers?.find((c) => c.customers?.stripe_id === getValues('stripe_cus_id'));
-    const customerName = customer?.customers?.customer_name || '';
-    const customerEmail = customer?.customers?.email || '';
-    const customerPhone = customer?.customers?.phone || '';
+    const customerName = selectedCustomer?.customers?.customer_name || '';
+    const customerEmail = selectedCustomer?.customers?.email || '';
+    const customerPhone = selectedCustomer?.customers?.phone || '';
     const product = products?.find((p) => p.id === getValues('product_id'));
     const productName = product?.product_name || '';
 
@@ -201,25 +217,54 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
           <form onSubmit={handleSubmit(handleCreatePaymentLink)} className='space-y-4'>
             <InputWrapper id='customer' label='Customer' required error={errors.stripe_cus_id?.message}>
-              <Select
-                value={watch('stripe_cus_id')}
-                onValueChange={(value) => handleValueChange('stripe_cus_id', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder='Select or add a customer' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='add-customer' className='cursor-pointer'>
-                    <div className='flex gap-1 items-center text-primary'>
-                      <FiPlus /> Add new customer
-                    </div>
-                  </SelectItem>
-                  {merchantCustomers?.map((data) => (
-                    <SelectItem key={data.id} value={data.customers?.stripe_id as string}>
-                      {data.customers?.customer_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={openCustomerSelect} onOpenChange={setOpenCustomerSelect}>
+                <PopoverTrigger asChild>
+                  <Button variant='outline' className='w-full justify-between shadow-none px-3'>
+                    {selectedCustomer?.customers?.customer_name || (
+                      <span className='text-muted-foreground/75'>Select or add a customer</span>
+                    )}
+                    <BiChevronDown className='size-5 text-gray-400 dark:text-default' />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className='w-[525px] p-0'>
+                  <Command>
+                    <CommandInput placeholder='Search customer...' />
+                    <CommandList>
+                      <CommandEmpty>No customer found.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandItem
+                          onSelect={() => handleValueChange('stripe_cus_id', 'add-customer')}
+                          className='cursor-pointer hover:bg-accent'>
+                          <div className='flex gap-1 items-center text-primary'>
+                            <FiPlus /> Add new customer
+                          </div>
+                        </CommandItem>
+                        {merchantCustomers?.map((data, index) => (
+                          <CommandItem
+                            key={data.id}
+                            // value={data.customers?.stripe_id as string}
+                            value={`${data.customers?.customer_name}~${index}`}
+                            onSelect={(value) => {
+                              const indx = Number(value.split('~')[1]);
+                              const customer = merchantCustomers[indx];
+                              handleValueChange('stripe_cus_id', customer.customers?.stripe_id as string);
+                              setOpenCustomerSelect(false);
+                            }}
+                            className={cn(
+                              'justify-between cursor-pointer hover:bg-accent',
+                              watch('stripe_cus_id') === data.customers?.stripe_id && 'bg-accent'
+                            )}>
+                            {data.customers?.customer_name}
+                            {watch('stripe_cus_id') === data.customers?.stripe_id && (
+                              <CheckIcon className={cn('mr-2 h-4 w-4')} />
+                            )}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </InputWrapper>
 
             <InputWrapper id='product' label='Product' required error={errors.product_id?.message}>
@@ -276,24 +321,28 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
               </div>
             </div>
 
-            <InputWrapper
-              id='installments_options'
-              label='Installment Options'
-              required
-              error={errors.installments_options?.message}>
-              <div className='grid grid-cols-2'>
+            <InputWrapper id='installments_options' label='Installment Options' required>
+              <div className='max-h-60 overflow-auto space-y-2'>
                 {installmentOptions.map((option) => (
-                  <div key={option} className='flex items-center text-sm space-x-2 mb-2'>
+                  <label
+                    key={option.id}
+                    htmlFor={`installment${option.id}`}
+                    className='h-10 flex items-center text-sm space-x-2 border rounded-md cursor-pointer px-3'>
                     <Checkbox
-                      id={`intslmnt${option}`}
-                      onCheckedChange={(checked) =>
-                        handleInstallmentChange(Number(option), checked as boolean)
-                      }
+                      id={`installment${option.id}`}
+                      onCheckedChange={(checked) => handleInstallmentChange(option, checked as boolean)}
                     />
-                    <label htmlFor={`intslmnt${option}`} className='cursor-pointer'>
-                      {option} months
-                    </label>
-                  </div>
+                    <div className='w-full flex items-center justify-between space-x-6'>
+                      <div>{option.count} installments</div>
+                      <div>
+                        <span className='font-semibold'>
+                          {getSymbolFromCurrency(watch('currency'))} {(totalAmount / option.count).toFixed(2)}{' '}
+                          /
+                        </span>{' '}
+                        <span className='font-normal'>{option.interval}</span>
+                      </div>
+                    </div>
+                  </label>
                 ))}
               </div>
             </InputWrapper>

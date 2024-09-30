@@ -9,7 +9,7 @@ import { TypeOrderDetails } from '@/types/types';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { LuLoader } from 'react-icons/lu';
 import { sendPaymentLinkToCustomer } from '@/utils/send-payment-link';
 
@@ -18,7 +18,7 @@ interface OrderDetailsProps {
   handleSheetOpen: () => void;
 }
 
-const OrderDetails = ({ data, handleSheetOpen }: OrderDetailsProps) => {
+const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${data.id}`;
@@ -47,6 +47,10 @@ const OrderDetails = ({ data, handleSheetOpen }: OrderDetailsProps) => {
     {
       label: 'Instalments',
       value: data.period ?? '-',
+    },
+    {
+      label: 'Interval',
+      value: data.interval ?? '-',
     },
   ];
 

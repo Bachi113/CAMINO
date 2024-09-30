@@ -61,8 +61,10 @@ export type TypeCreatePaymentLink = {
   currency: string;
   price: string;
   quantity: number;
-  installments_options: number[];
+  installments_options: any;
 };
+
+export type TypeInterval = 'day' | 'week' | 'month' | 'year';
 
 // Create Subscription
 export type TypeCreateSubscription = {
@@ -74,6 +76,7 @@ export type TypeCreateSubscription = {
   price: string;
   quantity: number;
   installments: number;
+  interval: TypeInterval;
 };
 
 // Create Payment Method CS
@@ -101,6 +104,7 @@ export type TypeOrderDetails = {
     phone: string;
   };
   period?: number | null;
+  interval?: string | null;
 };
 
 // Product Details

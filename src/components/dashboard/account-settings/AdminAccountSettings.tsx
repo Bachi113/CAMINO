@@ -21,7 +21,7 @@ const AdminAccountSettings = () => {
         </InputWrapper>
       </div>
 
-      <ModalDeleteAccount className='p-0' />
+      <ModalDeleteAccount />
     </div>
   );
 };
