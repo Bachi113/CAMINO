@@ -43,3 +43,10 @@ export const installmentOptions: TypeInstallmentOption[] = [
     interval: 'year',
   },
 ];
+
+export const intervalOptions = {
+  day: 'daily',
+  week: 'weekly',
+  month: 'monthly',
+  year: 'yearly',
+};

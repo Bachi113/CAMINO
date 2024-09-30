@@ -3,7 +3,7 @@ import NavTitle from '@/components/dashboard/NavTitle';
 
 const Page = () => {
   return (
-    <div className='p-8 w-full'>
+    <div className='w-full p-6'>
       <NavTitle />
       <MerchantsTable />
     </div>
