@@ -7,7 +7,7 @@ import InputWrapper from '@/components/InputWrapper';
 import { TypeOrder } from '@/types/types';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import ModalSubscriptionOverview from './ModalSubscriptionOverview';
-import { TypeInstallmentOption } from '@/utils/installment-options';
+import { intervalOptions, TypeInstallmentOption } from '@/utils/installment-options';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 
 interface PaymentDetailsProps {
@@ -107,7 +107,10 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ data }) => {
                   className='h-10 flex items-center text-sm space-x-2 border rounded-md cursor-pointer px-3'>
                   <RadioGroupItem value={option.id.toString()} id={`installment${option.id}`} />
                   <div className='w-full flex items-center justify-between space-x-6'>
-                    <div>{option.count} installments</div>
+                    <div>
+                      {option.count} <span className='capitalize'>{intervalOptions[option.interval]}</span>{' '}
+                      installments
+                    </div>
                     <div>
                       <span className='font-semibold'>
                         {getSymbolFromCurrency(data.currency)} {(totalAmount / option.count).toFixed(2)} /

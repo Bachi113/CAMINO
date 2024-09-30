@@ -15,19 +15,12 @@ import { errorToast } from '@/utils/utils';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { TypeInterval, TypeOrder } from '@/types/types';
 import { LuCalendarDays } from 'react-icons/lu';
-import { TypeInstallmentOption } from '@/utils/installment-options';
+import { intervalOptions, TypeInstallmentOption } from '@/utils/installment-options';
 
 interface ModalSubscriptionOverviewProps {
   data: TypeOrder;
   installment: TypeInstallmentOption;
 }
-
-const intervalOptions = {
-  day: 'daily',
-  week: 'weekly',
-  month: 'monthly',
-  year: 'yearly',
-};
 
 const today = new Date();
 const firstPaymentDate = today.toLocaleDateString('en-US', {

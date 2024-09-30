@@ -47,7 +47,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { BiChevronDown } from 'react-icons/bi';
 import { CheckIcon } from '@radix-ui/react-icons';
-import { installmentOptions, TypeInstallmentOption } from '@/utils/installment-options';
+import { installmentOptions, intervalOptions, TypeInstallmentOption } from '@/utils/installment-options';
 
 interface ModalCreatePaymentLinkProps {}
 
@@ -84,6 +84,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
     getValues,
     watch,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<TypeCreatePaymentLink>({
     resolver: yupResolver(validations),
@@ -92,7 +93,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
 
   const selectedProduct = products?.find((product) => product.id === watch('product_id'));
   const selectedCustomer = merchantCustomers?.find((c) => c.customers?.stripe_id === watch('stripe_cus_id'));
-  const totalAmount = Number(watch('price')) * watch('quantity');
+  const totalAmount = Number(watch('price') || 0) * watch('quantity');
 
   useEffect(() => {
     if (selectedProduct) {
@@ -102,11 +103,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   }, [selectedProduct, setValue]);
 
   useEffect(() => {
-    if (!products) {
-      return;
+    if (!isOpen) {
+      reset();
     }
-    setValue('product_id', products[0].id);
-  }, [products, setValue]);
+  }, [isOpen, reset]);
 
   const handleCreatePaymentLink = async (formData: TypeCreatePaymentLink) => {
     const supabase = supabaseBrowserClient();
@@ -123,6 +123,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
       }
 
       const installmentOptions = formData.installments_options;
+      if (installmentOptions.length == 0) {
+        throw 'Select installment options';
+      }
+
       const { data: paymentLink, error } = await supabase
         .from('orders')
         .insert({
@@ -322,7 +326,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
             </div>
 
             <InputWrapper id='installments_options' label='Installment Options' required>
-              <div className='max-h-60 overflow-auto space-y-2'>
+              <div className='max-h-52 overflow-auto space-y-2'>
                 {installmentOptions.map((option) => (
                   <label
                     key={option.id}
@@ -333,7 +337,10 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                       onCheckedChange={(checked) => handleInstallmentChange(option, checked as boolean)}
                     />
                     <div className='w-full flex items-center justify-between space-x-6'>
-                      <div>{option.count} installments</div>
+                      <div>
+                        {option.count} <span className='capitalize'>{intervalOptions[option.interval]}</span>{' '}
+                        installments
+                      </div>
                       <div>
                         <span className='font-semibold'>
                           {getSymbolFromCurrency(watch('currency'))} {(totalAmount / option.count).toFixed(2)}{' '}
