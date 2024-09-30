@@ -86,6 +86,21 @@ export async function getTransactions() {
   return { data };
 }
 
+export async function getTransactionsByOrderId(orderId: string) {
+  const { data, error } = await supabaseAdmin
+    .from('transactions')
+    .select()
+    .order('created_at', { ascending: false })
+    .eq('order_id', orderId);
+
+  if (error) {
+    console.error(error);
+    return { error };
+  }
+
+  return { data };
+}
+
 export async function getAllCustomers() {
   const { data, error } = await supabaseAdmin
     .from('merchants_customers')

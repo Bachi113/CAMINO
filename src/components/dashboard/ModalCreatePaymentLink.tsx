@@ -247,9 +247,9 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                           <CommandItem
                             key={data.id}
                             // value={data.customers?.stripe_id as string}
-                            value={`${data.customers?.customer_name}~${index}`}
+                            value={`${data.customers?.customer_name}~${data.customers?.email}~${index}`}
                             onSelect={(value) => {
-                              const indx = Number(value.split('~')[1]);
+                              const indx = Number(value.split('~')[2]);
                               const customer = merchantCustomers[indx];
                               handleValueChange('stripe_cus_id', customer.customers?.stripe_id as string);
                               setOpenCustomerSelect(false);
@@ -258,10 +258,13 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                               'justify-between cursor-pointer hover:bg-accent',
                               watch('stripe_cus_id') === data.customers?.stripe_id && 'bg-accent'
                             )}>
-                            {data.customers?.customer_name}
-                            {watch('stripe_cus_id') === data.customers?.stripe_id && (
-                              <CheckIcon className={cn('mr-2 h-4 w-4')} />
-                            )}
+                            <p>{data.customers?.customer_name}</p>
+                            <div className='flex gap-2'>
+                              <p className='text-xs opacity-50'>{data.customers?.email}</p>
+                              {watch('stripe_cus_id') === data.customers?.stripe_id && (
+                                <CheckIcon className={cn('mr-2 h-4 w-4')} />
+                              )}
+                            </div>
                           </CommandItem>
                         ))}
                       </CommandGroup>
