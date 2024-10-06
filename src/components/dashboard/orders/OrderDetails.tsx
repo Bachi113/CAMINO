@@ -81,6 +81,7 @@ const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
         productName,
         currency: data.currency,
         price: data.price,
+        quantity: data.quantity,
         paymentLink,
       });
       toast({ description: 'Payment link sent successfully' });

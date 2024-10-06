@@ -1,6 +1,10 @@
+import { getInvoice } from '@/app/actions/stripe.actions';
+import paymentConfirmationEmail from '@/components/email-template/PaymentConfirmationEmail';
+import config from '@/config';
 import { EnumOrderStatus, EnumTransactionStatus } from '@/types/types';
 import stripe from '@/utils/stripe';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import axios from 'axios';
 import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
@@ -89,6 +93,7 @@ async function handleRecordTransaction(invoice: Stripe.Response<Stripe.Invoice>)
 
   await supabaseAdmin.from('transactions').insert({
     stripe_id: invoice.id,
+    amount: `${invoice.currency} ${invoice.amount_paid}`,
     product_name: product.product_name!,
     product_id: product.id,
     order_id: orderDetails.id,
@@ -109,4 +114,28 @@ async function handleSubscriptionEvent(
     supabaseAdmin.from('orders').update({ status }).eq('stripe_id', subscriptionId),
     supabaseAdmin.from('transactions').update({ status: txStatus }).eq('stripe_id', invoiceId),
   ]);
+
+  // Send payment confirmation email to the customer
+  if (txStatus === 'completed') {
+    const { data, error } = await supabaseAdmin
+      .from('transactions')
+      .select('*, customers(*)')
+      .eq('stripe_id', subscriptionId)
+      .single();
+    if (!data) {
+      console.debug('Transaction Fetch Error');
+      console.error(error);
+      throw new Error(error.message);
+    }
+
+    const { url } = await getInvoice(invoiceId);
+
+    const productName = data.product_name;
+    const customerName = data.customer_name;
+
+    const emailBody = paymentConfirmationEmail(customerName!, data.amount!, productName!, url);
+    const subject = `Payment Successful: ${productName} - ${config.app.name}`;
+
+    await axios.post('/api/resend', { email: data?.customers?.email, subject, emailBody });
+  }
 }
