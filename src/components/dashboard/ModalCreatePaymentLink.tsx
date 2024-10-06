@@ -188,6 +188,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
         productName,
         currency: getValues('currency'),
         price: getValues('price'),
+        quantity: getValues('quantity'),
         paymentLink,
       });
       toast({ description: 'Payment link sent successfully' });
