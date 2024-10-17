@@ -46,8 +46,7 @@ const config = {
     senderEmailAddress: 'Camino <onboarding@resend.dev>',
   },
   twilio: {
-    // TODO: Update the messaging service SID for Twilio.
-    messagingServiceSid: 'MGXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    messagingServiceSid: 'MG2736eadba7b9a972e208f7a4cc2ce19e',
   },
 };
 

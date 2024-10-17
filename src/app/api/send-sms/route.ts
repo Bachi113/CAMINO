@@ -4,6 +4,7 @@ import client from 'twilio';
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
+const messagingServiceSid = config.twilio.messagingServiceSid;
 
 const twilio = client(accountSid, authToken, {
   autoRetry: true,
@@ -12,17 +13,17 @@ const twilio = client(accountSid, authToken, {
 
 export async function POST(req: Request) {
   try {
-    // Parse the request body to extract phone and name
     const { phone, message } = await req.json();
 
     const response = await twilio.messages.create({
       to: phone,
       body: message,
-      messagingServiceSid: config.twilio.messagingServiceSid,
+      messagingServiceSid,
     });
 
-    // TODO: handle error response
-    console.log(response);
+    if (['canceled', 'failed'].includes(response.status)) {
+      throw new Error(`Failed to send sms to ${phone}.`);
+    }
 
     return NextResponse.json({ message: `SMS sent to ${phone}` }, { status: 200 });
   } catch (error: any) {
