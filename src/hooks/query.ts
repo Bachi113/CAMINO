@@ -87,7 +87,7 @@ const useGetBankDetails = () => {
 const useGetVerificationDocuments = () => {
   const supabase = supabaseBrowserClient();
   return useQuery({
-    queryKey: ['getDocumentes'],
+    queryKey: ['getDocuments'],
     queryFn: async () => {
       const { data, error } = await supabase.from('documents').select('*').single();
 
