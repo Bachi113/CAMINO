@@ -4,6 +4,7 @@ import { TypeCreateCustomer, TypeCreatePaymentMethodCS, TypeCreateSubscription }
 import stripe from '@/utils/stripe';
 import { supabaseServerClient } from '@/utils/supabase/server';
 import { getUser } from './supabase.actions';
+import { supabaseAdmin } from '@/utils/supabase/admin';
 
 export async function createProduct() {
   const supabase = supabaseServerClient();
@@ -99,7 +100,7 @@ export async function createSubscription(data: TypeCreateSubscription) {
       end_behavior: 'cancel',
     });
 
-    await supabaseServerClient()
+    await supabaseAdmin
       .from('orders')
       .update({
         stripe_id: subscription.subscription as string,
