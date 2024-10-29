@@ -343,7 +343,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
                     <div className='w-full flex items-center justify-between space-x-6'>
                       <div>
                         {option.count} <span className='capitalize'>{intervalOptions[option.interval]}</span>{' '}
-                        installments
+                        Installments
                       </div>
                       <div>
                         <span className='font-semibold'>

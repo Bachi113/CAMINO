@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
-import { useGetBankDetails, useGetVerificationDocuments } from '@/hooks/query';
+import { useGetBankDetails, useGetBanksList, useGetVerificationDocuments } from '@/hooks/query';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { bankFields } from '@/utils/form-fields';
 import { BankDetailsSchema, IBankDetails } from '@/types/validations';
@@ -18,7 +18,6 @@ import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
 import { currencyOptions } from '@/utils/contsants/currencies';
-import { bankOptions } from '@/utils/contsants/banks';
 import ModalOnboardingSummary from './ModalOnboardingSummary';
 
 const BankDetails = () => {
@@ -35,6 +34,7 @@ const BankDetails = () => {
     resolver: yupResolver(BankDetailsSchema),
   });
 
+  const { data: bankOptions } = useGetBanksList();
   const { data } = useGetBankDetails();
   const { data: documentsData } = useGetVerificationDocuments();
 
@@ -98,11 +98,13 @@ const BankDetails = () => {
                     </SelectTrigger>
 
                     <SelectContent>
-                      {bankOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
+                      {bankOptions
+                        ?.map((b) => b.bank_name)
+                        .map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </InputWrapper>

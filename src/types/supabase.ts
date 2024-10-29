@@ -22,15 +22,7 @@ export type Database = {
           id?: string;
           user_id?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'admins_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: true;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       bank_details: {
         Row: {
@@ -66,15 +58,28 @@ export type Database = {
           swift_code?: string | null;
           user_id?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'bank_details_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
+      };
+      banks_list: {
+        Row: {
+          bank_id: string | null;
+          bank_name: string;
+          created_at: string;
+          id: number;
+        };
+        Insert: {
+          bank_id?: string | null;
+          bank_name: string;
+          created_at?: string;
+          id?: number;
+        };
+        Update: {
+          bank_id?: string | null;
+          bank_name?: string;
+          created_at?: string;
+          id?: number;
+        };
+        Relationships: [];
       };
       business_addresses: {
         Row: {
@@ -107,15 +112,7 @@ export type Database = {
           street_address?: string;
           user_id?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'business_addresses_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       business_details: {
         Row: {
@@ -145,15 +142,7 @@ export type Database = {
           user_id?: string;
           vat_registration_number?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'business_details_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       customers: {
         Row: {
@@ -186,15 +175,7 @@ export type Database = {
           stripe_id?: string | null;
           user_id?: string | null;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'customers_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: true;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       documents: {
         Row: {
@@ -218,15 +199,7 @@ export type Database = {
           id?: string;
           user_id?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'documents_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       merchants_customers: {
         Row: {
@@ -253,13 +226,6 @@ export type Database = {
             columns: ['customer_id'];
             isOneToOne: false;
             referencedRelation: 'customers';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'merchants_customers_merchant_id_fkey';
-            columns: ['merchant_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
             referencedColumns: ['id'];
           },
         ];
@@ -337,13 +303,6 @@ export type Database = {
             referencedRelation: 'personal_informations';
             referencedColumns: ['id'];
           },
-          {
-            foreignKeyName: 'onboarding_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: true;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
         ];
       };
       orders: {
@@ -407,13 +366,6 @@ export type Database = {
             referencedRelation: 'customers';
             referencedColumns: ['stripe_id'];
           },
-          {
-            foreignKeyName: 'orders_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
         ];
       };
       personal_informations: {
@@ -444,15 +396,7 @@ export type Database = {
           phone?: string;
           user_id?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'personal_informations_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       product_categories: {
         Row: {
@@ -509,15 +453,7 @@ export type Database = {
           stripe_id?: string | null;
           user_id?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'products_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       transactions: {
         Row: {
@@ -565,13 +501,6 @@ export type Database = {
             columns: ['customer_id'];
             isOneToOne: false;
             referencedRelation: 'customers';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'transactions_merchant_id_fkey';
-            columns: ['merchant_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
             referencedColumns: ['id'];
           },
           {
@@ -675,4 +604,17 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
     ? PublicSchema['Enums'][PublicEnumNameOrOptions]
+    : never;
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends keyof PublicSchema['CompositeTypes'] | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database;
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema['CompositeTypes']
+    ? PublicSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
     : never;

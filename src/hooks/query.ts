@@ -8,6 +8,20 @@ import {
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
+const useGetBanksList = () => {
+  const supabase = supabaseBrowserClient();
+  return useQuery({
+    queryKey: ['getBanksList'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('banks_list').select();
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+  });
+};
+
 const useGetPersonalInfo = () => {
   const supabase = supabaseBrowserClient();
   return useQuery({
@@ -298,6 +312,7 @@ const useGetProductCategories = () => {
 };
 
 export {
+  useGetBanksList,
   useGetPersonalInfo,
   useGetBuinessDetail,
   useGetBusinessAddress,
