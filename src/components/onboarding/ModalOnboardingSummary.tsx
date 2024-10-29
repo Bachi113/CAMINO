@@ -22,12 +22,10 @@ import { onboardingData } from '@/app/onboarding/[onboarding]/routes';
 
 const { sections: sidebarItems } = onboardingData;
 
-interface ModalOnboardingSummaryProps {
-  showModal?: boolean;
-}
+interface ModalOnboardingSummaryProps {}
 
-const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ showModal }) => {
-  const [isOpen, setIsOpen] = useState(showModal ?? false);
+const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [disableConfirmation, setDisableConfirmation] = useState(true);
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});

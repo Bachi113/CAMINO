@@ -85,7 +85,6 @@ async function uploadDocuments(files: FormData[]) {
 
 const DocumentVerification = () => {
   const [loading, setLoading] = useState(false);
-  const [showSummaryModal, setShowSummaryModal] = useState(false);
 
   const {
     register,
@@ -168,7 +167,6 @@ const DocumentVerification = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: ['getDocuments'] });
-      setShowSummaryModal(true);
     } catch (error: any) {
       errorToast(`${error}`);
     } finally {
@@ -251,7 +249,7 @@ const DocumentVerification = () => {
               </div>
               <div className='flex gap-2'>
                 <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
-                {(showSummaryModal || data) && <ModalOnboardingSummary showModal={showSummaryModal} />}
+                {data && <ModalOnboardingSummary />}
               </div>
             </div>
           </form>
