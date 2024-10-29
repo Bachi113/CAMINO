@@ -3,6 +3,7 @@
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { supabaseServerClient } from '@/utils/supabase/server';
 import { getUserRoleFromCookie } from '@/utils/user-role';
+import { redirect } from 'next/navigation';
 
 export const updateOrderForPeriodAndInterval = async (
   id: string,
@@ -142,6 +143,7 @@ export const deleteUser = async (userId?: string) => {
     if (error) {
       throw error.message;
     }
+    redirect('/');
   } catch (error: any) {
     return { error };
   }

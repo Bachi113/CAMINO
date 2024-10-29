@@ -13,13 +13,15 @@ import { FC, useState } from 'react';
 import { LuLoader } from 'react-icons/lu';
 import { sendPaymentLinkToCustomer } from '@/utils/send-payment-link';
 import { useGetTransactionsByOrderId } from '@/hooks/query';
+import ModalDeleteOrder from './ModalDeleteOrder';
 
 interface OrderDetailsProps {
   data: TypeOrderDetails;
   handleSheetOpen: () => void;
+  isMerchant: boolean;
 }
 
-const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
+const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen, isMerchant }) => {
   const [isSending, setIsSending] = useState(false);
 
   const { data: transactions } = useGetTransactionsByOrderId(data.id);
@@ -113,12 +115,15 @@ const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
               </p>
             </div>
 
-            <Badge
-              variant={data.status === 'active' ? 'default' : 'warning'}
-              className='capitalize space-x-2 w-fit'>
-              <span>Status:</span>
-              <span className='font-bold'>{data.status}</span>
-            </Badge>
+            <div className='w-full flex items-center justify-between'>
+              <Badge
+                variant={data.status === 'active' ? 'default' : 'warning'}
+                className='capitalize space-x-2 w-fit'>
+                <span>Status:</span>
+                <span className='font-bold'>{data.status}</span>
+              </Badge>
+              {isMerchant && <ModalDeleteOrder id={data.id} handleSheetOpen={handleSheetOpen} />}
+            </div>
 
             <div className='grid grid-cols-2 gap-4'>
               {dataToDisplay.map((item, index) => (
@@ -144,7 +149,7 @@ const OrderDetails: FC<OrderDetailsProps> = ({ data, handleSheetOpen }) => {
           </div>
         </div>
 
-        {data.status === 'pending' && (
+        {isMerchant && data.status === 'pending' && (
           <SheetFooter>
             <Button className='w-full h-11' disabled={isSending} onClick={handleSendPaymentLink}>
               {isSending ? (

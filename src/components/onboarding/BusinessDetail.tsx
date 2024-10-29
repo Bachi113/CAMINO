@@ -10,6 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { errorToast } from '@/utils/utils';
 import NavigationButton from '@/components/onboarding/NavigationButton';
 import { useGetBuinessDetail, useGetVerificationDocuments } from '@/hooks/query';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { IBusinessDetail, businessDetailSchema } from '@/types/validations';
 import { businessDetailsFields } from '@/utils/form-fields';
 import { saveData, updateData } from '@/app/actions/onboarding.actions';
@@ -17,6 +18,7 @@ import { queryClient } from '@/app/providers';
 import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
 import ModalOnboardingSummary from './ModalOnboardingSummary';
+import { businessRegistrationTypes } from '@/utils/contsants/business-registration-type';
 
 const BusinessDetail = () => {
   const router = useRouter();
@@ -27,6 +29,7 @@ const BusinessDetail = () => {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<IBusinessDetail>({
     resolver: yupResolver(businessDetailSchema),
   });
@@ -84,13 +87,28 @@ const BusinessDetail = () => {
             <div className='space-y-4'>
               {businessDetailsFields.map((field) => (
                 <InputWrapper key={field.id} label={field.label} required error={errors[field.id]?.message}>
-                  <Input
-                    type='text'
-                    placeholder={field.placeholder}
-                    id={field.id}
-                    {...register(field.id)}
-                    disabled={loading}
-                  />
+                  {field.id === 'registrationType' ? (
+                    <Select onValueChange={(val) => setValue(field.id, val)} value={watch(field.id)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={field.placeholder} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {businessRegistrationTypes.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      type='text'
+                      placeholder={field.placeholder}
+                      id={field.id}
+                      {...register(field.id)}
+                      disabled={loading}
+                    />
+                  )}
                 </InputWrapper>
               ))}
             </div>

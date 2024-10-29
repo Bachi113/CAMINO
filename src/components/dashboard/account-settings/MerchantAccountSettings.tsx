@@ -7,13 +7,13 @@ import { useGetOnboardingData } from '@/hooks/query';
 import { summaryFileds } from '@/utils/form-fields';
 import { onboardingData } from '@/app/onboarding/[onboarding]/routes';
 import { useState, useRef, useEffect } from 'react';
-import ModalDeleteAccount from './ModalDeleteAccount';
 import { redirect } from 'next/navigation';
 import { updateData } from '@/app/actions/onboarding.actions';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
+import ModalDeleteAccountRequest from './ModalDeleteAccountRequest';
 
 type Input = {
   label: string;
@@ -129,7 +129,8 @@ const MerchantAccountSettings = () => {
             </div>
           ))}
         </div>
-        <ModalDeleteAccount userId={data?.personal_informations?.user_id} />
+
+        <ModalDeleteAccountRequest />
       </div>
 
       <div className='p-4 max-h-[calc(100vh-172px)] border overflow-y-auto rounded-md bg-secondary/5 w-full'>

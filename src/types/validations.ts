@@ -32,10 +32,7 @@ export interface IPersonalInfoField {
 export const businessDetailSchema = yup.object().shape({
   businessName: yup.string().required('Business Name is required'),
   businessType: yup.string().required('Business Type is required'),
-  registrationType: yup
-    .string()
-    .required('Registration Type is required')
-    .max(9, 'VAT Registration Type must be at most 9 characters'),
+  registrationType: yup.string().required('Registration Type is required'),
   vatRegistrationNumber: yup
     .string()
     .required('VAT Registration Number is required')

@@ -33,7 +33,7 @@ interface OrdersTableProps {
 
 // const data = [
 //   {
-//     id: '6c31189d27b',
+//     id: 'f75cd47db85',
 //     created_at: '2024-09-11T14:40:35.165044+00:00',
 //     user_id: 'a8514366-0847-4d4c-89ec-3a76afcfca59',
 //     stripe_id: null,
@@ -288,7 +288,11 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ isMerchant }) => {
       </div>
 
       {selectedProduct && (
-        <OrderDetails data={selectedProduct} handleSheetOpen={() => setSelectedProduct(undefined)} />
+        <OrderDetails
+          data={selectedProduct}
+          handleSheetOpen={() => setSelectedProduct(undefined)}
+          isMerchant={isMerchant}
+        />
       )}
     </>
   );
