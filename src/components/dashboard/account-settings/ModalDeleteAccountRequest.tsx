@@ -10,48 +10,34 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { errorToast } from '@/utils/utils';
-import { deleteUser } from '@/app/actions/supabase.actions';
 
-interface ModalDeleteAccountProps {
-  userId?: string;
-}
-
-const ModalDeleteAccount = ({ userId }: ModalDeleteAccountProps) => {
-  const handleSubmit = async () => {
-    const response = await deleteUser(userId);
-    if (response?.error) {
-      errorToast(response.error);
-    }
-  };
-
+const ModalDeleteAccountRequest = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant='destructive'>Delete Account</Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Account?</DialogTitle>
+        <DialogHeader className='mb-3'>
+          <DialogTitle className='mb-3'>Delete Account?</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete the Account? This action cannot be undone.
+            To delete your account, please drop us an email @{' '}
+            <a href='mailto:support@camino.fi' className='text-primary'>
+              support@camino.fi
+            </a>
           </DialogDescription>
         </DialogHeader>
 
         <DialogFooter className='sm:space-x-4'>
           <DialogClose asChild>
             <Button variant='outline' className='w-full'>
-              Back
+              Cancel
             </Button>
           </DialogClose>
-
-          <Button onClick={handleSubmit} className='w-full bg-red-500 text-white'>
-            Yes, Delete
-          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ModalDeleteAccount;
+export default ModalDeleteAccountRequest;

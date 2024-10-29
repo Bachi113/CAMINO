@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useGetCustomerData } from '@/hooks/query';
 import { FormEvent, useEffect, useState } from 'react';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import ModalDeleteAccount from './ModalDeleteAccount';
+import ModalDeleteAccountRequest from './ModalDeleteAccountRequest';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { errorToast } from '@/utils/utils';
 import { toast } from '@/components/ui/use-toast';
@@ -65,7 +65,7 @@ const CustomerAccountSettings = () => {
         </Button>
       </form>
 
-      <ModalDeleteAccount />
+      <ModalDeleteAccountRequest />
     </div>
   );
 };

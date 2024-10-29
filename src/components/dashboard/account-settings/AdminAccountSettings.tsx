@@ -4,7 +4,7 @@ import InputWrapper from '@/components/InputWrapper';
 import { Input } from '@/components/ui/input';
 import { useGetAdminData } from '@/hooks/query';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import ModalDeleteAccount from './ModalDeleteAccount';
+import ModalDeleteAccountRequest from './ModalDeleteAccountRequest';
 
 const AdminAccountSettings = () => {
   const { data, isLoading } = useGetAdminData();
@@ -21,7 +21,7 @@ const AdminAccountSettings = () => {
         </InputWrapper>
       </div>
 
-      <ModalDeleteAccount />
+      <ModalDeleteAccountRequest />
     </div>
   );
 };

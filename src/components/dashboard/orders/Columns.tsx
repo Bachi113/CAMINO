@@ -51,7 +51,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
   },
   {
     accessorKey: 'price',
-    header: 'Total Amount',
+    header: 'Amount',
     cell: ({ row: { original } }) => (
       <div>
         {getSymbolFromCurrency(original.currency)} {Number(original.price) * original.quantity}
