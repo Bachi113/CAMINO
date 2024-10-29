@@ -98,6 +98,8 @@ const DocumentVerification = () => {
 
   const { data } = useGetVerificationDocuments();
 
+  console.log(data);
+
   const document1 = watch('document1') as any;
   const document2 = watch('document2') as any;
   const document3 = watch('document3') as any;

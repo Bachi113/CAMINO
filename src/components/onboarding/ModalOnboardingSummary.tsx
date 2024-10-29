@@ -83,11 +83,7 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = () => {
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(value) => {
-        setIsOpen(value);
-      }}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className='w-full'>
         <Button size='xl' variant='outline' type='button' onClick={handleModalOpen}>
           View Summary
