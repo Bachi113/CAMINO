@@ -251,12 +251,7 @@ const DocumentVerification = () => {
               </div>
               <div className='flex gap-2'>
                 <SubmitButton isLoading={loading}>{data ? 'Update' : 'Continue'}</SubmitButton>
-                {(showSummaryModal || data) && (
-                  <ModalOnboardingSummary
-                    showModal={showSummaryModal}
-                    handleShowModal={setShowSummaryModal}
-                  />
-                )}
+                {(showSummaryModal || data) && <ModalOnboardingSummary showModal={showSummaryModal} />}
               </div>
             </div>
           </form>

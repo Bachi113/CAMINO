@@ -24,10 +24,9 @@ const { sections: sidebarItems } = onboardingData;
 
 interface ModalOnboardingSummaryProps {
   showModal?: boolean;
-  handleShowModal?: (value: boolean) => void;
 }
 
-const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ showModal, handleShowModal }) => {
+const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ showModal }) => {
   const [isOpen, setIsOpen] = useState(showModal ?? false);
   const [disableConfirmation, setDisableConfirmation] = useState(true);
   const [selectedItem, setSelectedItem] = useState(sidebarItems[0].label);
@@ -78,7 +77,6 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ showModal, ha
 
   const handleModalOpen = () => {
     setIsOpen(!isOpen);
-    handleShowModal?.(!isOpen);
   };
 
   const handleRouteChange = (id: string) => {
@@ -91,7 +89,6 @@ const ModalOnboardingSummary: FC<ModalOnboardingSummaryProps> = ({ showModal, ha
       open={isOpen}
       onOpenChange={(value) => {
         setIsOpen(value);
-        handleShowModal?.(value);
       }}>
       <DialogTrigger className='w-full'>
         <Button size='xl' variant='outline' type='button' onClick={handleModalOpen}>
