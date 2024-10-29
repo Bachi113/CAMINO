@@ -13,7 +13,10 @@ const useGetBanksList = () => {
   return useQuery({
     queryKey: ['getBanksList'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('banks_list').select();
+      const { data, error } = await supabase
+        .from('banks_list')
+        .select()
+        .order('bank_name', { ascending: true });
       if (error) {
         throw error;
       }
