@@ -25,7 +25,7 @@ const LoginLayout = async ({ children }: Props) => {
 
   return (
     <div className='h-screen flex items-center bg-light-purple-gradient'>
-      <div className='w-[28%] space-y-2 border rounded-lg p-8 mx-auto'>
+      <div className='w-11/12 md:w-[28%] space-y-2 border rounded-lg p-8 mx-auto'>
         <div className='w-full flex flex-col items-center justify-center gap-5'>
           <Logo />
           <div className='text-default font-semibold text-center space-y-2 my-4'>
