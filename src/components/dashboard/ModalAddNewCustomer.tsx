@@ -87,6 +87,7 @@ const ModalAddNewCustomer: FC<ModalAddNewCustomerProps> = ({
       queryClient.invalidateQueries({ queryKey: ['getMerchantCustomers'] });
       queryClient.invalidateQueries({ queryKey: ['getCustomers'] });
       setIsOpen(false);
+      handleCustomerModal?.(false);
       reset();
       toast({ description: 'Customer added successfully' });
     } catch (error: any) {

@@ -98,6 +98,7 @@ const ModalAddNewProduct: FC<ModalAddNewProductProps> = ({
       queryClient.invalidateQueries({ queryKey: ['getMerchantProducts'] });
       queryClient.invalidateQueries({ queryKey: ['getProducts'] });
       setIsOpen(false);
+      handleProductModal?.(false);
       reset();
     } catch (error: any) {
       errorToast(error);
