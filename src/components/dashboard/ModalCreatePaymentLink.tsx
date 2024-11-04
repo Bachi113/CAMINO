@@ -61,7 +61,11 @@ const validations = yup.object().shape({
   stripe_cus_id: yup.string().required('Customer is required'),
   product_id: yup.string().required('Product is required'),
   currency: yup.string().required('Currency is required'),
-  price: yup.string().required('Price is required'),
+  price: yup
+    .number()
+    .required('Price is required')
+    .typeError('Price must be a number')
+    .min(0.01, 'Price must be greater than 0'),
   quantity: yup.number().required('Quantity is required').positive().integer().min(1),
   installments_options: yup.array().required('Max installments is required'),
 });
@@ -98,7 +102,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
   useEffect(() => {
     if (selectedProduct) {
       setValue('currency', selectedProduct.currency);
-      setValue('price', selectedProduct.price);
+      setValue('price', Number(selectedProduct.price));
     }
   }, [selectedProduct, setValue]);
 
@@ -132,6 +136,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
         .insert({
           ...formData,
           installments_options: installmentOptions,
+          price: String(formData.price),
           user_id: user.id,
         })
         .select('id')
@@ -187,7 +192,7 @@ const ModalCreatePaymentLink: FC<ModalCreatePaymentLinkProps> = () => {
         customerEmail,
         productName,
         currency: getValues('currency'),
-        price: getValues('price'),
+        price: String(getValues('price')),
         quantity: getValues('quantity'),
         paymentLink,
       });

@@ -59,7 +59,7 @@ export type TypeCreatePaymentLink = {
   stripe_cus_id: string;
   product_id: string;
   currency: string;
-  price: string;
+  price: number;
   quantity: number;
   installments_options: any;
 };
