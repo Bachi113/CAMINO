@@ -14,6 +14,14 @@ import { useState } from 'react';
 import ReactCountryFlag from 'react-country-flag';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 
+const getFullPhoneNumber = (phoneNumber: string, phoneCode: string) => {
+  const country = countryOptions.find((c) => c.code === phoneCode);
+  if (!country) {
+    throw new Error('Please select the country code');
+  }
+  return `${country.phoneCode}${phoneNumber}`;
+};
+
 export default function CustomerLoginOtpPage() {
   const [selectedPhoneCode, setSelectedPhoneCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -32,12 +40,7 @@ export default function CustomerLoginOtpPage() {
         throw 'Phone number is required with a valid country code.';
       }
 
-      const country = countryOptions.find((c) => c.code === selectedPhoneCode);
-      if (!country) {
-        throw new Error('Please select the country code');
-      }
-      const fullPhoneNumber = `${country.phoneCode}${phoneNumber}`;
-      setPhoneNumber(fullPhoneNumber);
+      const fullPhoneNumber = getFullPhoneNumber(phoneNumber, selectedPhoneCode);
 
       // Send OTP to the phone number
       const { error } = await supabase.auth.signInWithOtp({
@@ -62,8 +65,10 @@ export default function CustomerLoginOtpPage() {
         throw 'OTP must contain only numbers';
       }
 
+      const fullPhoneNumber = getFullPhoneNumber(phoneNumber, selectedPhoneCode);
+
       // Verify the OTP
-      const error = await verifyPhoneOtp(phoneNumber, otp);
+      const error = await verifyPhoneOtp(fullPhoneNumber, otp);
       if (error) {
         throw error;
       }

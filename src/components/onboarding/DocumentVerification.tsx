@@ -21,6 +21,7 @@ import Heading from '@/components/onboarding/Heading';
 import { SubmitButton } from '@/components/SubmitButton';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { getUser } from '@/app/actions/supabase.actions';
+import config from '@/config';
 
 interface IDocumentVerification {
   experience: string;
@@ -64,7 +65,7 @@ async function uploadDocuments(files: FormData[]) {
       }
 
       const key = `${user.id}-${file.name}`;
-      const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_NAME!;
+      const bucketName = config.supabaseStorageBucket;
       return supabase.storage.from(bucketName).upload(key, file, { upsert: true });
     });
 

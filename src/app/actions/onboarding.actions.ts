@@ -2,45 +2,9 @@
 
 import { supabaseServerClient } from '@/utils/supabase/server';
 import { getUser } from './supabase.actions';
+import config from '@/config';
 
-const bucketName = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_NAME!;
-
-// export async function uploadDocuments(files: FormData[]) {
-//   const supabase = await supabaseServerClient();
-
-//   try {
-//     const user = await getUser();
-//     if (!user) {
-//       throw 'Please login to get started.';
-//     }
-
-//     const uploadPromises = files.map((fileData, index) => {
-//       if (typeof fileData === 'string') {
-//         return fileData;
-//       }
-
-//       const file = fileData.get(`document${index + 1}`) as File;
-//       if (!file) {
-//         throw new Error(`Document ${index + 1} does not exist.`);
-//       }
-//       const key = `${user.id}-${file.name}`;
-//       return supabase.storage.from(bucketName).upload(key, file, { upsert: true });
-//     });
-
-//     const results = await Promise.all(uploadPromises);
-//     const errors = results.filter((result) => result.error);
-//     const urls = results.filter((result) => result.data?.path).map((result) => result.data!.path!);
-
-//     if (errors.length > 0) {
-//       throw new Error(errors.map((error) => error.error?.message).join(', '));
-//     }
-
-//     return { urls };
-//   } catch (error: any) {
-//     console.error('Error uploading file:', error);
-//     return { error: error.message ?? `${error}` };
-//   }
-// }
+const bucketName = config.supabaseStorageBucket;
 
 export async function getDocumentUrl(key: string) {
   try {

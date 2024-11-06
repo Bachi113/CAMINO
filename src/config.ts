@@ -7,6 +7,7 @@ type TypeConfig = {
     url: string;
   };
   supportEmail: string;
+  supabaseStorageBucket: string;
   stripe: {
     baseUrl: string;
   };
@@ -35,6 +36,9 @@ const config = {
 
   // SUPPORT: Contact email for application support, should be updated with an actual email address.
   supportEmail: '',
+
+  // Supabase
+  supabaseStorageBucket: 'documents',
 
   // STRIPE: payment configuration similar in structure to Lemon Squeezy for processing payments.
   stripe: {

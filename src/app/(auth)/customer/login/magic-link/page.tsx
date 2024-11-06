@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import InputWrapper from '@/components/InputWrapper';
 import { errorToast } from '@/utils/utils';
 import { signInWithMagicLink } from '@/app/actions/login.actions';
-
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 import { Button } from '@/components/ui/button';
 import { SubmitButton } from '@/components/SubmitButton';
@@ -14,6 +13,7 @@ import { SubmitButton } from '@/components/SubmitButton';
 export default function CustomerLoginMagicLinkPage() {
   const [emailAddress, setEmailAddress] = useState('');
   const [isMagicLinkSent, setIsMagicLinkSent] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
   // Handle form submission
   const handleFormAction = async (formData: FormData) => {
@@ -30,6 +30,23 @@ export default function CustomerLoginMagicLinkPage() {
       return;
     }
     setIsMagicLinkSent(true);
+  };
+
+  // Handle resend magic link
+  const handleResend = async () => {
+    setIsResending(true);
+    try {
+      const error = await signInWithMagicLink(emailAddress, 'customer');
+      if (error) {
+        errorToast(error);
+        return;
+      }
+      errorToast('Magic link has been resent!', 'success');
+    } catch (error) {
+      errorToast('Failed to resend magic link');
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
@@ -52,14 +69,21 @@ export default function CustomerLoginMagicLinkPage() {
           )}
         </p>
         {isMagicLinkSent ? (
-          <div className='flex flex-col justify-center gap-1'>
+          <div className='flex flex-col justify-center gap-3'>
             <Link href='https://mail.google.com' target='_blank' className='block'>
-              <Button size='xl'>Check your Email</Button>
+              <Button size='xl' className='w-full'>
+                Check your Email
+              </Button>
             </Link>
-            <Button variant='link' onClick={() => setIsMagicLinkSent(false)} className='font-normal'>
-              <MdOutlineKeyboardBackspace className='mr-2' />
-              Change email
-            </Button>
+            <div className='flex flex-col gap-8 items-center'>
+              <Button variant='ghost' onClick={handleResend} disabled={isResending} className='w-full'>
+                {isResending ? 'Resending...' : 'Resend magic link'}
+              </Button>
+              <Button variant='link' onClick={() => setIsMagicLinkSent(false)} className='font-normal'>
+                <MdOutlineKeyboardBackspace className='mr-2' />
+                Change email
+              </Button>
+            </div>
           </div>
         ) : (
           <form className='space-y-7'>
