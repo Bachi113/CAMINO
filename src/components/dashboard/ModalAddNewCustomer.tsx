@@ -35,7 +35,7 @@ interface ModalAddNewCustomerProps {
   triggerButton?: boolean;
 }
 
-export const customerValidations = yup.object().shape({
+const customerValidations = yup.object().shape({
   name: yup.string().required('Name is required'),
   email: yup.string().required('Email is required'),
   phone: yup.string().required('Phone number is required'),

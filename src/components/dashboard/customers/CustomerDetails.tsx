@@ -6,7 +6,7 @@ import { TypeCreateCustomer, TypeCustomerDetails } from '@/types/types';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { customerValidations } from '../ModalAddNewCustomer';
+import * as yup from 'yup';
 import { Button } from '@/components/ui/button';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { errorToast } from '@/utils/utils';
@@ -22,8 +22,15 @@ const dataToDisplay = [
   { id: 'date', label: 'Date Added', disabled: true },
   { id: 'email', label: 'Email', disabled: true },
   { id: 'name', label: 'Customer Name', disabled: false },
-  { id: 'phone', label: 'Phone', disabled: false },
+  { id: 'phone', label: 'Phone', disabled: true },
 ];
+
+const customerValidations = yup.object().shape({
+  name: yup.string().required('Name is required'),
+  email: yup.string().required('Email is required'),
+  phone: yup.string().required('Phone number is required'),
+  address: yup.string().required('Address is required'),
+});
 
 const CustomerDetails = ({ handleSheetOpen, data }: CustomerDetailsProps) => {
   const defaultValues = {
