@@ -20,7 +20,7 @@ export default function AdminLoginPage() {
       if (!email) {
         throw 'Email is required';
       }
-      if (!email.endsWith('@savex.me')) {
+      if (!email.endsWith('@camino.fi')) {
         throw 'The entered email is not authorised for admin login';
       }
 

@@ -20,15 +20,23 @@ export const sendPaymentLinkToCustomer = async (data: TypeSendPaymentLinkToCusto
 
   const amount = `${getSymbolFromCurrency(currency)}${price}`;
 
+  const notificationModes = [];
+
   // Send payment link to the customer via email
   if (customerEmail) {
-    await sendPaymentLinkViaEmail(customerName, customerEmail, productName, amount, quantity, paymentLink);
+    notificationModes.push(
+      sendPaymentLinkViaEmail(customerName, customerEmail, productName, amount, quantity, paymentLink)
+    );
   }
 
   // Send payment link to the customer via SMS
   if (customerPhone) {
-    await sendPaymentLinkViaSMS(customerName, customerPhone, productName, amount, quantity, paymentLink);
+    notificationModes.push(
+      sendPaymentLinkViaSMS(customerName, customerPhone, productName, amount, quantity, paymentLink)
+    );
   }
+
+  await Promise.all([notificationModes]);
 };
 
 // Send payment link to the customer via email
