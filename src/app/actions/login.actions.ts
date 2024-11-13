@@ -2,6 +2,7 @@
 
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { supabaseServerClient } from '@/utils/supabase/server';
+import { setUserRoleCookie } from '@/utils/user-role';
 import { headers } from 'next/headers';
 
 export async function signInWithMagicLink(email: string, user: 'customer' | 'merchant' | 'admin') {
@@ -67,6 +68,8 @@ export async function verifyPhoneOtp(phone: string, otp: string) {
     if (error) {
       throw error.message;
     }
+
+    await setUserRoleCookie('customer');
   } catch (error) {
     return `${error}`;
   }
