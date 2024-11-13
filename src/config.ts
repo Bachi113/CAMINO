@@ -46,8 +46,7 @@ const config = {
     baseUrl: 'https://api.stripe.com',
   },
   resend: {
-    // TODO: Update the sender email address for the Resend service.
-    senderEmailAddress: 'Camino <onboarding@resend.dev>',
+    senderEmailAddress: 'Camino <support@send.camino.fi>',
   },
   twilio: {
     messagingServiceSid: 'MG2736eadba7b9a972e208f7a4cc2ce19e',
