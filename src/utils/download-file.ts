@@ -1,3 +1,4 @@
+import { formatAddress, formatName } from '@/components/dashboard/merchants/Columns';
 import { format } from 'date-fns';
 
 export type TypeFilename = 'transactions' | 'orders' | 'customers' | 'products' | 'merchants';
@@ -28,7 +29,17 @@ const headers = {
   ],
   customers: ['Sr No.', 'Customer ID', 'Date Added', 'Customer Name', 'Email', 'Phone', 'Address'],
   products: ['Sr No.', 'Product ID', 'Date Added', 'Product Name', 'Price', 'Category', 'Description'],
-  merchants: ['Sr No.', 'Merchant ID', 'Date Added', 'Merchant Name', 'Email', 'Phone', 'Address', 'Status'],
+  merchants: [
+    'Sr No.',
+    'Merchant ID',
+    'Date Added',
+    'Merchant Name',
+    'Location',
+    'Address',
+    'Bank Acc. No',
+    'Swift Code',
+    'IBAN',
+  ],
 };
 
 function convertToCSV(data: any, type: TypeFilename): string {
@@ -91,13 +102,14 @@ function convertToCSV(data: any, type: TypeFilename): string {
     case 'merchants':
       rows = data.map((row: any, index: number) => [
         index + 1,
-        row.merchant_id,
+        row.personal_informations.id,
         format(new Date(row.onboarded_at), 'MMM dd, yyyy'),
-        row.merchant_name,
-        row.email || '-',
-        row.phone || '-',
-        row.address || '-',
-        row.status,
+        formatName(row.personal_informations),
+        row.business_addresses.city,
+        formatAddress(row.business_addresses),
+        row.bank_details.account_number,
+        row.bank_details.swift_code,
+        row.bank_details.iban_code,
       ]);
       break;
 
