@@ -45,6 +45,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
     header: 'Qty',
   },
   {
+    id: 'customer_name',
     accessorKey: 'customers.customer_name',
     header: 'Customer Name',
     cell: ({ row: { original } }) => (original as any).customers?.customer_name,
@@ -59,6 +60,7 @@ export const columns: ColumnDef<TypeOrder>[] = [
     ),
   },
   {
+    id: 'installments',
     accessorKey: 'period',
     header: 'Installments',
     cell: (info) => info.getValue() ?? '-',
