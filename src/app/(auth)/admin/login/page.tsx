@@ -20,9 +20,10 @@ export default function AdminLoginPage() {
       if (!email) {
         throw 'Email is required';
       }
-      if (!email.endsWith('@camino.fi')) {
-        throw 'The entered email is not authorised for admin login';
-      }
+      // TODO: remove after testing
+      // if (!email.endsWith('@camino.fi')) {
+      //   throw 'The entered email is not authorised for admin login';
+      // }
 
       setEmailAddress(email);
       const error = await signInWithMagicLink(email, 'admin');
