@@ -92,7 +92,7 @@ function convertToCSV(data: any, type: TypeFilename): string {
       rows = data.map((row: any, index: number) => [
         index + 1,
         row.merchant_id,
-        format(new Date(row.created_at), 'MMM dd, yyyy'),
+        format(new Date(row.onboarded_at), 'MMM dd, yyyy'),
         row.merchant_name,
         row.email || '-',
         row.phone || '-',

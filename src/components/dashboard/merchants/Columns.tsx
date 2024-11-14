@@ -26,8 +26,10 @@ export const columns: ColumnDef<TypeMerchantDetails>[] = [
     header: 'Merchant ID',
   },
   {
-    accessorKey: 'merchant_name',
+    id: 'merchant_name',
     header: 'Merchant Name',
+    accessorFn: (row) =>
+      `${row.personal_informations?.first_name || ''} ${row.personal_informations?.last_name || ''}`.trim(),
     cell: ({ row }) => formatName(row.original.personal_informations),
   },
   {
@@ -35,8 +37,10 @@ export const columns: ColumnDef<TypeMerchantDetails>[] = [
     header: 'Location',
   },
   {
-    accessorKey: 'address',
+    id: 'address',
     header: 'Address',
+    accessorFn: (row) =>
+      `${row.business_addresses?.street_address || ''} ${row.business_addresses?.postal_code || ''} ${row.business_addresses?.country || ''}`.trim(),
     cell: ({ row }) => formatAddress(row.original.business_addresses),
   },
   {
