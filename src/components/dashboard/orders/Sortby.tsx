@@ -87,33 +87,6 @@ const SortBy: React.FC<SortByProps> = ({ setSorting }) => {
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger className='cursor-pointer'>Instalments</DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem
-                onSelect={() => handleSort('instalments', 'asc')}
-                className={cn(
-                  'gap-2 cursor-pointer',
-                  selectedSort?.column === 'instalments' &&
-                    selectedSort.direction === 'asc' &&
-                    'bg-purple-700 text-white'
-                )}>
-                <span>Ascending</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => handleSort('instalments', 'desc')}
-                className={cn(
-                  'gap-2 cursor-pointer',
-                  selectedSort?.column === 'instalments' &&
-                    selectedSort.direction === 'desc' &&
-                    'bg-purple-700 text-white'
-                )}>
-                <span>Descending</span>
-              </DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
       </DropdownMenuContent>
     </DropdownMenu>
   );
