@@ -38,7 +38,11 @@ export default async function ConfirmPaymentPage({ params }: { params: { id: str
 
   const totalAmount = Number(data.price) * data.quantity;
   const installmentAmount = (parseFloat(totalAmount.toString()) / data.period!).toFixed(2);
-  const installmentDates = getInstallmentDates(new Date(), data.period!, data.interval as TypeInterval);
+  const installmentDates = getInstallmentDates(
+    new Date(data.created_at),
+    data.period!,
+    data.interval as TypeInterval
+  );
 
   return (
     <div className='w-full relative'>

@@ -38,7 +38,7 @@ export const getInstallmentDates = (startDate: Date, installments: number, inter
 
   for (let i = 0; i < installments; i++) {
     if (i === 0) {
-      dates.push('Today');
+      dates.push(currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
     } else {
       switch (interval) {
         case 'day':

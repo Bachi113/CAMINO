@@ -40,7 +40,7 @@ export default function MerchantLoginPage() {
             We have sent a magic link to <br /> <span className='font-medium'>{emailAddress}</span>
           </span>
         ) : (
-          'Please enter your below details to login'
+          'Please enter your below details to login/register'
         )}
       </p>
       {isMagicLinkSent ? (
@@ -74,7 +74,7 @@ export default function MerchantLoginPage() {
               />
             </InputWrapper>
 
-            <SubmitButton formAction={handleFormAction}>Verify & Login</SubmitButton>
+            <SubmitButton formAction={handleFormAction}>Verify & Login/Register</SubmitButton>
           </form>
         </div>
       )}

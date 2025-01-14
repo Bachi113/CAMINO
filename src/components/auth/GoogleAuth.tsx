@@ -31,7 +31,7 @@ export default function GoogleAuth() {
         localization={{
           variables: {
             sign_in: {
-              social_provider_text: 'Login with google',
+              social_provider_text: 'Login with Google',
             },
           },
         }}

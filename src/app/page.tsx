@@ -39,13 +39,13 @@ const Home: FC = async () => {
           <Link href='/merchant/login' className='w-full'>
             <Button variant='outline' size='lg' className='w-full gap-2 font-normal'>
               <BsHandbag className='size-4' strokeWidth={0.3} />
-              <span>Merchant Login</span>
+              <span>Business Login/Register</span>
             </Button>
           </Link>
           <Link href='/customer/login' className='w-full'>
             <Button variant='outline' size='lg' className='w-full gap-2 font-normal'>
               <LuUser2 className='size-4' />
-              <span>Customer Login</span>
+              <span>Customer Login/Register</span>
             </Button>
           </Link>
           <Link href='/admin/login' className='w-full'>
